@@ -1,6 +1,6 @@
 # Curso de Python - Facultad de Química (UNAM)
 
-Repositorio oficial con el material didáctico, códigos y bases de datos empleados durante el curso de Python.
+Repositorio oficial con el material didáctico, códigos y conjunto de datos empleados durante el curso de Python.
 
 ## 📅 Estructura del Curso
 * **Sesión 1:** Introducción a la sintaxis de Python, tipos de datos y estructuras de control.
