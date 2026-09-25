@@ -6,27 +6,26 @@ from bloques import URL_CRUDA, cierre, code, ejercicio, encabezado, instruccione
 def fuente(carpeta, archivo):
     return (
         encabezado(3, "Bibliotecas científicas y visualización de datos", """
-En esta sesión usaremos bibliotecas especializadas de Python para hacer cálculos numéricos,
-ajustar datos experimentales, generar gráficas de calidad editorial y explorar una base de datos
-con casi 10 000 compuestos.
+En esta sesión usaremos bibliotecas especializadas de Python para ajustar datos experimentales,
+generar gráficas de calidad editorial, analizar las lecturas de un espectrofotómetro y explorar
+una base de datos con casi 10 000 compuestos.
 
 **Al terminar podrás:**
 - Hacer regresiones y resolver ecuaciones con SciPy.
-- Operar con vectores y matrices usando NumPy.
 - Construir gráficas científicas con Matplotlib (ejes, unidades, leyendas y exportación).
-- Leer, filtrar y resumir datos tabulares con Pandas.
+- Leer, filtrar, agrupar y resumir datos de laboratorio con Pandas.
+- Determinar experimentalmente la ley de Lambert-Beer y su intervalo de validez.
 - Representar moléculas y buscar subestructuras con RDKit.
 """, carpeta, archivo)
         + instrucciones(3)
         + md("""
 ## **Importar bibliotecas**
 
-Una **biblioteca** (o *librería*) es un conjunto de funciones que alguien más escribió y que
-podemos reutilizar. Se cargan con `import`, y es costumbre darles un alias corto:
+Como vimos con NumPy en la sesión anterior, las bibliotecas se cargan con `import` y es
+costumbre darles un alias corto:
 """)
         + code("""
 import math
-import time
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -136,134 +135,6 @@ mejor_orden = ____
 k = ____
 """)
         + md("""
-# **NumPy**
-
-Las listas de Python son flexibles, pero lentas para cálculos numéricos. NumPy ofrece los
-**arreglos** (`np.array`), que permiten operar con todos los elementos a la vez y son mucho más
-rápidos. Comparemos el tiempo para elevar al cuadrado un millón de números:
-""")
-        + code("""
-lista = list(range(1_000_000))
-arreglo = np.array(lista)
-
-inicio = time.perf_counter()
-cuadrados_lista = [valor**2 for valor in lista]
-tiempo_lista = time.perf_counter() - inicio
-
-inicio = time.perf_counter()
-cuadrados_arreglo = arreglo**2          # Operación vectorizada: sin ciclo explícito
-tiempo_arreglo = time.perf_counter() - inicio
-
-print(f"Con lista:   {tiempo_lista * 1000:.1f} ms")
-print(f"Con arreglo: {tiempo_arreglo * 1000:.1f} ms  ({tiempo_lista / tiempo_arreglo:.0f} veces más rápido)")
-""")
-        + md("Los arreglos representan vectores y matrices, y permiten las operaciones del álgebra lineal:")
-        + code("""
-matriz_A = np.array([[1, 2],
-                     [3, 4]])
-matriz_B = np.array([[5, 6],
-                     [7, 8]])
-
-# Producto elemento a elemento (NO es el producto de matrices)
-print("A * B =\\n", matriz_A * matriz_B)
-
-# Producto matricial (filas por columnas)
-print("A @ B =\\n", matriz_A @ matriz_B)
-
-# Transpuesta
-print("Aᵀ =\\n", matriz_A.T)
-""")
-        + md("""
-Al igual que las listas, los arreglos se indexan; además podemos extraer filas o columnas
-completas con **rebanadas** (*slicing*): `arr[fila, columna]`, donde `:` significa "todas".
-""")
-        + code("""
-arr = np.arange(9).reshape(3, 3)    # Números del 0 al 8 acomodados en una matriz 3×3
-print(arr, "forma:", arr.shape)
-
-print("Primera fila:", arr[0])
-print("Elemento (0, 1):", arr[0, 1])
-print("Primera columna:", arr[:, 0])
-
-arr[0, :] = [10, 20, 30]            # Reemplazamos la primera fila
-print(arr)
-""")
-        + md("El módulo `np.linalg` contiene las funciones más comunes de álgebra lineal:")
-        + code("""
-print("Determinante de A:", np.linalg.det(matriz_A))
-
-valores_propios, vectores_propios = np.linalg.eig(matriz_A)
-print("Valores propios:", valores_propios)
-print("Vectores propios (columnas):\\n", vectores_propios)
-""")
-        + code("""
-# Resolver el sistema   2x +  y +  z = 10
-#                        x -  y + 2z =  5
-#                       3x + 2y -  z =  7
-coeficientes = np.array([[2,  1,  1],
-                         [1, -1,  2],
-                         [3,  2, -1]])
-resultados = np.array([10, 5, 7])
-
-solucion = np.linalg.solve(coeficientes, resultados)
-print("x, y, z =", solucion)
-""")
-        + md(r"""
-### **Ejercicio 2: Matriz de rotación**
-
-Para rotar un vector en $\mathbb{R}^2$ un ángulo $\theta$ se multiplica por la matriz de rotación:
-
-$$R(\theta) = \begin{pmatrix}
-\cos\theta & -\sin\theta \\
-\sin\theta & \cos\theta
-\end{pmatrix}$$
-
-Escribe la función `rotar_vector(vector, angulo_grados)` que devuelva el vector rotado.
-""")
-        + ejercicio("ej2", """
-def rotar_vector(vector, angulo_grados):
-    theta = ____
-    R = ____
-    return ____
-
-print(rotar_vector([1, 0], 90))   # Debe dar aproximadamente [0, 1]
-""")
-        + md(r"""
-### **Ejercicio 3: Regla de Cramer**
-
-Para un sistema de $2 \times 2$
-
-$$\begin{aligned}
-ax + by &= e \\
-cx + dy &= f
-\end{aligned}$$
-
-la regla de Cramer da $x = \frac{\Delta_x}{\Delta}$ y $y = \frac{\Delta_y}{\Delta}$, con
-
-$$\Delta = \begin{vmatrix} a & b \\ c & d \end{vmatrix}, \quad
-\Delta_x = \begin{vmatrix} e & b \\ f & d \end{vmatrix}, \quad
-\Delta_y = \begin{vmatrix} a & e \\ c & f \end{vmatrix}$$
-
-Escribe `resolver_cramer_2x2(A, b)` que devuelva un arreglo `[x, y]`, y compara tu resultado
-con `np.linalg.solve`.
-""")
-        + ejercicio("ej3", """
-def resolver_cramer_2x2(A, b):
-    A = np.array(A, dtype=float)
-    delta = ____
-
-    A_x = A.copy()
-    A_x[:, 0] = b
-    A_y = ____
-    ____
-
-    return ____
-
-A = np.array([[3, 2], [4, -1]])
-b = np.array([12, 5])
-print(resolver_cramer_2x2(A, b), np.linalg.solve(A, b))
-""")
-        + md("""
 # **Matplotlib**
 
 Matplotlib es la biblioteca de visualización más usada en ciencia. Aunque tiene varias formas
@@ -345,7 +216,7 @@ fig.savefig("cinetica.pdf", bbox_inches="tight")
 ```
 """)
         + md("""
-### **Ejercicio 4: Curva de calibración**
+### **Ejercicio 2: Curva de calibración**
 
 Con los datos de `concentraciones` y `absorbancias` de la sección de SciPy:
 
@@ -354,8 +225,11 @@ Con los datos de `concentraciones` y `absorbancias` de la sección de SciPy:
 2. Etiqueta ambos ejes con sus unidades y agrega una leyenda.
 3. Una muestra problema tiene una absorbancia de 0.500. Calcula su concentración con la recta
    de calibración y guárdala en `conc_problema`.
+
+> Aquí *suponemos* que la absorbancia es proporcional a la concentración. En el Ejercicio 3
+> comprobaremos esa suposición con datos de un espectrofotómetro.
 """)
-        + ejercicio("ej4", """
+        + ejercicio("ej2", """
 ajuste = linregress(concentraciones, absorbancias)
 x = np.array(concentraciones)
 
@@ -371,13 +245,126 @@ conc_problema = ____
 print(f"Concentración de la muestra problema: {conc_problema} mg/L")
 """)
         + md("""
-# **Pandas**
+# **Pandas: datos del laboratorio**
 
-Pandas es la biblioteca más usada para analizar datos tabulares: lee archivos (CSV, Excel,
-etc.), filtra, agrupa y grafica. Su estructura principal es el **DataFrame**, una tabla con
-filas y columnas con nombre, similar a una hoja de cálculo.
+Pandas es la biblioteca más usada para analizar datos tabulares. Su estructura principal es el
+**DataFrame**, una tabla con filas y columnas con nombre, parecida a una hoja de cálculo. La
+mayoría de los instrumentos (espectrofotómetros, potenciómetros, cromatógrafos) exportan sus
+lecturas como CSV o Excel, y Pandas las lee con `pd.read_csv()` o `pd.read_excel()`.
 
-Usaremos **AqSolDB**, una base de datos curada con la solubilidad acuosa de 9 982 compuestos
+Empezaremos con las lecturas de un espectrofotómetro: disoluciones estándar de KMnO₄ medidas
+**por triplicado** a 525 nm en una celda de 1.00 cm, más una muestra problema. Los datos son
+simulados, pero reproducen el comportamiento de un instrumento real.
+""")
+        + code(f"""
+from pathlib import Path
+
+def leer_datos(archivo):
+    \"\"\"Lee un CSV de la carpeta data/: la copia local si existe o la de GitHub (en Colab).\"\"\"
+    ruta_local = Path("../data") / archivo
+    return pd.read_csv(ruta_local if ruta_local.exists() else f"{URL_CRUDA}/data/{{archivo}}")
+
+datos_lb = leer_datos("lambert_beer_kmno4.csv")
+
+print(f"{{datos_lb.shape[0]}} lecturas, columnas: {{list(datos_lb.columns)}}")
+datos_lb.head(6)
+""")
+        + md("""
+Una columna se selecciona por su nombre, y las filas se **filtran** escribiendo una condición
+entre corchetes. Varias condiciones se combinan con `&` (y) o `|` (o), cada una entre paréntesis:
+""")
+        + code("""
+print("Absorbancia máxima:", datos_lb["absorbancia"].max())
+
+# Solo las lecturas de la muestra problema
+datos_lb[datos_lb["tipo"] == "problema"]
+""")
+        + md("""
+Para resumir datos por grupos usamos `groupby`, el equivalente a una *tabla dinámica* de Excel:
+se agrupan las filas que comparten un valor y se aplica una función a cada grupo.
+""")
+        + code("""
+# ¿Cuántas lecturas hay de cada tipo, y cuál es su absorbancia promedio?
+datos_lb.groupby("tipo")["absorbancia"].agg(["count", "mean"])
+""")
+        + md(r"""
+### **Ejercicio 3: Determinación de la ley de Lambert-Beer**
+
+La ley de Lambert-Beer relaciona la absorbancia con la concentración:
+
+$$A = \varepsilon\, b\, c$$
+
+donde $\varepsilon$ es la absortividad molar (L·mol⁻¹·cm⁻¹), $b$ el paso óptico (cm) y $c$ la
+concentración (mol/L). Con las lecturas de `datos_lb` vamos a comprobar si se cumple, en qué
+intervalo, y a usarla para cuantificar la muestra problema.
+
+**3a. Promedio de réplicas.** Filtra los estándares (`tipo == "estandar"`) y agrúpalos por
+concentración para obtener el DataFrame `resumen`, con las columnas `promedio` y `desviacion`
+(desviación estándar) de la absorbancia.
+""")
+        + ejercicio("ej3a", """
+estandares = datos_lb[____]
+resumen = estandares.groupby(____)["absorbancia"].agg(promedio="mean", desviacion="std")
+resumen
+""")
+        + md("""
+**3b. Absortividad molar.** Los espectrofotómetros pierden linealidad a absorbancias altas (por
+la luz parásita, entre otras causas), así que la ley solo se cumple en un intervalo.
+
+1. Ajusta una recta con **todos** los estándares y guarda su r² en `r2_todos`.
+2. Ajusta otra solo con los estándares cuya absorbancia promedio sea **≤ 1.0** (DataFrame
+   `lineal`, ajuste `ajuste_lb`) y guarda su r² en `r2_lineal`.
+3. Calcula la absortividad molar `epsilon` a partir de la pendiente (b = 1.00 cm).
+4. Grafica en `fig_lb` los promedios con barras de error y la recta del intervalo lineal.
+""")
+        + ejercicio("ej3b", """
+b = 1.00   # cm, paso óptico
+
+ajuste_todos = linregress(resumen.index, resumen["promedio"])
+r2_todos = ____
+
+lineal = resumen[____]
+ajuste_lb = ____
+r2_lineal = ____
+epsilon = ____
+
+fig_lb, ax = plt.subplots(figsize=(6, 4))
+ax.errorbar(resumen.index * 1e3, resumen["promedio"], yerr=resumen["desviacion"],
+            fmt="o", capsize=3, label="Estándares (promedio ± s)")
+c = np.linspace(0, lineal.index.max(), 50)
+ax.plot(c * 1e3, ____, color="tab:red", label="Ajuste lineal (A ≤ 1)")
+ax.set_xlabel("Concentración de KMnO₄ (mmol/L)")
+ax.set_ylabel(____)
+ax.legend()
+plt.show()
+
+print(f"r² con todos los puntos: {r2_todos}")
+print(f"r² en el intervalo lineal: {r2_lineal}")
+print(f"ε = {epsilon} L/(mol·cm)")
+""")
+        + md("""
+**3c. Muestra problema.** Promedia las tres lecturas de la muestra problema, calcula su
+concentración con `ajuste_lb` (`conc_problema_lb`, en mol/L) y guarda en `dentro_intervalo` si
+esa concentración queda dentro del intervalo de los estándares lineales (`True` o `False`).
+
+> 🤔 **Para reflexionar:** si otra muestra diera A = 1.8, ¿por qué convendría diluirla antes de
+> medirla, en lugar de extrapolar la recta?
+""")
+        + ejercicio("ej3c", """
+problema = datos_lb[datos_lb["tipo"] == "problema"]
+a_problema = ____
+
+conc_problema_lb = ____
+dentro_intervalo = ____
+
+print(f"A = {a_problema} → c = {conc_problema_lb} mol/L")
+print(f"¿Dentro del intervalo calibrado? {dentro_intervalo}")
+""")
+        + md("""
+## **Bases de datos grandes: AqSolDB**
+
+Las mismas herramientas sirven para tablas mucho más grandes. Usaremos **AqSolDB**, una base de
+datos curada con la solubilidad acuosa de 9 982 compuestos
 ([Sorkun *et al.*, *Scientific Data* **6**, 143 (2019)](https://doi.org/10.1038/s41597-019-0151-1)).
 Algunas de sus columnas son:
 
@@ -390,25 +377,15 @@ Algunas de sus columnas son:
 | `NumHDonors`, `NumHAcceptors` | Donadores y aceptores de puentes de hidrógeno |
 | `TPSA` | Área superficial polar (Å²) |
 """)
-        + code(f"""
-from pathlib import Path
+        + code("""
+df = leer_datos("curated_solubility.csv")
 
-RUTA_LOCAL = Path("../data/curated_solubility.csv")
-URL_DATOS = "{URL_CRUDA}/data/curated_solubility.csv"
-
-# Usa la copia local si existe; si no (por ejemplo, en Colab), descarga el archivo
-df = pd.read_csv(RUTA_LOCAL if RUTA_LOCAL.exists() else URL_DATOS)
-
-print(f"La tabla tiene {{df.shape[0]}} filas y {{df.shape[1]}} columnas")
+print(f"La tabla tiene {df.shape[0]} filas y {df.shape[1]} columnas")
 df.head()
 """)
         + md("Hagamos un análisis preliminar. `describe()` resume las columnas numéricas:")
         + code("""
 df[["Solubility", "MolWt", "MolLogP", "NumHDonors", "NumHAcceptors"]].describe()
-""")
-        + md("""
-Para **filtrar** filas escribimos una condición entre corchetes. Varias condiciones se combinan
-con `&` (y) o `|` (o), y cada una va entre paréntesis:
 """)
         + code("""
 # Compuestos con masa molar menor a 50 g/mol
@@ -428,7 +405,7 @@ ax.set_title("Distribución de la solubilidad acuosa en AqSolDB")
 plt.show()
 """)
         + md("""
-### **Ejercicio 5: Regla de los 5 de Lipinski**
+### **Ejercicio 4: Regla de los 5 de Lipinski**
 
 En el diseño de fármacos, la regla de Lipinski estima si un compuesto podría ser activo por vía
 oral. Un buen candidato cumple **todas** estas condiciones:
@@ -441,7 +418,7 @@ oral. Un buen candidato cumple **todas** estas condiciones:
 Guarda en `lipinski` las filas de `df` que cumplen la regla y en `porcentaje_lipinski` el
 porcentaje de compuestos que la cumplen.
 """)
-        + ejercicio("ej5", """
+        + ejercicio("ej4", """
 lipinski = df[(df["MolWt"] <= 500)
               & (____)
               & (____)
@@ -451,7 +428,7 @@ porcentaje_lipinski = ____
 print(f"{len(lipinski)} compuestos ({porcentaje_lipinski} %) cumplen la regla de Lipinski")
 """)
         + md("""
-### **Ejercicio 6 (integrador): lipofilicidad y solubilidad**
+### **Ejercicio 5 (integrador): lipofilicidad y solubilidad**
 
 ¿Los compuestos más lipofílicos son menos solubles en agua?
 
@@ -460,7 +437,7 @@ print(f"{len(lipinski)} compuestos ({porcentaje_lipinski} %) cumplen la regla de
 2. Calcula el coeficiente de correlación de Pearson entre ambas columnas y guárdalo en `r_logp`.
 3. Interpreta: ¿qué signo tiene la correlación y qué significa químicamente?
 """)
-        + ejercicio("ej6", """
+        + ejercicio("ej5", """
 r_logp = ____
 
 fig_logp, ax = plt.subplots(figsize=(6, 4))
@@ -504,7 +481,7 @@ Draw.MolsToGridImage(df["Mols"][:8].tolist(), molsPerRow=4, subImgSize=(200, 200
                      legends=[nombre[:25] for nombre in df["Name"][:8]])
 """)
         + md("""
-### **Ejercicio 7: Búsqueda de subestructuras**
+### **Ejercicio 6: Búsqueda de subestructuras**
 
 Con un patrón **SMARTS** podemos buscar fragmentos dentro de las moléculas. El anillo bencénico
 aromático se escribe `"c1ccccc1"`.
@@ -514,7 +491,7 @@ aromático se escribe `"c1ccccc1"`.
 2. Aplícala para crear la columna `df["tiene_benceno"]`.
 3. Guarda en `n_benceno` cuántos compuestos contienen benceno.
 """)
-        + ejercicio("ej7", """
+        + ejercicio("ej6", """
 patron_benceno = Chem.MolFromSmarts("c1ccccc1")
 
 def tiene_benceno(mol):
@@ -534,9 +511,8 @@ print(f"{n_benceno} compuestos contienen un anillo bencénico")
 | `math` | Funciones matemáticas básicas | `math.log`, `math.sqrt`, `math.pi` |
 | SymPy | Cálculo simbólico | `sp.symbols`, `sp.diff`, `sp.integrate` |
 | SciPy | Estadística, ajustes y ecuaciones | `linregress`, `curve_fit`, `fsolve` |
-| NumPy | Arreglos y álgebra lineal | `np.array`, `@`, `np.linalg.solve` |
-| Matplotlib | Gráficas | `plt.subplots`, `ax.plot`, `ax.scatter`, `fig.savefig` |
-| Pandas | Datos tabulares | `pd.read_csv`, `df.describe`, `df[condición]` |
+| Matplotlib | Gráficas | `plt.subplots`, `ax.plot`, `ax.scatter`, `ax.errorbar`, `fig.savefig` |
+| Pandas | Datos tabulares | `pd.read_csv`, `df[condición]`, `groupby().agg()`, `describe` |
 | RDKit | Quimioinformática | `Chem.MolFromSmiles`, `HasSubstructMatch` |
 
 **Para seguir aprendiendo:**

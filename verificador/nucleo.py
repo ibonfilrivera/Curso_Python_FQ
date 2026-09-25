@@ -16,6 +16,8 @@ import traceback
 import unicodedata
 from html import escape
 
+from . import registro
+
 
 # ---------------------------------------------------------------------------
 # Marcador de "espacio por completar"
@@ -247,40 +249,47 @@ class Ejercicio:
     añade al mensaje de éxito.
     """
 
-    def __init__(self, clave, titulo, comprobar, pista, solucion):
+    def __init__(self, clave, titulo, comprobar, pista, solucion, sesion=""):
         self.clave = clave
         self.titulo = titulo
         self._comprobar = comprobar
         self._pista = pista
         self._solucion = solucion.strip("\n")
+        self._sesion = sesion
         self.estado = "sin intentar"
+        self.intentos = 0
 
     def verificar(self):
         ns = _espacio_usuario()
+        self.intentos += 1
+        detalle = ""
         try:
             extra = self._comprobar(ns)
         except Pendiente as e:
-            self.estado = "pendiente"
-            _mostrar("pendiente", _a_html(str(e)), str(e))
+            self.estado, detalle = "pendiente", str(e)
+            _mostrar("pendiente", _a_html(detalle), detalle)
         except Incorrecto as e:
-            self.estado = "incorrecto"
-            mensaje = str(e) + f"\nSi te atoras, ejecuta `{self.clave}.pista()`."
+            self.estado, detalle = "incorrecto", str(e)
+            mensaje = detalle + f"\nSi te atoras, ejecuta `{self.clave}.pista()`."
             _mostrar("incorrecto", _a_html(mensaje), mensaje)
         except Exception as e:
             self.estado = "incorrecto"
-            ultima = traceback.format_exception_only(type(e), e)[-1].strip()
-            _mostrar("error", _a_html(f"`{ultima}`"), ultima)
+            detalle = traceback.format_exception_only(type(e), e)[-1].strip()
+            _mostrar("error", _a_html(f"`{detalle}`"), detalle)
         else:
             self.estado = "correcto"
             _mostrar("correcto", _a_html(extra or ""), extra or "")
+        registro.registrar(self._sesion, self.clave, self.estado, self.intentos, detalle)
 
     def pista(self):
         _mostrar("pista", _a_html(self._pista), self._pista)
+        registro.registrar(self._sesion, self.clave, "pista", self.intentos)
 
     def solucion(self):
         html = (f'<pre style="margin: 0.5em 0 0 0; white-space: pre-wrap;">'
                 f'{escape(self._solucion)}</pre>')
         _mostrar("solucion", html, "\n" + self._solucion)
+        registro.registrar(self._sesion, self.clave, "solucion", self.intentos)
 
     def __repr__(self):
         return (f"<{self.titulo} — usa {self.clave}.verificar(), "
@@ -292,14 +301,19 @@ class Sesion:
 
     _ICONOS = {"correcto": "✅", "incorrecto": "❌", "pendiente": "✏️", "sin intentar": "⬜"}
 
-    def __init__(self, nombre):
+    def __init__(self, nombre, corto):
         self.nombre = nombre
+        self.corto = corto          # Etiqueta breve para el registro docente, p. ej. "S1"
         self.ejercicios = []
 
     def agregar(self, clave, titulo, comprobar, pista, solucion):
-        ejercicio = Ejercicio(clave, titulo, comprobar, pista, solucion)
+        ejercicio = Ejercicio(clave, titulo, comprobar, pista, solucion, sesion=self.corto)
         self.ejercicios.append(ejercicio)
         return ejercicio
+
+    def iniciar_registro(self, alumno="", clave=""):
+        """Activa el envío del avance al equipo docente (ver verificador/registro.py)."""
+        registro.iniciar(self.corto, alumno, clave)
 
     def progreso(self):
         correctos = sum(e.estado == "correcto" for e in self.ejercicios)

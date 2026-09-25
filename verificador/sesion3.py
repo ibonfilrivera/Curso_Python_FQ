@@ -3,10 +3,11 @@
 import math
 
 from .nucleo import (Incorrecto, Pendiente, Sesion, ____, _tiene_espacios, comparar_numero,
-                     obtener, obtener_funcion, probar_funcion)
+                     obtener, obtener_funcion)
 
-sesion = Sesion("Sesión 3")
+sesion = Sesion("Sesión 3", "S3")
 progreso = sesion.progreso
+iniciar_registro = sesion.iniciar_registro
 
 TIEMPO = [0, 10, 20, 30, 40, 50]
 CONCENTRACION = [1.000, 0.607, 0.368, 0.223, 0.135, 0.082]
@@ -23,12 +24,6 @@ def _regresion(x, y):
     sxy = sum((a - mx) * (b - my) for a, b in zip(x, y))
     pendiente = sxy / sxx
     return pendiente, my - pendiente * mx, sxy ** 2 / (sxx * syy)
-
-
-def _cerca_arreglo(obtenido, esperado):
-    import numpy as np
-    obtenido = np.asarray(obtenido, dtype=float)
-    return obtenido.shape == np.shape(esperado) and np.allclose(obtenido, esperado, atol=1e-6)
 
 
 # --- Ejercicio 1: cinética ---------------------------------------------------
@@ -69,79 +64,7 @@ print(f"Mejor ajuste: orden {mejor_orden}, k = {k:.4f} min⁻¹")
 """)
 
 
-# --- Ejercicio 2: matriz de rotación ------------------------------------------
-
-def _ej2(ns):
-    funcion = obtener_funcion(ns, "rotar_vector")
-    r = math.sqrt(2)
-    casos = [
-        (([1, 0], 90), {}, [0.0, 1.0]),
-        (([0, 1], 90), {}, [-1.0, 0.0]),
-        (([2, 0], 180), {}, [-2.0, 0.0]),
-        (([1, 1], 45), {}, [0.0, r]),
-        (([3, 4], 0), {}, [3.0, 4.0]),
-    ]
-    probar_funcion("rotar_vector", funcion, casos, comparar=_cerca_arreglo)
-
-
-ej2 = sesion.agregar(
-    "ej2", "Rotación de un vector", _ej2,
-    pista="El ángulo llega en grados: conviértelo con `np.radians()`. El producto "
-          "matriz-vector se escribe `R @ v`.",
-    solucion="""
-def rotar_vector(vector, angulo_grados):
-    theta = np.radians(angulo_grados)
-    R = np.array([[np.cos(theta), -np.sin(theta)],
-                  [np.sin(theta),  np.cos(theta)]])
-    return R @ np.asarray(vector, dtype=float)
-
-print(rotar_vector([0, 1], 90))
-""")
-
-
-# --- Ejercicio 3: regla de Cramer ---------------------------------------------
-
-def _ej3(ns):
-    funcion = obtener_funcion(ns, "resolver_cramer_2x2")
-    import numpy as np
-    casos = [
-        ((np.array([[3, 2], [4, -1]]), np.array([12, 5])), {}, [2.0, 3.0]),
-        ((np.array([[1, 1], [1, -1]]), np.array([0.5, 0.1])), {}, [0.3, 0.2]),
-        ((np.array([[2.0, 1.0], [1.0, 3.0]]), np.array([3.0, 5.0])), {}, [0.8, 1.4]),
-    ]
-    try:
-        probar_funcion("resolver_cramer_2x2", funcion, casos, comparar=_cerca_arreglo)
-    except Incorrecto as e:
-        if "0.5" in str(e):
-            raise Incorrecto(str(e) + " Si la matriz es de enteros, `copy()` conserva el "
-                             "tipo `int` y los decimales de `b` se truncan: usa "
-                             "`np.array(A, dtype=float)`.") from None
-        raise
-
-
-ej3 = sesion.agregar(
-    "ej3", "Regla de Cramer", _ej3,
-    pista="Construye Aₓ sustituyendo la primera columna de A por b (`Ax[:, 0] = b`) y A_y "
-          "sustituyendo la segunda. Trabaja con `dtype=float` para no perder decimales.",
-    solucion="""
-def resolver_cramer_2x2(A, b):
-    A = np.array(A, dtype=float)
-    delta = np.linalg.det(A)
-
-    A_x = A.copy()
-    A_x[:, 0] = b
-    A_y = A.copy()
-    A_y[:, 1] = b
-
-    return np.array([np.linalg.det(A_x), np.linalg.det(A_y)]) / delta
-
-A = np.array([[3, 2], [4, -1]])
-b = np.array([12, 5])
-print(resolver_cramer_2x2(A, b), np.linalg.solve(A, b))
-""")
-
-
-# --- Ejercicio 4: curva de calibración ----------------------------------------
+# --- Ejercicio 2: curva de calibración ----------------------------------------
 
 def _ejes_de(ns, nombre):
     from matplotlib.figure import Figure
@@ -167,7 +90,7 @@ def _puntos_graficados(ax):
     return puntos
 
 
-def _ej4(ns):
+def _ej2(ns):
     conc_problema = obtener(ns, "conc_problema")
     ax = _ejes_de(ns, "fig_calibracion")
     if len(CONC_CALIBRACION) not in _puntos_graficados(ax):
@@ -184,8 +107,8 @@ def _ej4(ns):
                     (0.500 - ordenada) / pendiente, rel=5e-3)
 
 
-ej4 = sesion.agregar(
-    "ej4", "Curva de calibración", _ej4,
+ej2 = sesion.agregar(
+    "ej2", "Curva de calibración", _ej2,
     pista="Obtén `pendiente` y `ordenada` con `linregress`. La recta es "
           "`pendiente * x + ordenada`; para la muestra problema despeja x = (A − b) / m.",
     solucion="""
@@ -207,9 +130,154 @@ print(f"Concentración de la muestra problema: {conc_problema:.2f} mg/L")
 """)
 
 
-# --- Ejercicio 5: regla de Lipinski --------------------------------------------
+# --- Ejercicio 3: ley de Lambert-Beer -----------------------------------------------
 
-def _ej5(ns):
+LIMITE_LINEAL = 1.0     # Absorbancia máxima del intervalo lineal
+PASO_OPTICO = 1.00      # cm
+
+
+def _estandares_lb(ns):
+    datos = obtener(ns, "datos_lb")
+    estandares = datos[datos["tipo"] == "estandar"]
+    return datos, estandares.groupby("concentracion_mol_L")["absorbancia"].agg(
+        promedio="mean", desviacion="std")
+
+
+def _ajuste_lb(resumen):
+    lineal = resumen[resumen["promedio"] <= LIMITE_LINEAL]
+    return _regresion(list(lineal.index), list(lineal["promedio"]))
+
+
+def _ej3a(ns):
+    resumen = obtener(ns, "resumen")
+    _, esperado = _estandares_lb(ns)
+    if not hasattr(resumen, "columns"):
+        raise Incorrecto("`resumen` debe ser un DataFrame creado con `groupby(...).agg(...)`.")
+    faltan = {"promedio", "desviacion"} - set(resumen.columns)
+    if faltan:
+        raise Incorrecto(f"A `resumen` le faltan las columnas {sorted(faltan)}. Usa "
+                         '`.agg(promedio="mean", desviacion="std")`.')
+    if len(resumen) != len(esperado):
+        raise Incorrecto(f"`resumen` tiene {len(resumen)} filas, pero hay {len(esperado)} "
+                         "estándares distintos. ¿Filtraste solo las filas con "
+                         '`tipo == "estandar"` y agrupaste por concentración?')
+    import numpy as np
+    if not np.allclose(resumen.index.astype(float), esperado.index, rtol=1e-9, atol=0):
+        raise Incorrecto("El índice de `resumen` debe ser la concentración: agrupa por "
+                         '`"concentracion_mol_L"`.')
+    for columna in ("promedio", "desviacion"):
+        if not np.allclose(resumen[columna], esperado[columna], atol=1e-9):
+            raise Incorrecto(f"Los valores de la columna `{columna}` no coinciden con los "
+                             "esperados. Revisa la función de agregación.")
+    return f"{len(esperado)} estándares, cada uno con 3 réplicas."
+
+
+ej3a = sesion.agregar(
+    "ej3a", "Lambert-Beer: promedio de réplicas", _ej3a,
+    pista='Primero filtra: `datos_lb[datos_lb["tipo"] == "estandar"]`. Después agrupa con '
+          '`.groupby("concentracion_mol_L")["absorbancia"]` y resume con '
+          '`.agg(promedio="mean", desviacion="std")`.',
+    solucion="""
+estandares = datos_lb[datos_lb["tipo"] == "estandar"]
+resumen = estandares.groupby("concentracion_mol_L")["absorbancia"].agg(
+    promedio="mean", desviacion="std")
+resumen
+""")
+
+
+def _ej3b(ns):
+    epsilon = obtener(ns, "epsilon")
+    r2_lineal = obtener(ns, "r2_lineal")
+    r2_todos = obtener(ns, "r2_todos")
+    ax = _ejes_de(ns, "fig_lb")
+    _, resumen = _estandares_lb(ns)
+    todos = _regresion(list(resumen.index), list(resumen["promedio"]))
+    pendiente, _, r2 = _ajuste_lb(resumen)
+    comparar_numero("r2_todos", r2_todos, todos[2], rel=1e-4)
+    comparar_numero("epsilon", epsilon, pendiente / PASO_OPTICO, rel=2e-3)
+    comparar_numero("r2_lineal", r2_lineal, r2, rel=1e-4)
+    if ax.get_legend() is None:
+        raise Incorrecto("Agrega una leyenda con `ax.legend()` para distinguir los estándares "
+                         "del ajuste.")
+    return (f"ε ≈ {pendiente / PASO_OPTICO:.0f} L·mol⁻¹·cm⁻¹. Con todos los puntos, r² baja a "
+            f"{todos[2]:.4f}: por encima de A ≈ 1 la respuesta deja de ser lineal.")
+
+
+ej3b = sesion.agregar(
+    "ej3b", "Lambert-Beer: absortividad molar", _ej3b,
+    pista="Filtra `resumen` con `resumen[\"promedio\"] <= 1.0` y ajusta con `linregress` "
+          "usando `lineal.index` como x. Como A = ε·b·c, la pendiente es ε·b; con b = 1.00 cm, "
+          "ε = pendiente / b.",
+    solucion="""
+b = 1.00   # cm
+
+ajuste_todos = linregress(resumen.index, resumen["promedio"])
+r2_todos = ajuste_todos.rvalue**2
+
+lineal = resumen[resumen["promedio"] <= 1.0]
+ajuste_lb = linregress(lineal.index, lineal["promedio"])
+r2_lineal = ajuste_lb.rvalue**2
+epsilon = ajuste_lb.slope / b
+
+fig_lb, ax = plt.subplots(figsize=(6, 4))
+ax.errorbar(resumen.index * 1e3, resumen["promedio"], yerr=resumen["desviacion"],
+            fmt="o", capsize=3, label="Estándares (promedio ± s)")
+c = np.linspace(0, lineal.index.max(), 50)
+ax.plot(c * 1e3, ajuste_lb.slope * c + ajuste_lb.intercept, color="tab:red",
+        label=f"Ajuste en A ≤ 1: ε = {epsilon:.0f} L/(mol·cm)")
+c_extra = np.linspace(lineal.index.max(), resumen.index.max(), 20)
+ax.plot(c_extra * 1e3, ajuste_lb.slope * c_extra + ajuste_lb.intercept, color="tab:red",
+        linestyle="--", alpha=0.5, label="Extrapolación de la recta")
+ax.axhline(1.0, color="gray", linestyle=":", label="Límite del intervalo lineal")
+ax.set_xlabel("Concentración de KMnO₄ (mmol/L)")
+ax.set_ylabel("Absorbancia a 525 nm")
+ax.legend()
+plt.show()
+
+print(f"Todos los puntos: r² = {r2_todos:.4f}")
+print(f"Intervalo lineal: r² = {r2_lineal:.5f}, ε = {epsilon:.0f} L/(mol·cm)")
+""")
+
+
+def _ej3c(ns):
+    datos, resumen = _estandares_lb(ns)
+    conc = obtener(ns, "conc_problema_lb")
+    pendiente, ordenada, _ = _ajuste_lb(resumen)
+    a_problema = datos[datos["tipo"] == "problema"]["absorbancia"].mean()
+    esperado = (a_problema - ordenada) / pendiente
+    comparar_numero("conc_problema_lb", conc, esperado, rel=5e-3)
+    dentro = obtener(ns, "dentro_intervalo")
+    lineal = resumen[resumen["promedio"] <= LIMITE_LINEAL]
+    esperado_dentro = bool(lineal.index.min() <= esperado <= lineal.index.max())
+    if type(dentro).__name__ not in ("bool", "bool_"):
+        raise Incorrecto("`dentro_intervalo` debe ser `True` o `False`, resultado de una comparación.")
+    if bool(dentro) != esperado_dentro:
+        raise Incorrecto("`dentro_intervalo` no es correcto: compara la concentración con la "
+                         "menor y la mayor de los estándares del intervalo lineal.")
+    return (f"c = {esperado:.3e} mol/L; la muestra está dentro del intervalo calibrado, "
+            "así que el resultado es confiable.")
+
+
+ej3c = sesion.agregar(
+    "ej3c", "Lambert-Beer: muestra problema", _ej3c,
+    pista="Promedia las tres lecturas de la muestra problema y despeja c = (A − ordenada) / "
+          "pendiente usando `ajuste_lb`. Para `dentro_intervalo`, compara c con "
+          "`lineal.index.min()` y `lineal.index.max()`.",
+    solucion="""
+problema = datos_lb[datos_lb["tipo"] == "problema"]
+a_problema = problema["absorbancia"].mean()
+
+conc_problema_lb = (a_problema - ajuste_lb.intercept) / ajuste_lb.slope
+dentro_intervalo = lineal.index.min() <= conc_problema_lb <= lineal.index.max()
+
+print(f"A = {a_problema:.3f} → c = {conc_problema_lb:.3e} mol/L")
+print(f"¿Dentro del intervalo calibrado? {dentro_intervalo}")
+""")
+
+
+# --- Ejercicio 4: regla de Lipinski --------------------------------------------
+
+def _ej4(ns):
     df = obtener(ns, "df")
     lipinski = obtener(ns, "lipinski")
     esperado = df[(df["MolWt"] <= 500) & (df["MolLogP"] <= 5)
@@ -225,8 +293,8 @@ def _ej5(ns):
     return f"{len(esperado)} de {len(df)} moléculas ({100 * len(esperado) / len(df):.1f} %) cumplen la regla."
 
 
-ej5 = sesion.agregar(
-    "ej5", "Regla de los 5 de Lipinski", _ej5,
+ej4 = sesion.agregar(
+    "ej4", "Regla de los 5 de Lipinski", _ej4,
     pista="Combina las cuatro condiciones con `&` y encierra cada una entre paréntesis: "
           '`df[(df["MolWt"] <= 500) & (...)]`.',
     solucion="""
@@ -240,9 +308,9 @@ print(f"{len(lipinski)} moléculas ({porcentaje_lipinski:.1f} %) cumplen la regl
 """)
 
 
-# --- Ejercicio 6: integrador ---------------------------------------------------
+# --- Ejercicio 5: integrador ---------------------------------------------------
 
-def _ej6(ns):
+def _ej5(ns):
     df = obtener(ns, "df")
     r_logp = obtener(ns, "r_logp")
     ax = _ejes_de(ns, "fig_logp")
@@ -253,8 +321,8 @@ def _ej6(ns):
                     df["MolLogP"].corr(df["Solubility"]), rel=1e-3)
 
 
-ej6 = sesion.agregar(
-    "ej6", "LogP contra solubilidad", _ej6,
+ej5 = sesion.agregar(
+    "ej5", "LogP contra solubilidad", _ej5,
     pista='El coeficiente de Pearson entre dos columnas se obtiene con '
           '`df["MolLogP"].corr(df["Solubility"])`. Usa `alpha=0.3` para ver mejor los puntos.',
     solucion="""
@@ -269,9 +337,9 @@ plt.show()
 """)
 
 
-# --- Ejercicio 7: RDKit ----------------------------------------------------------
+# --- Ejercicio 6: RDKit ----------------------------------------------------------
 
-def _ej7(ns):
+def _ej6(ns):
     df = obtener(ns, "df")
     if _tiene_espacios(obtener_funcion(ns, "tiene_benceno")):
         raise Pendiente("Completa la función `tiene_benceno`: sustituye los `____`.")
@@ -291,8 +359,8 @@ def _ej7(ns):
                              'patrón SMARTS aromático "c1ccccc1".')
 
 
-ej7 = sesion.agregar(
-    "ej7", "Búsqueda de subestructuras", _ej7,
+ej6 = sesion.agregar(
+    "ej6", "Búsqueda de subestructuras", _ej6,
     pista="Crea el patrón una sola vez con `Chem.MolFromSmarts(\"c1ccccc1\")` y, dentro de "
           "la función, devuelve `mol.HasSubstructMatch(patron)` (o `False` si `mol` es `None`).",
     solucion="""
@@ -309,5 +377,5 @@ print(f"{n_benceno} de {len(df)} moléculas contienen un anillo bencénico")
 """)
 
 
-__all__ = ["____", "progreso"] + [e.clave for e in sesion.ejercicios]
+__all__ = ["____", "progreso", "iniciar_registro"] + [e.clave for e in sesion.ejercicios]
 sesion.bienvenida()

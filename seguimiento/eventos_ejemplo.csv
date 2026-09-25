@@ -1,0 +1,433 @@
+recibido,marca_cliente,alumno,sesion,ejercicio,evento,intento,detalle
+2026-10-10T15:05:02+00:00,2026-10-10T15:05:02+00:00,A04,S1,,inicio,0,
+2026-10-10T15:05:19+00:00,2026-10-10T15:05:19+00:00,A13,S1,,inicio,0,
+2026-10-10T15:05:27+00:00,2026-10-10T15:05:27+00:00,A05,S1,,inicio,0,
+2026-10-10T15:05:30+00:00,2026-10-10T15:05:30+00:00,A23,S1,,inicio,0,
+2026-10-10T15:05:55+00:00,2026-10-10T15:05:55+00:00,A03,S1,,inicio,0,
+2026-10-10T15:06:13+00:00,2026-10-10T15:06:13+00:00,A24,S1,,inicio,0,
+2026-10-10T15:06:32+00:00,2026-10-10T15:06:32+00:00,A09,S1,,inicio,0,
+2026-10-10T15:07:17+00:00,2026-10-10T15:07:17+00:00,A07,S1,,inicio,0,
+2026-10-10T15:07:25+00:00,2026-10-10T15:07:25+00:00,A10,S1,,inicio,0,
+2026-10-10T15:07:33+00:00,2026-10-10T15:07:33+00:00,A06,S1,,inicio,0,
+2026-10-10T15:07:36+00:00,2026-10-10T15:07:36+00:00,A14,S1,,inicio,0,
+2026-10-10T15:07:47+00:00,2026-10-10T15:07:47+00:00,A18,S1,,inicio,0,
+2026-10-10T15:08:15+00:00,2026-10-10T15:08:15+00:00,A21,S1,,inicio,0,
+2026-10-10T15:08:28+00:00,2026-10-10T15:08:28+00:00,A01,S1,,inicio,0,
+2026-10-10T15:08:37+00:00,2026-10-10T15:08:37+00:00,A19,S1,,inicio,0,
+2026-10-10T15:08:56+00:00,2026-10-10T15:08:56+00:00,A15,S1,,inicio,0,
+2026-10-10T15:09:28+00:00,2026-10-10T15:09:28+00:00,A20,S1,,inicio,0,
+2026-10-10T15:09:35+00:00,2026-10-10T15:09:35+00:00,A16,S1,,inicio,0,
+2026-10-10T15:09:50+00:00,2026-10-10T15:09:50+00:00,A02,S1,,inicio,0,
+2026-10-10T15:10:02+00:00,2026-10-10T15:10:02+00:00,A17,S1,,inicio,0,
+2026-10-10T15:10:27+00:00,2026-10-10T15:10:27+00:00,A08,S1,,inicio,0,
+2026-10-10T15:10:36+00:00,2026-10-10T15:10:36+00:00,A11,S1,,inicio,0,
+2026-10-10T15:10:52+00:00,2026-10-10T15:10:52+00:00,A12,S1,,inicio,0,
+2026-10-10T15:10:58+00:00,2026-10-10T15:10:58+00:00,A22,S1,,inicio,0,
+2026-10-10T15:22:57+00:00,2026-10-10T15:22:57+00:00,A09,S1,ej1,correcto,1,
+2026-10-10T15:24:34+00:00,2026-10-10T15:24:34+00:00,A04,S1,ej1,incorrecto,1,"`x` vale 77.1, pero no es el valor esperado."
+2026-10-10T15:24:41+00:00,2026-10-10T15:24:41+00:00,A15,S1,ej1,pendiente,1,Sustituye `____` por tu respuesta.
+2026-10-10T15:25:49+00:00,2026-10-10T15:25:49+00:00,A24,S1,ej1,correcto,1,
+2026-10-10T15:26:54+00:00,2026-10-10T15:26:54+00:00,A15,S1,ej1,correcto,2,
+2026-10-10T15:27:03+00:00,2026-10-10T15:27:03+00:00,A20,S1,ej1,correcto,1,
+2026-10-10T15:27:48+00:00,2026-10-10T15:27:48+00:00,A23,S1,ej1,correcto,1,
+2026-10-10T15:27:58+00:00,2026-10-10T15:27:58+00:00,A08,S1,ej1,pendiente,1,Sustituye `____` por tu respuesta.
+2026-10-10T15:28:45+00:00,2026-10-10T15:28:45+00:00,A04,S1,ej1,incorrecto,2,"`x` vale 77.1, pero no es el valor esperado."
+2026-10-10T15:29:23+00:00,2026-10-10T15:29:23+00:00,A06,S1,ej1,correcto,1,
+2026-10-10T15:29:25+00:00,2026-10-10T15:29:25+00:00,A04,S1,ej1,pista,2,
+2026-10-10T15:31:09+00:00,2026-10-10T15:31:09+00:00,A08,S1,ej1,correcto,2,
+2026-10-10T15:31:33+00:00,2026-10-10T15:31:33+00:00,A13,S1,ej1,incorrecto,1,"`x` vale 77.1, pero no es el valor esperado."
+2026-10-10T15:32:27+00:00,2026-10-10T15:32:27+00:00,A05,S1,ej1,correcto,1,
+2026-10-10T15:32:47+00:00,2026-10-10T15:32:47+00:00,A04,S1,ej1,incorrecto,3,"`x` vale 77.1, pero no es el valor esperado."
+2026-10-10T15:33:02+00:00,2026-10-10T15:33:02+00:00,A09,S1,ej2a,incorrecto,1,"`masa_molar_hcn` vale 26.0, pero no es el valor esperado."
+2026-10-10T15:33:04+00:00,2026-10-10T15:33:04+00:00,A13,S1,ej1,correcto,2,
+2026-10-10T15:33:13+00:00,2026-10-10T15:33:13+00:00,A19,S1,ej1,correcto,1,
+2026-10-10T15:33:17+00:00,2026-10-10T15:33:17+00:00,A14,S1,ej1,pendiente,1,Sustituye `____` por tu respuesta.
+2026-10-10T15:34:19+00:00,2026-10-10T15:34:19+00:00,A17,S1,ej1,pendiente,1,Sustituye `____` por tu respuesta.
+2026-10-10T15:35:39+00:00,2026-10-10T15:35:39+00:00,A09,S1,ej2a,incorrecto,2,"`masa_molar_hcn` vale 26.0, pero no es el valor esperado."
+2026-10-10T15:35:46+00:00,2026-10-10T15:35:46+00:00,A12,S1,ej1,pendiente,1,Sustituye `____` por tu respuesta.
+2026-10-10T15:35:49+00:00,2026-10-10T15:35:49+00:00,A04,S1,ej1,incorrecto,4,"`x` vale 77.1, pero no es el valor esperado."
+2026-10-10T15:35:50+00:00,2026-10-10T15:35:50+00:00,A11,S1,ej1,correcto,1,
+2026-10-10T15:36:22+00:00,2026-10-10T15:36:22+00:00,A17,S1,ej1,correcto,2,
+2026-10-10T15:36:44+00:00,2026-10-10T15:36:44+00:00,A02,S1,ej1,correcto,1,
+2026-10-10T15:36:58+00:00,2026-10-10T15:36:58+00:00,A15,S1,ej2a,correcto,1,
+2026-10-10T15:37:29+00:00,2026-10-10T15:37:29+00:00,A10,S1,ej1,pendiente,1,Sustituye `____` por tu respuesta.
+2026-10-10T15:37:30+00:00,2026-10-10T15:37:30+00:00,A14,S1,ej1,correcto,2,
+2026-10-10T15:38:13+00:00,2026-10-10T15:38:13+00:00,A04,S1,ej1,correcto,5,
+2026-10-10T15:38:23+00:00,2026-10-10T15:38:23+00:00,A09,S1,ej2a,correcto,3,
+2026-10-10T15:38:31+00:00,2026-10-10T15:38:31+00:00,A16,S1,ej1,correcto,1,
+2026-10-10T15:38:44+00:00,2026-10-10T15:38:44+00:00,A18,S1,ej1,correcto,1,
+2026-10-10T15:39:38+00:00,2026-10-10T15:39:38+00:00,A01,S1,ej1,incorrecto,1,"`x` vale 77.1, pero no es el valor esperado."
+2026-10-10T15:39:38+00:00,2026-10-10T15:39:38+00:00,A22,S1,ej1,correcto,1,
+2026-10-10T15:40:13+00:00,2026-10-10T15:40:13+00:00,A12,S1,ej1,incorrecto,2,"`x` vale 77.1, pero no es el valor esperado."
+2026-10-10T15:40:52+00:00,2026-10-10T15:40:52+00:00,A10,S1,ej1,correcto,2,
+2026-10-10T15:40:53+00:00,2026-10-10T15:40:53+00:00,A12,S1,ej1,pista,2,
+2026-10-10T15:41:57+00:00,2026-10-10T15:41:57+00:00,A01,S1,ej1,correcto,2,
+2026-10-10T15:42:53+00:00,2026-10-10T15:42:53+00:00,A21,S1,ej1,correcto,1,
+2026-10-10T15:43:31+00:00,2026-10-10T15:43:31+00:00,A03,S1,ej1,correcto,1,
+2026-10-10T15:43:35+00:00,2026-10-10T15:43:35+00:00,A12,S1,ej1,correcto,3,
+2026-10-10T15:44:16+00:00,2026-10-10T15:44:16+00:00,A07,S1,ej1,correcto,1,
+2026-10-10T15:45:02+00:00,2026-10-10T15:45:02+00:00,A23,S1,ej2a,pendiente,1,Sustituye `____` por tu respuesta.
+2026-10-10T15:45:51+00:00,2026-10-10T15:45:51+00:00,A09,S1,ej2b,correcto,1,
+2026-10-10T15:46:58+00:00,2026-10-10T15:46:58+00:00,A02,S1,ej2a,incorrecto,1,"`masa_molar_hcn` vale 26.0, pero no es el valor esperado."
+2026-10-10T15:47:17+00:00,2026-10-10T15:47:17+00:00,A17,S1,ej2a,correcto,1,
+2026-10-10T15:48:27+00:00,2026-10-10T15:48:27+00:00,A23,S1,ej2a,incorrecto,2,"`moles_hcn` vale 369.959, pero no es el valor esperado. Tu resultado difiere por un factor de 1000: revisa las conversiones de unidades."
+2026-10-10T15:49:11+00:00,2026-10-10T15:49:11+00:00,A02,S1,ej2a,correcto,2,
+2026-10-10T15:49:45+00:00,2026-10-10T15:49:45+00:00,A05,S1,ej2a,incorrecto,1,"`moles_hcn` vale 369.959, pero no es el valor esperado. Tu resultado difiere por un factor de 1000: revisa las conversiones de unidades."
+2026-10-10T15:49:45+00:00,2026-10-10T15:49:45+00:00,A08,S1,ej2a,correcto,1,
+2026-10-10T15:50:38+00:00,2026-10-10T15:50:38+00:00,A04,S1,ej2a,incorrecto,1,"`masa_molar_hcn` vale 26.0, pero no es el valor esperado."
+2026-10-10T15:51:43+00:00,2026-10-10T15:51:43+00:00,A23,S1,ej2a,correcto,3,
+2026-10-10T15:52:41+00:00,2026-10-10T15:52:41+00:00,A19,S1,ej2a,correcto,1,
+2026-10-10T15:53:04+00:00,2026-10-10T15:53:04+00:00,A05,S1,ej2a,correcto,2,
+2026-10-10T15:53:16+00:00,2026-10-10T15:53:16+00:00,A15,S1,ej2b,correcto,1,
+2026-10-10T15:53:52+00:00,2026-10-10T15:53:52+00:00,A07,S1,ej2a,correcto,1,
+2026-10-10T15:54:17+00:00,2026-10-10T15:54:17+00:00,A23,S1,ej2b,correcto,1,
+2026-10-10T15:54:50+00:00,2026-10-10T15:54:50+00:00,A04,S1,ej2a,correcto,2,
+2026-10-10T15:55:17+00:00,2026-10-10T15:55:17+00:00,A11,S1,ej2a,incorrecto,1,"`masa_molar_hcn` vale 26.0, pero no es el valor esperado."
+2026-10-10T15:56:08+00:00,2026-10-10T15:56:08+00:00,A16,S1,ej2a,correcto,1,
+2026-10-10T15:57:02+00:00,2026-10-10T15:57:02+00:00,A22,S1,ej2a,pendiente,1,Sustituye `____` por tu respuesta.
+2026-10-10T15:57:13+00:00,2026-10-10T15:57:13+00:00,A03,S1,ej2a,correcto,1,
+2026-10-10T15:57:34+00:00,2026-10-10T15:57:34+00:00,A10,S1,ej2a,incorrecto,1,"`moles_hcn` vale 369.959, pero no es el valor esperado. Tu resultado difiere por un factor de 1000: revisa las conversiones de unidades."
+2026-10-10T15:57:37+00:00,2026-10-10T15:57:37+00:00,A02,S1,ej2b,correcto,1,
+2026-10-10T15:57:51+00:00,2026-10-10T15:57:51+00:00,A07,S1,ej2b,correcto,1,
+2026-10-10T15:58:30+00:00,2026-10-10T15:58:30+00:00,A20,S1,ej2a,incorrecto,1,"`moles_hcn` vale 369.959, pero no es el valor esperado. Tu resultado difiere por un factor de 1000: revisa las conversiones de unidades."
+2026-10-10T15:59:18+00:00,2026-10-10T15:59:18+00:00,A24,S1,ej2a,correcto,1,
+2026-10-10T15:59:19+00:00,2026-10-10T15:59:19+00:00,A22,S1,ej2a,incorrecto,2,"`masa_molar_hcn` vale 26.0, pero no es el valor esperado."
+2026-10-10T15:59:22+00:00,2026-10-10T15:59:22+00:00,A06,S1,ej2a,incorrecto,1,"`masa_molar_hcn` vale 26.0, pero no es el valor esperado."
+2026-10-10T15:59:40+00:00,2026-10-10T15:59:40+00:00,A11,S1,ej2a,correcto,2,
+2026-10-10T16:00:20+00:00,2026-10-10T16:00:20+00:00,A10,S1,ej2a,correcto,2,
+2026-10-10T16:00:34+00:00,2026-10-10T16:00:34+00:00,A22,S1,ej2a,correcto,3,
+2026-10-10T16:00:43+00:00,2026-10-10T16:00:43+00:00,A24,S1,ej2b,correcto,1,
+2026-10-10T16:00:58+00:00,2026-10-10T16:00:58+00:00,A06,S1,ej2a,correcto,2,
+2026-10-10T16:01:51+00:00,2026-10-10T16:01:51+00:00,A13,S1,ej2a,pendiente,1,Sustituye `____` por tu respuesta.
+2026-10-10T16:02:41+00:00,2026-10-10T16:02:41+00:00,A08,S1,ej2b,correcto,1,
+2026-10-10T16:02:51+00:00,2026-10-10T16:02:51+00:00,A14,S1,ej2a,correcto,1,
+2026-10-10T16:02:54+00:00,2026-10-10T16:02:54+00:00,A19,S1,ej2b,correcto,1,
+2026-10-10T16:03:11+00:00,2026-10-10T16:03:11+00:00,A20,S1,ej2a,correcto,2,
+2026-10-10T16:04:36+00:00,2026-10-10T16:04:36+00:00,A10,S1,ej2b,incorrecto,1,"`moleculas_hcn` vale 6.022e+23, pero no es el valor esperado."
+2026-10-10T16:05:17+00:00,2026-10-10T16:05:17+00:00,A18,S1,ej2a,correcto,1,
+2026-10-10T16:06:06+00:00,2026-10-10T16:06:06+00:00,A21,S1,ej2a,incorrecto,1,"`masa_molar_hcn` vale 26.0, pero no es el valor esperado."
+2026-10-10T16:06:11+00:00,2026-10-10T16:06:11+00:00,A05,S1,ej2b,incorrecto,1,"`moleculas_hcn` vale 6.022e+23, pero no es el valor esperado."
+2026-10-10T16:06:33+00:00,2026-10-10T16:06:33+00:00,A16,S1,ej2b,correcto,1,
+2026-10-10T16:06:39+00:00,2026-10-10T16:06:39+00:00,A13,S1,ej2a,correcto,2,
+2026-10-10T16:07:33+00:00,2026-10-10T16:07:33+00:00,A20,S1,ej2b,correcto,1,
+2026-10-10T16:07:42+00:00,2026-10-10T16:07:42+00:00,A12,S1,ej2a,correcto,1,
+2026-10-10T16:07:47+00:00,2026-10-10T16:07:47+00:00,A10,S1,ej2b,correcto,2,
+2026-10-10T16:08:17+00:00,2026-10-10T16:08:17+00:00,A03,S1,ej2b,correcto,1,
+2026-10-10T16:08:52+00:00,2026-10-10T16:08:52+00:00,A05,S1,ej2b,correcto,2,
+2026-10-10T16:08:54+00:00,2026-10-10T16:08:54+00:00,A21,S1,ej2a,correcto,2,
+2026-10-10T16:08:56+00:00,2026-10-10T16:08:56+00:00,A01,S1,ej2a,pendiente,1,Sustituye `____` por tu respuesta.
+2026-10-10T16:09:39+00:00,2026-10-10T16:09:39+00:00,A06,S1,ej2b,correcto,1,
+2026-10-10T16:09:45+00:00,2026-10-10T16:09:45+00:00,A22,S1,ej2b,correcto,1,
+2026-10-10T16:09:49+00:00,2026-10-10T16:09:49+00:00,A11,S1,ej2b,correcto,1,
+2026-10-10T16:09:51+00:00,2026-10-10T16:09:51+00:00,A17,S1,ej2b,correcto,1,
+2026-10-10T16:10:20+00:00,2026-10-10T16:10:20+00:00,A18,S1,ej2b,pendiente,1,Sustituye `____` por tu respuesta.
+2026-10-10T16:11:21+00:00,2026-10-10T16:11:21+00:00,A13,S1,ej2b,correcto,1,
+2026-10-10T16:11:37+00:00,2026-10-10T16:11:37+00:00,A04,S1,ej2b,pendiente,1,Sustituye `____` por tu respuesta.
+2026-10-10T16:11:55+00:00,2026-10-10T16:11:55+00:00,A21,S1,ej2b,pendiente,1,Sustituye `____` por tu respuesta.
+2026-10-10T16:12:32+00:00,2026-10-10T16:12:32+00:00,A18,S1,ej2b,correcto,2,
+2026-10-10T16:13:12+00:00,2026-10-10T16:13:12+00:00,A21,S1,ej2b,correcto,2,
+2026-10-10T16:13:23+00:00,2026-10-10T16:13:23+00:00,A01,S1,ej2a,correcto,2,
+2026-10-10T16:16:00+00:00,2026-10-10T16:16:00+00:00,A04,S1,ej2b,incorrecto,2,"`moleculas_hcn` vale 6.022e+23, pero no es el valor esperado."
+2026-10-10T16:16:12+00:00,2026-10-10T16:16:12+00:00,A01,S1,ej2b,correcto,1,
+2026-10-10T16:17:18+00:00,2026-10-10T16:17:18+00:00,A04,S1,ej2b,correcto,3,
+2026-10-10T16:18:58+00:00,2026-10-10T16:18:58+00:00,A12,S1,ej2b,correcto,1,
+2026-10-10T16:22:10+00:00,2026-10-10T16:22:10+00:00,A14,S1,ej2b,incorrecto,1,"`moleculas_hcn` vale 6.022e+23, pero no es el valor esperado."
+2026-10-10T16:24:07+00:00,2026-10-10T16:24:07+00:00,A14,S1,ej2b,correcto,2,
+2026-10-10T16:36:55+00:00,2026-10-10T16:36:55+00:00,A23,S1,ej3,incorrecto,1,`clasificar_enlace(0)` devolvió `None`. ¿Olvidaste usar `return`?
+2026-10-10T16:40:00+00:00,2026-10-10T16:40:00+00:00,A04,S1,ej3,incorrecto,1,"`clasificar_enlace(1.7)` devolvió 'covalente polar', pero se esperaba 'iónico'."
+2026-10-10T16:40:20+00:00,2026-10-10T16:40:20+00:00,A02,S1,ej3,pendiente,1,Sustituye `____` por tu respuesta.
+2026-10-10T16:40:50+00:00,2026-10-10T16:40:50+00:00,A15,S1,ej3,pendiente,1,Sustituye `____` por tu respuesta.
+2026-10-10T16:41:39+00:00,2026-10-10T16:41:39+00:00,A23,S1,ej3,correcto,2,
+2026-10-10T16:44:10+00:00,2026-10-10T16:44:10+00:00,A04,S1,ej3,incorrecto,2,"`clasificar_enlace(1.7)` devolvió 'covalente polar', pero se esperaba 'iónico'."
+2026-10-10T16:44:17+00:00,2026-10-10T16:44:17+00:00,A15,S1,ej3,incorrecto,2,`clasificar_enlace(0)` devolvió `None`. ¿Olvidaste usar `return`?
+2026-10-10T16:44:50+00:00,2026-10-10T16:44:50+00:00,A04,S1,ej3,pista,2,
+2026-10-10T16:44:56+00:00,2026-10-10T16:44:56+00:00,A02,S1,ej3,incorrecto,2,`clasificar_enlace(0)` devolvió `None`. ¿Olvidaste usar `return`?
+2026-10-10T16:45:44+00:00,2026-10-10T16:45:44+00:00,A09,S1,ej3,correcto,1,
+2026-10-10T16:46:51+00:00,2026-10-10T16:46:51+00:00,A04,S1,ej3,correcto,3,
+2026-10-10T16:47:22+00:00,2026-10-10T16:47:22+00:00,A15,S1,ej3,correcto,3,
+2026-10-10T16:47:29+00:00,2026-10-10T16:47:29+00:00,A02,S1,ej3,correcto,3,
+2026-10-10T16:53:05+00:00,2026-10-10T16:53:05+00:00,A17,S1,ej3,correcto,1,
+2026-10-10T16:55:25+00:00,2026-10-10T16:55:25+00:00,A07,S1,ej3,incorrecto,1,"`clasificar_enlace(0.5)` devolvió 'covalente no polar', pero se esperaba 'covalente polar'."
+2026-10-10T16:56:54+00:00,2026-10-10T16:56:54+00:00,A05,S1,ej3,incorrecto,1,"`clasificar_enlace(1.7)` devolvió 'covalente polar', pero se esperaba 'iónico'."
+2026-10-10T16:57:37+00:00,2026-10-10T16:57:37+00:00,A24,S1,ej3,incorrecto,1,"`clasificar_enlace(1.7)` devolvió 'covalente polar', pero se esperaba 'iónico'."
+2026-10-10T16:58:14+00:00,2026-10-10T16:58:14+00:00,A07,S1,ej3,incorrecto,2,"`clasificar_enlace(1.7)` devolvió 'covalente polar', pero se esperaba 'iónico'."
+2026-10-10T16:58:54+00:00,2026-10-10T16:58:54+00:00,A07,S1,ej3,pista,2,
+2026-10-10T16:59:10+00:00,2026-10-10T16:59:10+00:00,A08,S1,ej3,correcto,1,
+2026-10-10T17:00:02+00:00,2026-10-10T17:00:02+00:00,A10,S1,ej3,incorrecto,1,`clasificar_enlace(0)` devolvió `None`. ¿Olvidaste usar `return`?
+2026-10-10T17:00:22+00:00,2026-10-10T17:00:22+00:00,A05,S1,ej3,incorrecto,2,"`clasificar_enlace(0.5)` devolvió 'covalente no polar', pero se esperaba 'covalente polar'."
+2026-10-10T17:00:35+00:00,2026-10-10T17:00:35+00:00,A07,S1,ej3,incorrecto,3,`clasificar_enlace(0)` devolvió `None`. ¿Olvidaste usar `return`?
+2026-10-10T17:01:06+00:00,2026-10-10T17:01:06+00:00,A24,S1,ej3,incorrecto,2,"`clasificar_enlace(1.7)` devolvió 'covalente polar', pero se esperaba 'iónico'."
+2026-10-10T17:01:46+00:00,2026-10-10T17:01:46+00:00,A24,S1,ej3,pista,2,
+2026-10-10T17:03:15+00:00,2026-10-10T17:03:15+00:00,A07,S1,ej3,incorrecto,4,`clasificar_enlace(0)` devolvió `None`. ¿Olvidaste usar `return`?
+2026-10-10T17:03:51+00:00,2026-10-10T17:03:51+00:00,A10,S1,ej3,correcto,2,
+2026-10-10T17:04:08+00:00,2026-10-10T17:04:08+00:00,A23,S1,ej4,incorrecto,1,"`n_agua` vale 0.555093, pero no es el valor esperado."
+2026-10-10T17:05:14+00:00,2026-10-10T17:05:14+00:00,A05,S1,ej3,incorrecto,3,"`clasificar_enlace(1.7)` devolvió 'covalente polar', pero se esperaba 'iónico'."
+2026-10-10T17:05:28+00:00,2026-10-10T17:05:28+00:00,A24,S1,ej3,correcto,3,
+2026-10-10T17:06:06+00:00,2026-10-10T17:06:06+00:00,A23,S1,ej4,incorrecto,2,"`calcular_temperatura(1, 22.4, 1)` devolvió `None`. ¿Olvidaste usar `return`?"
+2026-10-10T17:06:24+00:00,2026-10-10T17:06:24+00:00,A18,S1,ej3,correcto,1,
+2026-10-10T17:07:21+00:00,2026-10-10T17:07:21+00:00,A07,S1,ej3,incorrecto,5,"`clasificar_enlace(1.7)` devolvió 'covalente polar', pero se esperaba 'iónico'."
+2026-10-10T17:07:28+00:00,2026-10-10T17:07:28+00:00,A06,S1,ej3,incorrecto,1,"`clasificar_enlace(1.7)` devolvió 'covalente polar', pero se esperaba 'iónico'."
+2026-10-10T17:08:11+00:00,2026-10-10T17:08:11+00:00,A07,S1,ej3,solucion,5,
+2026-10-10T17:08:18+00:00,2026-10-10T17:08:18+00:00,A20,S1,ej3,correcto,1,
+2026-10-10T17:08:32+00:00,2026-10-10T17:08:32+00:00,A11,S1,ej3,pendiente,1,Sustituye `____` por tu respuesta.
+2026-10-10T17:08:46+00:00,2026-10-10T17:08:46+00:00,A05,S1,ej3,incorrecto,4,`clasificar_enlace(0)` devolvió `None`. ¿Olvidaste usar `return`?
+2026-10-10T17:09:02+00:00,2026-10-10T17:09:02+00:00,A07,S1,ej3,correcto,6,
+2026-10-10T17:09:05+00:00,2026-10-10T17:09:05+00:00,A13,S1,ej3,correcto,1,
+2026-10-10T17:09:07+00:00,2026-10-10T17:09:07+00:00,A23,S1,ej4,incorrecto,3,"`calcular_temperatura(1, 22.4, 1)` devolvió `None`. ¿Olvidaste usar `return`?"
+2026-10-10T17:09:32+00:00,2026-10-10T17:09:32+00:00,A02,S1,ej4,correcto,1,
+2026-10-10T17:10:35+00:00,2026-10-10T17:10:35+00:00,A09,S1,ej4,correcto,1,
+2026-10-10T17:10:55+00:00,2026-10-10T17:10:55+00:00,A05,S1,ej3,correcto,5,
+2026-10-10T17:11:04+00:00,2026-10-10T17:11:04+00:00,A15,S1,ej4,incorrecto,1,"`calcular_temperatura(1, 22.4, 1)` devolvió `None`. ¿Olvidaste usar `return`?"
+2026-10-10T17:11:24+00:00,2026-10-10T17:11:24+00:00,A03,S1,ej3,correcto,1,
+2026-10-10T17:11:32+00:00,2026-10-10T17:11:32+00:00,A11,S1,ej3,incorrecto,2,"`clasificar_enlace(1.7)` devolvió 'covalente polar', pero se esperaba 'iónico'."
+2026-10-10T17:12:04+00:00,2026-10-10T17:12:04+00:00,A06,S1,ej3,correcto,2,
+2026-10-10T17:12:55+00:00,2026-10-10T17:12:55+00:00,A23,S1,ej4,incorrecto,4,"`calcular_temperatura(1, 22.4, 1)` devolvió `None`. ¿Olvidaste usar `return`?"
+2026-10-10T17:13:09+00:00,2026-10-10T17:13:09+00:00,A19,S1,ej3,incorrecto,1,"`clasificar_enlace(1.7)` devolvió 'covalente polar', pero se esperaba 'iónico'."
+2026-10-10T17:13:45+00:00,2026-10-10T17:13:45+00:00,A23,S1,ej4,solucion,4,
+2026-10-10T17:13:46+00:00,2026-10-10T17:13:46+00:00,A15,S1,ej4,incorrecto,2,"`calcular_temperatura(1, 22.4, 1)` devolvió `None`. ¿Olvidaste usar `return`?"
+2026-10-10T17:14:02+00:00,2026-10-10T17:14:02+00:00,A11,S1,ej3,incorrecto,3,"`clasificar_enlace(1.7)` devolvió 'covalente polar', pero se esperaba 'iónico'."
+2026-10-10T17:14:26+00:00,2026-10-10T17:14:26+00:00,A15,S1,ej4,pista,2,
+2026-10-10T17:15:04+00:00,2026-10-10T17:15:04+00:00,A19,S1,ej3,correcto,2,
+2026-10-10T17:16:21+00:00,2026-10-10T17:16:21+00:00,A23,S1,ej4,correcto,5,
+2026-10-10T17:16:25+00:00,2026-10-10T17:16:25+00:00,A01,S1,ej3,correcto,1,
+2026-10-10T17:16:59+00:00,2026-10-10T17:16:59+00:00,A11,S1,ej3,incorrecto,4,"`clasificar_enlace(1.7)` devolvió 'covalente polar', pero se esperaba 'iónico'."
+2026-10-10T17:17:04+00:00,2026-10-10T17:17:04+00:00,A04,S1,ej4,incorrecto,1,"`n_agua` vale 0.555093, pero no es el valor esperado."
+2026-10-10T17:18:09+00:00,2026-10-10T17:18:09+00:00,A15,S1,ej4,incorrecto,3,"`calcular_temperatura(1, 22.4, 1)` devolvió `None`. ¿Olvidaste usar `return`?"
+2026-10-10T17:18:14+00:00,2026-10-10T17:18:14+00:00,A14,S1,ej3,incorrecto,1,"`clasificar_enlace(0.5)` devolvió 'covalente no polar', pero se esperaba 'covalente polar'."
+2026-10-10T17:18:54+00:00,2026-10-10T17:18:54+00:00,A16,S1,ej3,correcto,1,
+2026-10-10T17:19:19+00:00,2026-10-10T17:19:19+00:00,A15,S1,ej4,correcto,4,
+2026-10-10T17:19:52+00:00,2026-10-10T17:19:52+00:00,A11,S1,ej3,correcto,5,
+2026-10-10T17:20:09+00:00,2026-10-10T17:20:09+00:00,A04,S1,ej4,correcto,2,
+2026-10-10T17:20:58+00:00,2026-10-10T17:20:58+00:00,A14,S1,ej3,incorrecto,2,`clasificar_enlace(0)` devolvió `None`. ¿Olvidaste usar `return`?
+2026-10-10T17:21:38+00:00,2026-10-10T17:21:38+00:00,A24,S1,ej4,incorrecto,1,"`calcular_temperatura(1, 22.4, 1)` devolvió `None`. ¿Olvidaste usar `return`?"
+2026-10-10T17:21:58+00:00,2026-10-10T17:21:58+00:00,A08,S1,ej4,incorrecto,1,"`n_agua` vale 0.555093, pero no es el valor esperado."
+2026-10-10T17:22:20+00:00,2026-10-10T17:22:20+00:00,A17,S1,ej4,correcto,1,
+2026-10-10T17:22:50+00:00,2026-10-10T17:22:50+00:00,A23,S1,auto1,correcto,1,
+2026-10-10T17:23:06+00:00,2026-10-10T17:23:06+00:00,A08,S1,ej4,incorrecto,2,"`calcular_temperatura(1, 22.4, 1)` devolvió `None`. ¿Olvidaste usar `return`?"
+2026-10-10T17:23:36+00:00,2026-10-10T17:23:36+00:00,A07,S1,ej4,incorrecto,1,"`n_agua` vale 0.555093, pero no es el valor esperado."
+2026-10-10T17:23:46+00:00,2026-10-10T17:23:46+00:00,A08,S1,ej4,pista,2,
+2026-10-10T17:23:59+00:00,2026-10-10T17:23:59+00:00,A05,S1,ej4,incorrecto,1,"`calcular_temperatura(1, 22.4, 1)` devolvió `None`. ¿Olvidaste usar `return`?"
+2026-10-10T17:24:14+00:00,2026-10-10T17:24:14+00:00,A14,S1,ej3,correcto,3,
+2026-10-10T17:24:44+00:00,2026-10-10T17:24:44+00:00,A12,S1,ej3,incorrecto,1,"`clasificar_enlace(0.5)` devolvió 'covalente no polar', pero se esperaba 'covalente polar'."
+2026-10-10T17:25:40+00:00,2026-10-10T17:25:40+00:00,A24,S1,ej4,correcto,2,
+2026-10-10T17:26:20+00:00,2026-10-10T17:26:20+00:00,A05,S1,ej4,correcto,2,
+2026-10-10T17:26:38+00:00,2026-10-10T17:26:38+00:00,A08,S1,ej4,incorrecto,3,"`calcular_temperatura(1, 22.4, 1)` devolvió `None`. ¿Olvidaste usar `return`?"
+2026-10-10T17:27:33+00:00,2026-10-10T17:27:33+00:00,A20,S1,ej4,correcto,1,
+2026-10-10T17:27:41+00:00,2026-10-10T17:27:41+00:00,A12,S1,ej3,correcto,2,
+2026-10-10T17:27:48+00:00,2026-10-10T17:27:48+00:00,A08,S1,ej4,correcto,4,
+2026-10-10T17:28:06+00:00,2026-10-10T17:28:06+00:00,A07,S1,ej4,correcto,2,
+2026-10-10T17:28:48+00:00,2026-10-10T17:28:48+00:00,A02,S1,auto1,correcto,1,
+2026-10-10T17:31:42+00:00,2026-10-10T17:31:42+00:00,A10,S1,ej4,correcto,1,
+2026-10-10T17:33:31+00:00,2026-10-10T17:33:31+00:00,A09,S1,auto1,incorrecto,1,`T_K` es un texto ('573.15'); debería ser un número.
+2026-10-10T17:35:35+00:00,2026-10-10T17:35:35+00:00,A22,S1,ej3,incorrecto,1,"`clasificar_enlace(1.7)` devolvió 'covalente polar', pero se esperaba 'iónico'."
+2026-10-10T17:36:02+00:00,2026-10-10T17:36:02+00:00,A15,S1,auto1,incorrecto,1,`T_K` es un texto ('573.15'); debería ser un número.
+2026-10-10T17:36:22+00:00,2026-10-10T17:36:22+00:00,A04,S1,auto1,incorrecto,1,`T_K` es un texto ('573.15'); debería ser un número.
+2026-10-10T17:37:10+00:00,2026-10-10T17:37:10+00:00,A15,S1,auto1,correcto,2,
+2026-10-10T17:37:24+00:00,2026-10-10T17:37:24+00:00,A22,S1,ej3,correcto,2,
+2026-10-10T17:37:31+00:00,2026-10-10T17:37:31+00:00,A04,S1,auto1,correcto,2,
+2026-10-10T17:37:40+00:00,2026-10-10T17:37:40+00:00,A09,S1,auto1,correcto,2,
+2026-10-10T17:40:48+00:00,2026-10-10T17:40:48+00:00,A16,S1,ej4,incorrecto,1,"`calcular_temperatura(1, 22.4, 1)` devolvió `None`. ¿Olvidaste usar `return`?"
+2026-10-10T17:41:35+00:00,2026-10-10T17:41:35+00:00,A03,S1,ej4,incorrecto,1,"`calcular_temperatura(1, 22.4, 1)` devolvió `None`. ¿Olvidaste usar `return`?"
+2026-10-10T17:41:58+00:00,2026-10-10T17:41:58+00:00,A15,S1,auto2,correcto,1,
+2026-10-10T17:42:40+00:00,2026-10-10T17:42:40+00:00,A13,S1,ej4,incorrecto,1,"`calcular_temperatura(1, 22.4, 1)` devolvió `None`. ¿Olvidaste usar `return`?"
+2026-10-10T17:43:09+00:00,2026-10-10T17:43:09+00:00,A03,S1,ej4,correcto,2,
+2026-10-10T17:43:19+00:00,2026-10-10T17:43:19+00:00,A18,S1,ej4,incorrecto,1,"`calcular_temperatura(1, 22.4, 1)` devolvió `None`. ¿Olvidaste usar `return`?"
+2026-10-10T17:43:27+00:00,2026-10-10T17:43:27+00:00,A16,S1,ej4,incorrecto,2,"`calcular_temperatura(1, 22.4, 1)` devolvió `None`. ¿Olvidaste usar `return`?"
+2026-10-10T17:43:35+00:00,2026-10-10T17:43:35+00:00,A06,S1,ej4,incorrecto,1,"`calcular_temperatura(1, 22.4, 1)` devolvió `None`. ¿Olvidaste usar `return`?"
+2026-10-10T17:44:07+00:00,2026-10-10T17:44:07+00:00,A16,S1,ej4,pista,2,
+2026-10-10T17:44:25+00:00,2026-10-10T17:44:25+00:00,A11,S1,ej4,incorrecto,1,"`calcular_temperatura(1, 22.4, 1)` devolvió `None`. ¿Olvidaste usar `return`?"
+2026-10-10T17:44:34+00:00,2026-10-10T17:44:34+00:00,A02,S1,auto2,correcto,1,
+2026-10-10T17:44:48+00:00,2026-10-10T17:44:48+00:00,A09,S1,auto2,correcto,1,
+2026-10-10T17:44:54+00:00,2026-10-10T17:44:54+00:00,A16,S1,ej4,incorrecto,3,"`n_agua` vale 0.555093, pero no es el valor esperado."
+2026-10-10T17:45:01+00:00,2026-10-10T17:45:01+00:00,A18,S1,ej4,correcto,2,
+2026-10-10T17:45:29+00:00,2026-10-10T17:45:29+00:00,A23,S1,auto2,incorrecto,1,"`C_2` vale 100, pero no es el valor esperado."
+2026-10-10T17:45:31+00:00,2026-10-10T17:45:31+00:00,A15,S1,auto3,correcto,1,
+2026-10-10T17:45:39+00:00,2026-10-10T17:45:39+00:00,A04,S1,auto2,pendiente,1,Sustituye `____` por tu respuesta.
+2026-10-10T17:45:51+00:00,2026-10-10T17:45:51+00:00,A11,S1,ej4,incorrecto,2,"`calcular_temperatura(1, 22.4, 1)` devolvió `None`. ¿Olvidaste usar `return`?"
+2026-10-10T17:45:55+00:00,2026-10-10T17:45:55+00:00,A21,S1,ej3,incorrecto,1,`clasificar_enlace(0)` devolvió `None`. ¿Olvidaste usar `return`?
+2026-10-10T17:46:31+00:00,2026-10-10T17:46:31+00:00,A11,S1,ej4,pista,2,
+2026-10-10T17:46:36+00:00,2026-10-10T17:46:36+00:00,A24,S1,auto1,correcto,1,
+2026-10-10T17:47:00+00:00,2026-10-10T17:47:00+00:00,A13,S1,ej4,incorrecto,2,"`calcular_temperatura(1, 22.4, 1)` devolvió `None`. ¿Olvidaste usar `return`?"
+2026-10-10T17:47:24+00:00,2026-10-10T17:47:24+00:00,A06,S1,ej4,incorrecto,2,"`calcular_temperatura(1, 22.4, 1)` devolvió `None`. ¿Olvidaste usar `return`?"
+2026-10-10T17:47:33+00:00,2026-10-10T17:47:33+00:00,A11,S1,ej4,incorrecto,3,"`n_agua` vale 0.555093, pero no es el valor esperado."
+2026-10-10T17:48:56+00:00,2026-10-10T17:48:56+00:00,A01,S1,ej4,pendiente,1,Sustituye `____` por tu respuesta.
+2026-10-10T17:48:58+00:00,2026-10-10T17:48:58+00:00,A21,S1,ej3,incorrecto,2,"`clasificar_enlace(1.7)` devolvió 'covalente polar', pero se esperaba 'iónico'."
+2026-10-10T17:49:06+00:00,2026-10-10T17:49:06+00:00,A19,S1,ej4,correcto,1,
+2026-10-10T17:49:29+00:00,2026-10-10T17:49:29+00:00,A23,S1,auto2,correcto,2,
+2026-10-10T17:49:36+00:00,2026-10-10T17:49:36+00:00,A16,S1,ej4,correcto,4,
+2026-10-10T17:49:38+00:00,2026-10-10T17:49:38+00:00,A21,S1,ej3,pista,2,
+2026-10-10T17:49:49+00:00,2026-10-10T17:49:49+00:00,A04,S1,auto2,incorrecto,2,"`C_2` vale 100, pero no es el valor esperado."
+2026-10-10T17:50:28+00:00,2026-10-10T17:50:28+00:00,A01,S1,ej4,incorrecto,2,"`calcular_temperatura(1, 22.4, 1)` devolvió `None`. ¿Olvidaste usar `return`?"
+2026-10-10T17:50:29+00:00,2026-10-10T17:50:29+00:00,A04,S1,auto2,pista,2,
+2026-10-10T17:50:34+00:00,2026-10-10T17:50:34+00:00,A11,S1,ej4,incorrecto,4,"`n_agua` vale 0.555093, pero no es el valor esperado."
+2026-10-10T17:50:39+00:00,2026-10-10T17:50:39+00:00,A13,S1,ej4,incorrecto,3,"`calcular_temperatura(1, 22.4, 1)` devolvió `None`. ¿Olvidaste usar `return`?"
+2026-10-10T17:50:39+00:00,2026-10-10T17:50:39+00:00,A06,S1,ej4,incorrecto,3,"`n_agua` vale 0.555093, pero no es el valor esperado."
+2026-10-10T17:51:39+00:00,2026-10-10T17:51:39+00:00,A02,S1,auto3,correcto,1,
+2026-10-10T17:52:09+00:00,2026-10-10T17:52:09+00:00,A14,S1,ej4,correcto,1,
+2026-10-10T17:52:22+00:00,2026-10-10T17:52:22+00:00,A21,S1,ej3,incorrecto,3,"`clasificar_enlace(1.7)` devolvió 'covalente polar', pero se esperaba 'iónico'."
+2026-10-10T17:52:26+00:00,2026-10-10T17:52:26+00:00,A01,S1,ej4,incorrecto,3,"`calcular_temperatura(1, 22.4, 1)` devolvió `None`. ¿Olvidaste usar `return`?"
+2026-10-10T17:52:34+00:00,2026-10-10T17:52:34+00:00,A04,S1,auto2,incorrecto,3,"`C_2` vale 100, pero no es el valor esperado."
+2026-10-10T17:53:04+00:00,2026-10-10T17:53:04+00:00,A07,S1,auto1,correcto,1,
+2026-10-10T17:53:41+00:00,2026-10-10T17:53:41+00:00,A01,S1,ej4,correcto,4,
+2026-10-10T17:53:52+00:00,2026-10-10T17:53:52+00:00,A23,S1,auto3,pendiente,1,Sustituye `____` por tu respuesta.
+2026-10-10T17:55:13+00:00,2026-10-10T17:55:13+00:00,A06,S1,ej4,correcto,4,
+2026-10-10T17:55:18+00:00,2026-10-10T17:55:18+00:00,A13,S1,ej4,incorrecto,4,"`calcular_temperatura(1, 22.4, 1)` devolvió `None`. ¿Olvidaste usar `return`?"
+2026-10-10T17:55:28+00:00,2026-10-10T17:55:28+00:00,A11,S1,ej4,incorrecto,5,"`calcular_temperatura(1, 22.4, 1)` devolvió `None`. ¿Olvidaste usar `return`?"
+2026-10-10T17:55:51+00:00,2026-10-10T17:55:51+00:00,A23,S1,auto3,correcto,2,
+2026-10-10T17:56:08+00:00,2026-10-10T17:56:08+00:00,A13,S1,ej4,solucion,4,
+2026-10-10T17:56:18+00:00,2026-10-10T17:56:18+00:00,A11,S1,ej4,solucion,5,
+2026-10-10T17:56:24+00:00,2026-10-10T17:56:24+00:00,A04,S1,auto2,correcto,4,
+2026-10-10T17:56:33+00:00,2026-10-10T17:56:33+00:00,A17,S1,auto1,correcto,1,
+2026-10-10T17:57:19+00:00,2026-10-10T17:57:19+00:00,A21,S1,ej3,incorrecto,4,`clasificar_enlace(0)` devolvió `None`. ¿Olvidaste usar `return`?
+2026-10-10T17:57:31+00:00,2026-10-10T17:57:31+00:00,A13,S1,ej4,incorrecto,5,"`calcular_temperatura(1, 22.4, 1)` devolvió `None`. ¿Olvidaste usar `return`?"
+2026-10-10T17:58:21+00:00,2026-10-10T17:58:21+00:00,A13,S1,ej4,solucion,5,
+2026-10-10T17:58:29+00:00,2026-10-10T17:58:29+00:00,A21,S1,ej3,incorrecto,5,"`clasificar_enlace(0.5)` devolvió 'covalente no polar', pero se esperaba 'covalente polar'."
+2026-10-10T17:59:20+00:00,2026-10-10T17:59:20+00:00,A08,S1,auto1,correcto,1,
+2026-10-10T18:00:06+00:00,2026-10-10T18:00:06+00:00,A11,S1,ej4,incorrecto,6,"`calcular_temperatura(1, 22.4, 1)` devolvió `None`. ¿Olvidaste usar `return`?"
+2026-10-10T18:00:34+00:00,2026-10-10T18:00:34+00:00,A09,S1,auto3,correcto,1,
+2026-10-10T18:01:05+00:00,2026-10-10T18:01:05+00:00,A05,S1,auto1,correcto,1,
+2026-10-10T18:01:21+00:00,2026-10-10T18:01:21+00:00,A21,S1,ej3,correcto,6,
+2026-10-10T18:01:31+00:00,2026-10-10T18:01:31+00:00,A13,S1,ej4,incorrecto,6,"`n_agua` vale 0.555093, pero no es el valor esperado."
+2026-10-10T18:02:21+00:00,2026-10-10T18:02:21+00:00,A13,S1,ej4,solucion,6,
+2026-10-10T18:02:27+00:00,2026-10-10T18:02:27+00:00,A07,S1,auto2,pendiente,1,Sustituye `____` por tu respuesta.
+2026-10-10T18:02:33+00:00,2026-10-10T18:02:33+00:00,A09,S1,auto4,correcto,1,
+2026-10-10T18:02:42+00:00,2026-10-10T18:02:42+00:00,A17,S1,auto2,pendiente,1,Sustituye `____` por tu respuesta.
+2026-10-10T18:04:28+00:00,2026-10-10T18:04:28+00:00,A12,S1,ej4,correcto,1,
+2026-10-10T18:04:50+00:00,2026-10-10T18:04:50+00:00,A23,S1,auto4,correcto,1,
+2026-10-10T18:05:27+00:00,2026-10-10T18:05:27+00:00,A17,S1,auto2,correcto,2,
+2026-10-10T18:07:13+00:00,2026-10-10T18:07:13+00:00,A07,S1,auto2,correcto,2,
+2026-10-10T18:07:15+00:00,2026-10-10T18:07:15+00:00,A20,S1,auto1,pendiente,1,Sustituye `____` por tu respuesta.
+2026-10-10T18:07:21+00:00,2026-10-10T18:07:21+00:00,A22,S1,ej4,incorrecto,1,"`calcular_temperatura(1, 22.4, 1)` devolvió `None`. ¿Olvidaste usar `return`?"
+2026-10-10T18:07:30+00:00,2026-10-10T18:07:30+00:00,A23,S1,auto5,incorrecto,1,"`calcular_delta_g(206.1, 215, 298.15)` devolvió -63896.1, pero se esperaba 141.998."
+2026-10-10T18:08:00+00:00,2026-10-10T18:08:00+00:00,A10,S1,auto1,correcto,1,
+2026-10-10T18:09:03+00:00,2026-10-10T18:09:03+00:00,A04,S1,auto3,correcto,1,
+2026-10-10T18:09:26+00:00,2026-10-10T18:09:26+00:00,A22,S1,ej4,correcto,2,
+2026-10-10T18:09:41+00:00,2026-10-10T18:09:41+00:00,A02,S1,auto4,pendiente,1,Sustituye `____` por tu respuesta.
+2026-10-10T18:09:44+00:00,2026-10-10T18:09:44+00:00,A23,S1,auto5,correcto,2,
+2026-10-10T18:10:01+00:00,2026-10-10T18:10:01+00:00,A15,S1,auto4,pendiente,1,Sustituye `____` por tu respuesta.
+2026-10-10T18:10:10+00:00,2026-10-10T18:10:10+00:00,A09,S1,auto5,pendiente,1,Sustituye `____` por tu respuesta.
+2026-10-10T18:10:42+00:00,2026-10-10T18:10:42+00:00,A02,S1,auto4,incorrecto,2,`formula_gauss(1)` devolvió `None`. ¿Olvidaste usar `return`?
+2026-10-10T18:11:22+00:00,2026-10-10T18:11:22+00:00,A02,S1,auto4,pista,2,
+2026-10-10T18:11:32+00:00,2026-10-10T18:11:32+00:00,A19,S1,auto1,correcto,1,
+2026-10-10T18:11:40+00:00,2026-10-10T18:11:40+00:00,A20,S1,auto1,correcto,2,
+2026-10-10T18:12:07+00:00,2026-10-10T18:12:07+00:00,A08,S1,auto2,correcto,1,
+2026-10-10T18:13:03+00:00,2026-10-10T18:13:03+00:00,A21,S1,ej4,correcto,1,
+2026-10-10T18:13:46+00:00,2026-10-10T18:13:46+00:00,A13,S1,auto1,pendiente,1,Sustituye `____` por tu respuesta.
+2026-10-10T18:14:04+00:00,2026-10-10T18:14:04+00:00,A09,S1,auto5,incorrecto,2,"`calcular_delta_g(206.1, 215, 298.15)` devolvió -63896.1, pero se esperaba 141.998."
+2026-10-10T18:14:07+00:00,2026-10-10T18:14:07+00:00,A02,S1,auto4,correcto,3,
+2026-10-10T18:14:38+00:00,2026-10-10T18:14:38+00:00,A07,S1,auto3,correcto,1,
+2026-10-10T18:14:51+00:00,2026-10-10T18:14:51+00:00,A24,S1,auto2,correcto,1,
+2026-10-10T18:14:57+00:00,2026-10-10T18:14:57+00:00,A15,S1,auto4,correcto,2,
+2026-10-10T18:15:45+00:00,2026-10-10T18:15:45+00:00,A20,S1,auto2,correcto,1,
+2026-10-10T18:15:57+00:00,2026-10-10T18:15:57+00:00,A04,S1,auto4,incorrecto,1,`formula_gauss(1)` devolvió `None`. ¿Olvidaste usar `return`?
+2026-10-10T18:15:57+00:00,2026-10-10T18:15:57+00:00,A13,S1,auto1,correcto,2,
+2026-10-10T18:17:02+00:00,2026-10-10T18:17:02+00:00,A05,S1,auto2,incorrecto,1,"`C_2` vale 100, pero no es el valor esperado."
+2026-10-10T18:17:12+00:00,2026-10-10T18:17:12+00:00,A09,S1,auto5,incorrecto,3,"`calcular_delta_g(206.1, 215, 298.15)` devolvió -63896.1, pero se esperaba 141.998."
+2026-10-10T18:17:49+00:00,2026-10-10T18:17:49+00:00,A15,S1,auto5,pendiente,1,Sustituye `____` por tu respuesta.
+2026-10-10T18:18:13+00:00,2026-10-10T18:18:13+00:00,A08,S1,auto3,pendiente,1,Sustituye `____` por tu respuesta.
+2026-10-10T18:19:31+00:00,2026-10-10T18:19:31+00:00,A04,S1,auto4,correcto,2,
+2026-10-10T18:19:35+00:00,2026-10-10T18:19:35+00:00,A05,S1,auto2,correcto,2,
+2026-10-10T18:19:35+00:00,2026-10-10T18:19:35+00:00,A16,S1,auto1,correcto,1,
+2026-10-10T18:20:18+00:00,2026-10-10T18:20:18+00:00,A01,S1,auto1,correcto,1,
+2026-10-10T18:20:25+00:00,2026-10-10T18:20:25+00:00,A10,S1,auto2,correcto,1,
+2026-10-10T18:21:00+00:00,2026-10-10T18:21:00+00:00,A09,S1,auto5,correcto,4,
+2026-10-10T18:21:09+00:00,2026-10-10T18:21:09+00:00,A08,S1,auto3,incorrecto,2,"`numero_pasos` vale 5.4914e+06, pero no es el valor esperado. Tu resultado difiere por un factor de 100: revisa las conversiones de unidades."
+2026-10-10T18:21:41+00:00,2026-10-10T18:21:41+00:00,A19,S1,auto2,correcto,1,
+2026-10-10T18:21:43+00:00,2026-10-10T18:21:43+00:00,A17,S1,auto3,pendiente,1,Sustituye `____` por tu respuesta.
+2026-10-10T18:21:49+00:00,2026-10-10T18:21:49+00:00,A08,S1,auto3,pista,2,
+2026-10-10T18:21:56+00:00,2026-10-10T18:21:56+00:00,A15,S1,auto5,incorrecto,2,"`calcular_delta_g(206.1, 215, 298.15)` devolvió -63896.1, pero se esperaba 141.998."
+2026-10-10T18:22:25+00:00,2026-10-10T18:22:25+00:00,A08,S1,auto3,correcto,3,
+2026-10-10T18:23:04+00:00,2026-10-10T18:23:04+00:00,A04,S1,auto5,incorrecto,1,"`calcular_delta_g(206.1, 215, 298.15)` devolvió -63896.1, pero se esperaba 141.998."
+2026-10-10T18:23:22+00:00,2026-10-10T18:23:22+00:00,A24,S1,auto3,correcto,1,
+2026-10-10T18:24:15+00:00,2026-10-10T18:24:15+00:00,A18,S1,auto1,correcto,1,
+2026-10-10T18:24:48+00:00,2026-10-10T18:24:48+00:00,A07,S1,auto4,correcto,1,
+2026-10-10T18:25:35+00:00,2026-10-10T18:25:35+00:00,A17,S1,auto3,correcto,2,
+2026-10-10T18:25:38+00:00,2026-10-10T18:25:38+00:00,A15,S1,auto5,incorrecto,3,"`calcular_delta_g(206.1, 215, 298.15)` devolvió -63896.1, pero se esperaba 141.998."
+2026-10-10T18:26:19+00:00,2026-10-10T18:26:19+00:00,A04,S1,auto5,incorrecto,2,"`calcular_delta_g(206.1, 215, 298.15)` devolvió -63896.1, pero se esperaba 141.998."
+2026-10-10T18:26:48+00:00,2026-10-10T18:26:48+00:00,A15,S1,auto5,incorrecto,4,"`calcular_delta_g(206.1, 215, 298.15)` devolvió -63896.1, pero se esperaba 141.998."
+2026-10-10T18:26:59+00:00,2026-10-10T18:26:59+00:00,A04,S1,auto5,pista,2,
+2026-10-10T18:27:38+00:00,2026-10-10T18:27:38+00:00,A15,S1,auto5,solucion,4,
+2026-10-10T18:28:10+00:00,2026-10-10T18:28:10+00:00,A20,S1,auto3,incorrecto,1,"`numero_pasos` vale 5.4914e+06, pero no es el valor esperado. Tu resultado difiere por un factor de 100: revisa las conversiones de unidades."
+2026-10-10T18:28:36+00:00,2026-10-10T18:28:36+00:00,A08,S1,auto4,correcto,1,
+2026-10-10T18:29:18+00:00,2026-10-10T18:29:18+00:00,A20,S1,auto3,incorrecto,2,"`numero_pasos` vale 5.4914e+06, pero no es el valor esperado. Tu resultado difiere por un factor de 100: revisa las conversiones de unidades."
+2026-10-10T18:29:59+00:00,2026-10-10T18:29:59+00:00,A02,S1,auto5,incorrecto,1,"`calcular_delta_g(206.1, 215, 298.15)` devolvió -63896.1, pero se esperaba 141.998."
+2026-10-10T18:30:29+00:00,2026-10-10T18:30:29+00:00,A03,S1,auto1,incorrecto,1,`T_K` es un texto ('573.15'); debería ser un número.
+2026-10-10T18:30:39+00:00,2026-10-10T18:30:39+00:00,A11,S1,auto1,correcto,1,
+2026-10-10T18:30:46+00:00,2026-10-10T18:30:46+00:00,A10,S1,auto3,correcto,1,
+2026-10-10T18:31:06+00:00,2026-10-10T18:31:06+00:00,A04,S1,auto5,incorrecto,3,"`calcular_delta_g(206.1, 215, 298.15)` devolvió -63896.1, pero se esperaba 141.998."
+2026-10-10T18:31:08+00:00,2026-10-10T18:31:08+00:00,A15,S1,auto5,correcto,5,
+2026-10-10T18:32:01+00:00,2026-10-10T18:32:01+00:00,A13,S1,auto2,correcto,1,
+2026-10-10T18:33:26+00:00,2026-10-10T18:33:26+00:00,A20,S1,auto3,incorrecto,3,"`numero_pasos` vale 5.4914e+06, pero no es el valor esperado. Tu resultado difiere por un factor de 100: revisa las conversiones de unidades."
+2026-10-10T18:34:13+00:00,2026-10-10T18:34:13+00:00,A03,S1,auto1,correcto,2,
+2026-10-10T18:34:34+00:00,2026-10-10T18:34:34+00:00,A02,S1,auto5,correcto,2,
+2026-10-10T18:34:43+00:00,2026-10-10T18:34:43+00:00,A06,S1,auto1,pendiente,1,Sustituye `____` por tu respuesta.
+2026-10-10T18:34:46+00:00,2026-10-10T18:34:46+00:00,A11,S1,auto2,correcto,1,
+2026-10-10T18:34:52+00:00,2026-10-10T18:34:52+00:00,A20,S1,auto3,incorrecto,4,"`numero_pasos` vale 5.4914e+06, pero no es el valor esperado. Tu resultado difiere por un factor de 100: revisa las conversiones de unidades."
+2026-10-10T18:35:27+00:00,2026-10-10T18:35:27+00:00,A04,S1,auto5,correcto,4,
+2026-10-10T18:35:55+00:00,2026-10-10T18:35:55+00:00,A06,S1,auto1,correcto,2,
+2026-10-10T18:35:58+00:00,2026-10-10T18:35:58+00:00,A16,S1,auto2,correcto,1,
+2026-10-10T18:36:01+00:00,2026-10-10T18:36:01+00:00,A05,S1,auto3,incorrecto,1,"`numero_pasos` vale 5.4914e+06, pero no es el valor esperado. Tu resultado difiere por un factor de 100: revisa las conversiones de unidades."
+2026-10-10T18:36:14+00:00,2026-10-10T18:36:14+00:00,A24,S1,auto4,incorrecto,1,`formula_gauss(1)` devolvió `None`. ¿Olvidaste usar `return`?
+2026-10-10T18:36:14+00:00,2026-10-10T18:36:14+00:00,A20,S1,auto3,correcto,5,
+2026-10-10T18:36:33+00:00,2026-10-10T18:36:33+00:00,A07,S1,auto5,correcto,1,
+2026-10-10T18:36:37+00:00,2026-10-10T18:36:37+00:00,A13,S1,auto3,incorrecto,1,"`numero_pasos` vale 5.4914e+06, pero no es el valor esperado. Tu resultado difiere por un factor de 100: revisa las conversiones de unidades."
+2026-10-10T18:36:44+00:00,2026-10-10T18:36:44+00:00,A18,S1,auto2,correcto,1,
+2026-10-10T18:37:07+00:00,2026-10-10T18:37:07+00:00,A05,S1,auto3,correcto,2,
+2026-10-10T18:38:36+00:00,2026-10-10T18:38:36+00:00,A17,S1,auto4,correcto,1,
+2026-10-10T18:38:48+00:00,2026-10-10T18:38:48+00:00,A13,S1,auto3,incorrecto,2,"`numero_pasos` vale 5.4914e+06, pero no es el valor esperado. Tu resultado difiere por un factor de 100: revisa las conversiones de unidades."
+2026-10-10T18:39:32+00:00,2026-10-10T18:39:32+00:00,A08,S1,auto5,incorrecto,1,"`calcular_delta_g(206.1, 215, 298.15)` devolvió -63896.1, pero se esperaba 141.998."
+2026-10-10T18:41:06+00:00,2026-10-10T18:41:06+00:00,A01,S1,auto2,correcto,1,
+2026-10-10T18:41:07+00:00,2026-10-10T18:41:07+00:00,A24,S1,auto4,correcto,2,
+2026-10-10T18:41:58+00:00,2026-10-10T18:41:58+00:00,A08,S1,auto5,incorrecto,2,"`calcular_delta_g(206.1, 215, 298.15)` devolvió -63896.1, pero se esperaba 141.998."
+2026-10-10T18:43:03+00:00,2026-10-10T18:43:03+00:00,A13,S1,auto3,incorrecto,3,"`numero_pasos` vale 5.4914e+06, pero no es el valor esperado. Tu resultado difiere por un factor de 100: revisa las conversiones de unidades."
+2026-10-10T18:45:16+00:00,2026-10-10T18:45:16+00:00,A08,S1,auto5,correcto,3,
+2026-10-10T18:45:44+00:00,2026-10-10T18:45:44+00:00,A16,S1,auto3,correcto,1,
+2026-10-10T18:45:51+00:00,2026-10-10T18:45:51+00:00,A13,S1,auto3,correcto,4,
+2026-10-10T18:47:01+00:00,2026-10-10T18:47:01+00:00,A14,S1,auto1,correcto,1,
+2026-10-10T18:47:52+00:00,2026-10-10T18:47:52+00:00,A03,S1,auto2,correcto,1,
+2026-10-10T18:48:51+00:00,2026-10-10T18:48:51+00:00,A06,S1,auto2,pendiente,1,Sustituye `____` por tu respuesta.
+2026-10-10T18:48:54+00:00,2026-10-10T18:48:54+00:00,A05,S1,auto4,pendiente,1,Sustituye `____` por tu respuesta.
+2026-10-10T18:49:30+00:00,2026-10-10T18:49:30+00:00,A12,S1,auto1,incorrecto,1,`T_K` es un texto ('573.15'); debería ser un número.
+2026-10-10T18:49:33+00:00,2026-10-10T18:49:33+00:00,A19,S1,auto3,correcto,1,
+2026-10-10T18:49:46+00:00,2026-10-10T18:49:46+00:00,A22,S1,auto1,correcto,1,
+2026-10-10T18:50:11+00:00,2026-10-10T18:50:11+00:00,A14,S1,auto2,incorrecto,1,"`C_2` vale 100, pero no es el valor esperado."
+2026-10-10T18:51:11+00:00,2026-10-10T18:51:11+00:00,A24,S1,auto5,correcto,1,
+2026-10-10T18:51:38+00:00,2026-10-10T18:51:38+00:00,A05,S1,auto4,correcto,2,
+2026-10-10T18:52:07+00:00,2026-10-10T18:52:07+00:00,A17,S1,auto5,correcto,1,
+2026-10-10T18:52:16+00:00,2026-10-10T18:52:16+00:00,A14,S1,auto2,correcto,2,
+2026-10-10T18:52:23+00:00,2026-10-10T18:52:23+00:00,A18,S1,auto3,correcto,1,
+2026-10-10T18:52:29+00:00,2026-10-10T18:52:29+00:00,A21,S1,auto1,correcto,1,
+2026-10-10T18:52:38+00:00,2026-10-10T18:52:38+00:00,A06,S1,auto2,incorrecto,2,"`C_2` vale 100, pero no es el valor esperado."
+2026-10-10T18:53:37+00:00,2026-10-10T18:53:37+00:00,A01,S1,auto3,pendiente,1,Sustituye `____` por tu respuesta.
+2026-10-10T18:53:44+00:00,2026-10-10T18:53:44+00:00,A20,S1,auto4,incorrecto,1,`formula_gauss(1)` devolvió `None`. ¿Olvidaste usar `return`?
+2026-10-10T18:53:59+00:00,2026-10-10T18:53:59+00:00,A12,S1,auto1,correcto,2,
+2026-10-10T18:54:35+00:00,2026-10-10T18:54:35+00:00,A13,S1,auto4,incorrecto,1,`formula_gauss(1)` devolvió `None`. ¿Olvidaste usar `return`?
+2026-10-10T18:55:13+00:00,2026-10-10T18:55:13+00:00,A20,S1,auto4,correcto,2,
+2026-10-10T18:55:23+00:00,2026-10-10T18:55:23+00:00,A06,S1,auto2,correcto,3,
+2026-10-10T18:55:35+00:00,2026-10-10T18:55:35+00:00,A10,S1,auto4,correcto,1,
+2026-10-10T18:56:30+00:00,2026-10-10T18:56:30+00:00,A13,S1,auto4,incorrecto,2,`formula_gauss(1)` devolvió `None`. ¿Olvidaste usar `return`?
+2026-10-10T18:56:50+00:00,2026-10-10T18:56:50+00:00,A11,S1,auto3,pendiente,1,Sustituye `____` por tu respuesta.
+2026-10-10T18:56:53+00:00,2026-10-10T18:56:53+00:00,A01,S1,auto3,correcto,2,
+2026-10-10T18:58:37+00:00,2026-10-10T18:58:37+00:00,A20,S1,auto5,incorrecto,1,"`calcular_delta_g(206.1, 215, 298.15)` devolvió -63896.1, pero se esperaba 141.998."
+2026-10-10T18:58:57+00:00,2026-10-10T18:58:57+00:00,A13,S1,auto4,incorrecto,3,`formula_gauss(1)` devolvió `None`. ¿Olvidaste usar `return`?
+2026-10-10T18:59:26+00:00,2026-10-10T18:59:26+00:00,A12,S1,auto2,pendiente,1,Sustituye `____` por tu respuesta.
+2026-10-10T18:59:29+00:00,2026-10-10T18:59:29+00:00,A03,S1,auto3,correcto,1,
+2026-10-10T19:01:18+00:00,2026-10-10T19:01:18+00:00,A05,S1,auto5,incorrecto,1,"`calcular_delta_g(206.1, 215, 298.15)` devolvió -63896.1, pero se esperaba 141.998."
+2026-10-10T19:01:35+00:00,2026-10-10T19:01:35+00:00,A06,S1,auto3,incorrecto,1,"`numero_pasos` vale 5.4914e+06, pero no es el valor esperado. Tu resultado difiere por un factor de 100: revisa las conversiones de unidades."
+2026-10-10T19:01:39+00:00,2026-10-10T19:01:39+00:00,A11,S1,auto3,correcto,2,
+2026-10-10T19:01:59+00:00,2026-10-10T19:01:59+00:00,A20,S1,auto5,incorrecto,2,"`calcular_delta_g(206.1, 215, 298.15)` devolvió -63896.1, pero se esperaba 141.998."
+2026-10-10T19:02:39+00:00,2026-10-10T19:02:39+00:00,A20,S1,auto5,pista,2,
+2026-10-10T19:03:05+00:00,2026-10-10T19:03:05+00:00,A12,S1,auto2,correcto,2,
+2026-10-10T19:03:47+00:00,2026-10-10T19:03:47+00:00,A13,S1,auto4,correcto,4,
+2026-10-10T19:04:23+00:00,2026-10-10T19:04:23+00:00,A20,S1,auto5,incorrecto,3,"`calcular_delta_g(206.1, 215, 298.15)` devolvió -63896.1, pero se esperaba 141.998."
+2026-10-10T19:04:36+00:00,2026-10-10T19:04:36+00:00,A05,S1,auto5,incorrecto,2,"`calcular_delta_g(206.1, 215, 298.15)` devolvió -63896.1, pero se esperaba 141.998."
+2026-10-10T19:06:16+00:00,2026-10-10T19:06:16+00:00,A20,S1,auto5,incorrecto,4,"`calcular_delta_g(206.1, 215, 298.15)` devolvió -63896.1, pero se esperaba 141.998."
+2026-10-10T19:06:25+00:00,2026-10-10T19:06:25+00:00,A06,S1,auto3,incorrecto,2,"`numero_pasos` vale 5.4914e+06, pero no es el valor esperado. Tu resultado difiere por un factor de 100: revisa las conversiones de unidades."
+2026-10-10T19:07:34+00:00,2026-10-10T19:07:34+00:00,A05,S1,auto5,incorrecto,3,"`calcular_delta_g(206.1, 215, 298.15)` devolvió -63896.1, pero se esperaba 141.998."
+2026-10-10T19:09:07+00:00,2026-10-10T19:09:07+00:00,A05,S1,auto5,incorrecto,4,"`calcular_delta_g(206.1, 215, 298.15)` devolvió -63896.1, pero se esperaba 141.998."
+2026-10-10T19:09:57+00:00,2026-10-10T19:09:57+00:00,A05,S1,auto5,solucion,4,
+2026-10-10T19:10:26+00:00,2026-10-10T19:10:26+00:00,A05,S1,auto5,incorrecto,5,"`calcular_delta_g(206.1, 215, 298.15)` devolvió -63896.1, pero se esperaba 141.998."
+2026-10-10T19:10:29+00:00,2026-10-10T19:10:29+00:00,A06,S1,auto3,correcto,3,
+2026-10-10T19:10:52+00:00,2026-10-10T19:10:52+00:00,A20,S1,auto5,incorrecto,5,"`calcular_delta_g(206.1, 215, 298.15)` devolvió -63896.1, pero se esperaba 141.998."
+2026-10-10T19:12:35+00:00,2026-10-10T19:12:35+00:00,A05,S1,auto5,incorrecto,6,"`calcular_delta_g(206.1, 215, 298.15)` devolvió -63896.1, pero se esperaba 141.998."
+2026-10-10T19:13:41+00:00,2026-10-10T19:13:41+00:00,A20,S1,auto5,incorrecto,6,"`calcular_delta_g(206.1, 215, 298.15)` devolvió -63896.1, pero se esperaba 141.998."

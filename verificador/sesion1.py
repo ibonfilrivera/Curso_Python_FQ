@@ -3,8 +3,9 @@
 from .nucleo import (Sesion, ____, comparar_numero, normalizar_texto,
                      obtener, obtener_funcion, probar_funcion)
 
-sesion = Sesion("Sesión 1")
+sesion = Sesion("Sesión 1", "S1")
 progreso = sesion.progreso
+iniciar_registro = sesion.iniciar_registro
 
 NA = 6.022e23          # mol⁻¹
 MM_HCN = 27.03         # g/mol
@@ -282,5 +283,5 @@ print(f"La reacción es espontánea por encima de {T_inversion:.1f} K")
 """)
 
 
-__all__ = ["____", "progreso"] + [e.clave for e in sesion.ejercicios]
+__all__ = ["____", "progreso", "iniciar_registro"] + [e.clave for e in sesion.ejercicios]
 sesion.bienvenida()

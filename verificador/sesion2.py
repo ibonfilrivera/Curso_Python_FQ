@@ -3,10 +3,17 @@
 from .nucleo import (Incorrecto, Sesion, ____, comparar_numero, lista_no_vacia, obtener,
                      obtener_funcion, probar_funcion)
 
-sesion = Sesion("Sesión 2")
+sesion = Sesion("Sesión 2", "S2")
 progreso = sesion.progreso
+iniciar_registro = sesion.iniciar_registro
 
 MM_NACL = 58.44   # g/mol
+
+
+def _cerca_arreglo(obtenido, esperado):
+    import numpy as np
+    obtenido = np.asarray(obtenido, dtype=float)
+    return obtenido.shape == np.shape(esperado) and np.allclose(obtenido, esperado, atol=1e-6)
 
 
 # --- Ejercicio 1: listas -----------------------------------------------------
@@ -190,82 +197,75 @@ print(f"Críticas: {len(indices_criticas)} → {indices_criticas}")
 """)
 
 
-# --- Ejercicio 5: clases -------------------------------------------------------
+# --- Ejercicio 5: NumPy, matriz de rotación ------------------------------------------
 
 def _ej5(ns):
-    Sustancia = obtener(ns, "Sustancia")
-    nacl = obtener(ns, "cloruro_sodio")
-    if not isinstance(nacl, Sustancia):
-        raise Incorrecto("`cloruro_sodio` debe crearse con `Sustancia(...)`.")
-    if getattr(nacl, "formula", None) != "NaCl":
-        raise Incorrecto('El atributo `formula` debe ser "NaCl".')
-    masa = getattr(nacl, "masa_molar", None)
-    if masa is not None and abs(masa - 35.45) < 0.01:
-        raise Incorrecto("35.45 g/mol es la masa molar del cloro, no la del NaCl.")
-    comparar_numero("cloruro_sodio.masa_molar", masa, MM_NACL, rel=2e-3)
-    comparar_numero("moles_nacl", obtener(ns, "moles_nacl"), 15 / MM_NACL, rel=2e-3)
+    funcion = obtener_funcion(ns, "rotar_vector")
+    r = 2 ** 0.5
+    casos = [
+        (([1, 0], 90), {}, [0.0, 1.0]),
+        (([0, 1], 90), {}, [-1.0, 0.0]),
+        (([2, 0], 180), {}, [-2.0, 0.0]),
+        (([1, 1], 45), {}, [0.0, r]),
+        (([3, 4], 0), {}, [3.0, 4.0]),
+    ]
+    probar_funcion("rotar_vector", funcion, casos, comparar=_cerca_arreglo)
 
 
 ej5 = sesion.agregar(
-    "ej5", "Objeto cloruro de sodio", _ej5,
-    pista="La masa molar del NaCl es la suma de Na (22.99) y Cl (35.45). Para los "
-          "moles, llama al método: `cloruro_sodio.gramos_a_moles(15)`.",
+    "ej5", "Rotación de un vector", _ej5,
+    pista="El ángulo llega en grados: conviértelo con `np.radians()`. El producto "
+          "matriz-vector se escribe `R @ v`.",
     solucion="""
-cloruro_sodio = Sustancia("Cloruro de sodio", "NaCl", 58.44)
-moles_nacl = cloruro_sodio.gramos_a_moles(15)
-print(f"En 15 g de {cloruro_sodio.formula} hay {moles_nacl} mol.")
+def rotar_vector(vector, angulo_grados):
+    theta = np.radians(angulo_grados)
+    R = np.array([[np.cos(theta), -np.sin(theta)],
+                  [np.sin(theta),  np.cos(theta)]])
+    return R @ np.asarray(vector, dtype=float)
+
+print(rotar_vector([0, 1], 90))
 """)
 
 
-def _ej6(ns):
-    Disolucion = obtener(ns, "Disolucion")
-    muestra = Disolucion(5, 100, 103, MM_NACL)
-    for metodo in ("calcular_molaridad", "calcular_molalidad", "calcular_moles"):
-        if not hasattr(muestra, metodo):
-            raise Incorrecto(f"La clase `Disolucion` no tiene el método `{metodo}`.")
-    probar_funcion("Disolucion(5, 100, 103, 58.44).calcular_molaridad",
-                   muestra.calcular_molaridad, [((), {}, 5 / MM_NACL / 0.103)])
-    probar_funcion("Disolucion(5, 100, 103, 58.44).calcular_molalidad",
-                   muestra.calcular_molalidad, [((), {}, 5 / MM_NACL / 0.100)])
-    probar_funcion("Disolucion(5, 100, 103, 58.44).calcular_moles",
-                   muestra.calcular_moles, [((), {}, 5 / MM_NACL)])
-    comparar_numero("moles_50g", obtener(ns, "moles_50g"), 50 / MM_NACL, rel=2e-3)
+# --- Ejercicio 6: NumPy, regla de Cramer ---------------------------------------------
+
+def _ej6_numpy(ns):
+    funcion = obtener_funcion(ns, "resolver_cramer_2x2")
+    import numpy as np
+    casos = [
+        ((np.array([[3, 2], [4, -1]]), np.array([12, 5])), {}, [2.0, 3.0]),
+        ((np.array([[1, 1], [1, -1]]), np.array([0.5, 0.1])), {}, [0.3, 0.2]),
+        ((np.array([[2.0, 1.0], [1.0, 3.0]]), np.array([3.0, 5.0])), {}, [0.8, 1.4]),
+    ]
+    try:
+        probar_funcion("resolver_cramer_2x2", funcion, casos, comparar=_cerca_arreglo)
+    except Incorrecto as e:
+        if "0.5" in str(e):
+            raise Incorrecto(str(e) + " Si la matriz es de enteros, `copy()` conserva el "
+                             "tipo `int` y los decimales de `b` se truncan: usa "
+                             "`np.array(A, dtype=float)`.") from None
+        raise
 
 
 ej6 = sesion.agregar(
-    "ej6", "Métodos de la clase Disolucion", _ej6,
-    pista="Molaridad = mol de soluto / L de disolución; molalidad = mol de soluto / kg "
-          "de disolvente. Recuerda convertir mL → L y g → kg dividiendo entre 1000.",
+    "ej6", "Regla de Cramer", _ej6_numpy,
+    pista="Construye Aₓ sustituyendo la primera columna de A por b (`Ax[:, 0] = b`) y A_y "
+          "sustituyendo la segunda. Trabaja con `dtype=float` para no perder decimales.",
     solucion="""
-class Disolucion:
-    def __init__(self, masa_soluto, masa_disolvente, volumen_ml, masa_molar):
-        self.masa_soluto = masa_soluto
-        self.masa_disolvente = masa_disolvente
-        self.masa_disolucion = masa_soluto + masa_disolvente
-        self.volumen_ml = volumen_ml
-        self.masa_molar = masa_molar
+def resolver_cramer_2x2(A, b):
+    A = np.array(A, dtype=float)
+    delta = np.linalg.det(A)
 
-    def porcentaje_masa_masa(self):
-        return self.masa_soluto / self.masa_disolucion * 100
+    A_x = A.copy()
+    A_x[:, 0] = b
+    A_y = A.copy()
+    A_y[:, 1] = b
 
-    def porcentaje_masa_volumen(self):
-        return self.masa_soluto / self.volumen_ml * 100
+    return np.array([np.linalg.det(A_x), np.linalg.det(A_y)]) / delta
 
-    def calcular_moles(self):
-        return self.masa_soluto / self.masa_molar
-
-    def calcular_molaridad(self):
-        return self.calcular_moles() / (self.volumen_ml / 1000)
-
-    def calcular_molalidad(self):
-        return self.calcular_moles() / (self.masa_disolvente / 1000)
-
-muestra = Disolucion(5, 100, 103, 58.44)
-print(f"Molaridad: {muestra.calcular_molaridad():.3f} mol/L")
-print(f"Molalidad: {muestra.calcular_molalidad():.3f} mol/kg")
-
-moles_50g = Disolucion(50, 100, 120, 58.44).calcular_moles()
-print(f"En 50 g de NaCl hay {moles_50g:.4f} mol")
+A = np.array([[3, 2], [4, -1]])
+b = np.array([12, 5])
+print(resolver_cramer_2x2(A, b), np.linalg.solve(A, b))
 """)
 
 
@@ -345,5 +345,84 @@ print(datos_limpios)
 """)
 
 
-__all__ = ["____", "progreso"] + [e.clave for e in sesion.ejercicios]
+# --- Tema extra: clases ------------------------------------------------------
+
+def _extra1(ns):
+    Sustancia = obtener(ns, "Sustancia")
+    nacl = obtener(ns, "cloruro_sodio")
+    if not isinstance(nacl, Sustancia):
+        raise Incorrecto("`cloruro_sodio` debe crearse con `Sustancia(...)`.")
+    if getattr(nacl, "formula", None) != "NaCl":
+        raise Incorrecto('El atributo `formula` debe ser "NaCl".')
+    masa = getattr(nacl, "masa_molar", None)
+    if masa is not None and abs(masa - 35.45) < 0.01:
+        raise Incorrecto("35.45 g/mol es la masa molar del cloro, no la del NaCl.")
+    comparar_numero("cloruro_sodio.masa_molar", masa, MM_NACL, rel=2e-3)
+    comparar_numero("moles_nacl", obtener(ns, "moles_nacl"), 15 / MM_NACL, rel=2e-3)
+
+
+extra1 = sesion.agregar(
+    "extra1", "(Extra) Objeto cloruro de sodio", _extra1,
+    pista="La masa molar del NaCl es la suma de Na (22.99) y Cl (35.45). Para los "
+          "moles, llama al método: `cloruro_sodio.gramos_a_moles(15)`.",
+    solucion="""
+cloruro_sodio = Sustancia("Cloruro de sodio", "NaCl", 58.44)
+moles_nacl = cloruro_sodio.gramos_a_moles(15)
+print(f"En 15 g de {cloruro_sodio.formula} hay {moles_nacl} mol.")
+""")
+
+
+def _extra2(ns):
+    Disolucion = obtener(ns, "Disolucion")
+    muestra = Disolucion(5, 100, 103, MM_NACL)
+    for metodo in ("calcular_molaridad", "calcular_molalidad", "calcular_moles"):
+        if not hasattr(muestra, metodo):
+            raise Incorrecto(f"La clase `Disolucion` no tiene el método `{metodo}`.")
+    probar_funcion("Disolucion(5, 100, 103, 58.44).calcular_molaridad",
+                   muestra.calcular_molaridad, [((), {}, 5 / MM_NACL / 0.103)])
+    probar_funcion("Disolucion(5, 100, 103, 58.44).calcular_molalidad",
+                   muestra.calcular_molalidad, [((), {}, 5 / MM_NACL / 0.100)])
+    probar_funcion("Disolucion(5, 100, 103, 58.44).calcular_moles",
+                   muestra.calcular_moles, [((), {}, 5 / MM_NACL)])
+    comparar_numero("moles_50g", obtener(ns, "moles_50g"), 50 / MM_NACL, rel=2e-3)
+
+
+extra2 = sesion.agregar(
+    "extra2", "(Extra) Métodos de la clase Disolucion", _extra2,
+    pista="Molaridad = mol de soluto / L de disolución; molalidad = mol de soluto / kg "
+          "de disolvente. Recuerda convertir mL → L y g → kg dividiendo entre 1000.",
+    solucion="""
+class Disolucion:
+    def __init__(self, masa_soluto, masa_disolvente, volumen_ml, masa_molar):
+        self.masa_soluto = masa_soluto
+        self.masa_disolvente = masa_disolvente
+        self.masa_disolucion = masa_soluto + masa_disolvente
+        self.volumen_ml = volumen_ml
+        self.masa_molar = masa_molar
+
+    def porcentaje_masa_masa(self):
+        return self.masa_soluto / self.masa_disolucion * 100
+
+    def porcentaje_masa_volumen(self):
+        return self.masa_soluto / self.volumen_ml * 100
+
+    def calcular_moles(self):
+        return self.masa_soluto / self.masa_molar
+
+    def calcular_molaridad(self):
+        return self.calcular_moles() / (self.volumen_ml / 1000)
+
+    def calcular_molalidad(self):
+        return self.calcular_moles() / (self.masa_disolvente / 1000)
+
+muestra = Disolucion(5, 100, 103, 58.44)
+print(f"Molaridad: {muestra.calcular_molaridad():.3f} mol/L")
+print(f"Molalidad: {muestra.calcular_molalidad():.3f} mol/kg")
+
+moles_50g = Disolucion(50, 100, 120, 58.44).calcular_moles()
+print(f"En 50 g de NaCl hay {moles_50g:.4f} mol")
+""")
+
+
+__all__ = ["____", "progreso", "iniciar_registro"] + [e.clave for e in sesion.ejercicios]
 sesion.bienvenida()

@@ -3,7 +3,7 @@
 REPOSITORIO_GITHUB = "ibonfilrivera/Curso_Python_FQ"
 URL_CRUDA = f"https://raw.githubusercontent.com/{REPOSITORIO_GITHUB}/main"
 
-AUTORES = "Iván Bonfil, Rafael Rodriguez y Roberto Rojas"
+AUTORES = "Iván Bonfil, Rafael Rodriguez, Roberto Rojas y Lizeth Franco Nolasco"
 
 
 def md(texto):
@@ -56,6 +56,11 @@ una celda que la **verifica automáticamente**, como en los cursos de [Kaggle Le
    para ver una solución. **Intenta resolverlo antes de ver la solución.**
 5. Ejecuta `progreso()` en cualquier momento para ver tu avance en la sesión.
 
+> 📋 **Registro de avance.** Si tu docente lo solicita, escribe en la celda de configuración tu
+> número de cuenta (o el alias que te asignen) y la clave del grupo. Así el equipo docente sabe
+> en qué ejercicios necesita ayuda el grupo. Solo se envía el resultado de cada verificación,
+> **nunca tu código**. Si no te lo piden, deja los campos vacíos.
+
 > 💡 El verificador lee las variables del notebook. Si reinicias el entorno de ejecución, vuelve
 > a ejecutar la celda de configuración y las celdas anteriores al ejercicio.
 """) + code(f"""
@@ -70,11 +75,15 @@ if os.path.isdir("../verificador"):      # Copia local del repositorio
     sys.path.insert(0, "..")
 else:                                     # Google Colab: descarga el verificador
     os.makedirs("verificador", exist_ok=True)
-    for archivo in ["__init__.py", "nucleo.py", "sesion{numero}.py"]:
+    for archivo in ["__init__.py", "nucleo.py", "registro.py", "configuracion.py",
+                    "sesion{numero}.py"]:
         urllib.request.urlretrieve(f"{{REPOSITORIO}}/verificador/{{archivo}}",
                                    f"verificador/{{archivo}}")
 
 from verificador.sesion{numero} import *
+
+# 📋 Registro de avance (solo si tu docente lo pide): tu identificador y la clave del grupo
+iniciar_registro(alumno="", clave="")
 """)
 
 

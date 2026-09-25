@@ -7,6 +7,8 @@ Para cada sesión se producen dos versiones:
 * soluciones/Sesion_N_soluciones.ipynb — solucionario: los mismos notebooks
   con las soluciones de referencia del paquete `verificador`.
 
+Además genera seguimiento/Tablero_docente.ipynb, el tablero de seguimiento del grupo.
+
 Uso (desde la carpeta Curso_Python_FQ):
 
     python herramientas/construir_notebooks.py
@@ -76,12 +78,19 @@ def construir(numero, fuente):
         _guardar(_celdas(bloques, modulo, solucionario), RAIZ / carpeta / archivo)
 
 
+def construir_simple(fuente, carpeta, archivo):
+    """Notebook sin ejercicios verificables (p. ej., el tablero docente)."""
+    _guardar(_celdas(fuente(carpeta, archivo), None, False), RAIZ / carpeta / archivo)
+
+
 if __name__ == "__main__":
     from contenido_sesion1 import fuente as sesion1
     from contenido_sesion2 import fuente as sesion2
     from contenido_sesion3 import fuente as sesion3
+    from contenido_tablero import fuente as tablero
 
     print("Generando notebooks:")
     construir(1, sesion1)
     construir(2, sesion2)
     construir(3, sesion3)
+    construir_simple(tablero, "seguimiento", "Tablero_docente.ipynb")
