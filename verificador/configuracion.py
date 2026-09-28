@@ -5,4 +5,4 @@ recibe el avance del grupo (ver herramientas/seguimiento/README.md). Mientras
 esté vacía, el registro está desactivado y no se envía nada.
 """
 
-URL_REGISTRO = ""
+URL_REGISTRO = "https://script.google.com/macros/s/AKfycbxAg8EYTzlqejAvi18NHwnheIQT0dXfvRrGp00EjDo55oRB3zFOkC8vwUfKpyBQZYBA/exec"
