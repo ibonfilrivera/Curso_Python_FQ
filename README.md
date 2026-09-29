@@ -1,5 +1,7 @@
 # Curso de Python — Facultad de Química (UNAM)
 
+[![Pruebas del curso](https://github.com/ibonfilrivera/Curso_Python_FQ/actions/workflows/pruebas.yml/badge.svg)](https://github.com/ibonfilrivera/Curso_Python_FQ/actions/workflows/pruebas.yml)
+
 Material didáctico, código y datos del curso introductorio de Python del Departamento de Física
 y Química Teórica. Curso intensivo de 12 horas (3 sesiones de 4 horas) en Google Colab.
 
@@ -9,8 +11,8 @@ y Química Teórica. Curso intensivo de 12 horas (3 sesiones de 4 horas) en Goog
 
 | Sesión | Temas | Aplicaciones químicas | Abrir en Colab |
 | :--- | :--- | :--- | :---: |
-| **1** | Tipos de datos, operaciones, `if`/`elif`/`else`, funciones | Moles y moléculas, gases ideales, tipo de enlace, ΔG | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ibonfilrivera/Curso_Python_FQ/blob/main/notebooks_kaggle/Sesion_1.ipynb) |
-| **2** | Listas, tuplas, diccionarios, `for`, `while`, NumPy · *extra:* clases | Masas molares, vida media, control de calidad, álgebra lineal | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ibonfilrivera/Curso_Python_FQ/blob/main/notebooks_kaggle/Sesion_2.ipynb) |
+| **1** | Tipos de datos, operaciones, `if`/`elif`/`else`, funciones, uso responsable de la IA | Moles y moléculas, gases ideales, tipo de enlace, ΔG | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ibonfilrivera/Curso_Python_FQ/blob/main/notebooks_kaggle/Sesion_1.ipynb) |
+| **2** | Listas, tuplas, diccionarios, `for`, `while`, NumPy, unidades con pint · *extra:* clases | Masas molares, vida media, control de calidad, gases y disoluciones con unidades | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ibonfilrivera/Curso_Python_FQ/blob/main/notebooks_kaggle/Sesion_2.ipynb) |
 | **3** | SciPy, Matplotlib, Pandas, RDKit | Cinética, ley de Lambert-Beer, regla de Lipinski, solubilidad | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ibonfilrivera/Curso_Python_FQ/blob/main/notebooks_kaggle/Sesion_3.ipynb) |
 
 ## ✅ Ejercicios con verificación automática
@@ -28,6 +30,10 @@ progreso()        # Resumen de ejercicios resueltos en la sesión
 
 La primera celda de cada notebook descarga el paquete `verificador/` desde este repositorio,
 así que funciona en Colab sin instalar nada.
+
+El verificador acepta respuestas con unidades de [pint](https://pint.readthedocs.io): si un
+estudiante responde `370 * ureg.mmol` donde se esperaban mol, convierte antes de comparar, y
+avisa si las unidades no son compatibles.
 
 ## 📋 Seguimiento del grupo
 
@@ -47,6 +53,8 @@ Curso_Python_FQ/
 ├── verificador/          Paquete que revisa los ejercicios (uno por sesión) y registro opcional
 ├── seguimiento/          Estrategia, Apps Script y tablero para el seguimiento del grupo
 ├── herramientas/         Generador de los notebooks y de los datos simulados
+├── pruebas/              Pruebas automáticas (pytest y ejecución de todos los notebooks)
+├── .github/workflows/    Integración continua en GitHub Actions
 └── data/                 curated_solubility.csv (AqSolDB), lambert_beer_kmno4.csv
 ```
 
@@ -64,7 +72,29 @@ a mano, para que las dos versiones no se desincronicen.
    python herramientas/construir_notebooks.py
    ```
 
-4. Ejecuta el solucionario completo: todas las celdas `verificar()` deben mostrar ✅.
+4. Comprueba que todo funcione antes de subir los cambios:
+
+   ```bash
+   pip install -r pruebas/requirements.txt
+   pytest -q pruebas                       # Pruebas del verificador
+   python pruebas/ejecutar_notebooks.py    # Ejecuta todos los notebooks
+   ```
+
+### Integración continua
+
+Con cada `push` a `main` (y en cada *pull request*), GitHub Actions ejecuta
+[`.github/workflows/pruebas.yml`](.github/workflows/pruebas.yml) y comprueba que:
+
+- el código del verificador pasa `ruff`, y el Apps Script no tiene errores de sintaxis;
+- los notebooks subidos coinciden con los que genera `construir_notebooks.py` (nadie los editó a
+  mano ni olvidó regenerarlos);
+- los datos simulados de Lambert-Beer se reproducen idénticos;
+- las pruebas del verificador pasan (errores típicos, pint, registro con un servidor simulado);
+- en los solucionarios **todas** las verificaciones dan ✅, en los notebooks del estudiante sin
+  resolver quedan en ✏️ y el tablero docente se ejecuta sin errores.
+
+El resultado aparece en la pestaña **Actions** y en la insignia de arriba. Las pruebas definen
+`CURSO_PYTHON_SIN_REGISTRO=1`, así que nunca escriben en la hoja de registro real.
 
 > El verificador se descarga de la rama `main`, así que los cambios en `verificador/` llegan a
 > los estudiantes en cuanto se suben a GitHub.

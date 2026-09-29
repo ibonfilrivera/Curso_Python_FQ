@@ -38,7 +38,7 @@ def _ej1(ns):
     k = obtener(ns, "k")
     if isinstance(k, (int, float)) and k < 0:
         raise Incorrecto("La constante de velocidad es positiva: k = −pendiente.")
-    comparar_numero("k", k, -pendiente, rel=5e-3)
+    comparar_numero("k", k, -pendiente, rel=5e-3, unidades="1/min")
     return f"La reacción es de primer orden con k ≈ {-pendiente:.4f} min⁻¹."
 
 
@@ -104,7 +104,7 @@ def _ej2(ns):
         raise Incorrecto("Agrega una leyenda con `ax.legend()` para distinguir datos y ajuste.")
     pendiente, ordenada, _ = _regresion(CONC_CALIBRACION, ABS_CALIBRACION)
     comparar_numero("conc_problema", conc_problema,
-                    (0.500 - ordenada) / pendiente, rel=5e-3)
+                    (0.500 - ordenada) / pendiente, rel=5e-3, unidades="mg/L")
 
 
 ej2 = sesion.agregar(
@@ -194,7 +194,7 @@ def _ej3b(ns):
     todos = _regresion(list(resumen.index), list(resumen["promedio"]))
     pendiente, _, r2 = _ajuste_lb(resumen)
     comparar_numero("r2_todos", r2_todos, todos[2], rel=1e-4)
-    comparar_numero("epsilon", epsilon, pendiente / PASO_OPTICO, rel=2e-3)
+    comparar_numero("epsilon", epsilon, pendiente / PASO_OPTICO, rel=2e-3, unidades="L/(mol*cm)")
     comparar_numero("r2_lineal", r2_lineal, r2, rel=1e-4)
     if ax.get_legend() is None:
         raise Incorrecto("Agrega una leyenda con `ax.legend()` para distinguir los estándares "
@@ -245,7 +245,7 @@ def _ej3c(ns):
     pendiente, ordenada, _ = _ajuste_lb(resumen)
     a_problema = datos[datos["tipo"] == "problema"]["absorbancia"].mean()
     esperado = (a_problema - ordenada) / pendiente
-    comparar_numero("conc_problema_lb", conc, esperado, rel=5e-3)
+    comparar_numero("conc_problema_lb", conc, esperado, rel=5e-3, unidades="mol/L")
     dentro = obtener(ns, "dentro_intervalo")
     lineal = resumen[resumen["promedio"] <= LIMITE_LINEAL]
     esperado_dentro = bool(lineal.index.min() <= esperado <= lineal.index.max())

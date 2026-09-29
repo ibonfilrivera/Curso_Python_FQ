@@ -145,6 +145,8 @@ def es_numero(valor):
 
 
 def _formato(valor):
+    if es_cantidad(valor):
+        return f"{valor:~P}"
     if es_numero(valor):
         valor = float(valor)
         if valor != 0 and (abs(valor) >= 1e6 or abs(valor) < 1e-3):
@@ -153,8 +155,33 @@ def _formato(valor):
     return repr(valor)
 
 
-def comparar_numero(nombre, valor, esperado, rel=1e-3, abs_=1e-9):
-    """Compara un número con tolerancia y da pistas sobre errores comunes."""
+def es_cantidad(valor):
+    """True si `valor` es una cantidad con unidades de pint (número × unidad)."""
+    return all(hasattr(valor, atributo) for atributo in ("magnitude", "units", "to"))
+
+
+def _convertir(nombre, valor, unidades):
+    """Convierte una cantidad de pint a `unidades` y devuelve solo su magnitud."""
+    try:
+        return valor.to(unidades).magnitude
+    except Exception:
+        raise Incorrecto(f"`{nombre}` tiene unidades de {valor.units:~P} "
+                         f"({valor.dimensionality}), pero se esperaban unidades "
+                         f"compatibles con {unidades}.") from None
+
+
+def comparar_numero(nombre, valor, esperado, rel=1e-3, abs_=1e-9, unidades=None):
+    """Compara un número con tolerancia y da pistas sobre errores comunes.
+
+    Si se indican `unidades` (texto que entiende pint, p. ej. "mol/L") y el
+    estudiante respondió con una cantidad de pint, se convierte antes de
+    comparar; un número sin unidades se interpreta ya expresado en `unidades`.
+    """
+    if es_cantidad(valor):
+        if unidades is None:
+            valor = valor.magnitude
+        else:
+            valor = _convertir(nombre, valor, unidades)
     if isinstance(valor, str):
         raise Incorrecto(f"`{nombre}` es un texto ({valor!r}); debería ser un número. "
                          "¿Pusiste el número entre comillas?")
@@ -163,18 +190,27 @@ def comparar_numero(nombre, valor, esperado, rel=1e-3, abs_=1e-9):
                          f"`{type(valor).__name__}`.")
     if math.isclose(float(valor), esperado, rel_tol=rel, abs_tol=abs_):
         return
-    mensaje = f"`{nombre}` vale {_formato(valor)}, pero no es el valor esperado."
+    en_unidades = f" {unidades}" if unidades else ""
+    mensaje = f"`{nombre}` vale {_formato(valor)}{en_unidades}, pero no es el valor esperado."
     if esperado != 0:
         cociente = float(valor) / esperado
         for factor in (1e3, 1e-3, 1e2, 1e-2, 1e6, 1e-6):
             if math.isclose(cociente, factor, rel_tol=1e-2):
-                mensaje += (f" Tu resultado difiere por un factor de {factor:g}: "
-                            "revisa las conversiones de unidades.")
+                mensaje += (f" Tu resultado difiere por un factor de {factor:g}: revisa las "
+                            "conversiones de unidades (con pint, `.to()` las hace por ti).")
                 break
         else:
             if math.isclose(cociente, -1, rel_tol=1e-2):
                 mensaje += " Tu resultado tiene el signo opuesto."
     raise Incorrecto(mensaje)
+
+
+def comparar_cantidad(nombre, valor, esperado, unidades, rel=1e-3):
+    """Como `comparar_numero`, pero exige que la respuesta tenga unidades de pint."""
+    if not es_cantidad(valor):
+        raise Incorrecto(f"`{nombre}` es un número sin unidades. En este ejercicio el "
+                         f"resultado debe ser una cantidad de pint, p. ej. `valor * ureg.mol`.")
+    comparar_numero(nombre, valor, esperado, rel=rel, unidades=unidades)
 
 
 def normalizar_texto(texto):

@@ -9,7 +9,7 @@ def fuente(carpeta, archivo):
 En la sesión anterior aprendimos los tipos de datos, las operaciones y los condicionales
 (`if`, `elif`, `else`). Ahora aprenderemos a **guardar colecciones de datos** (`list`, `tuple`,
 `dict`), a **repetir instrucciones** con los ciclos `for` y `while`, y a hacer cálculos con
-vectores y matrices usando **NumPy**. Si queda tiempo, veremos como tema extra una introducción
+vectores y matrices usando **NumPy**, cuidando las unidades con **pint**. Si queda tiempo, veremos como tema extra una introducción
 a la programación orientada a objetos.
 
 **Al terminar podrás:**
@@ -17,6 +17,7 @@ a la programación orientada a objetos.
 - Recorrer colecciones con `for` y repetir cálculos con `while`.
 - Filtrar datos experimentales de forma automática, con ciclos y con máscaras de NumPy.
 - Operar con vectores y matrices y resolver sistemas de ecuaciones con NumPy.
+- Evitar errores de unidades (como los factores de 1000) con la biblioteca pint.
 """, carpeta, archivo)
         + instrucciones(2)
         + md("""
@@ -535,6 +536,100 @@ b = np.array([12, 5])
 print(resolver_cramer_2x2(A, b), np.linalg.solve(A, b))
 """)
         + md("""
+## **Unidades con pint**
+
+Muchos errores en los cálculos químicos no son de programación sino de **unidades**: usar mL
+donde iban L, g donde iban kg o °C donde iba K. El resultado sale 1000 veces más grande o más
+pequeño, y Python no se queja porque solo ve números.
+
+La biblioteca **pint** une cada número con su unidad. Así, las conversiones se hacen solas y
+Python se detiene si intentas combinar unidades incompatibles.
+""")
+        + code("""
+try:
+    import pint
+except ImportError:                     # Si no está instalada (por ejemplo, en Colab)
+    import subprocess
+    subprocess.run([sys.executable, "-m", "pip", "install", "-q", "pint"], check=True)
+
+from pint import UnitRegistry
+
+ureg = UnitRegistry()     # Catálogo de unidades
+Q_ = ureg.Quantity        # Atajo para crear cantidades, útil con temperaturas
+""")
+        + md("Una **cantidad** es un número multiplicado por una unidad. Con `.to()` se convierte a otra unidad:")
+        + code("""
+volumen = 250 * ureg.mL
+masa = 2.5 * ureg.kg
+
+print(volumen.to("L"))
+print(masa.to("g"))
+print((1 * ureg.atm).to("kPa"))
+print(f"{(8.314 * ureg('J/(mol*K)')).to('L*atm/(mol*K)'):.5f}")   # R en otras unidades
+""")
+        + md("""
+Las unidades se multiplican y se dividen junto con los números. Veamos el error típico de
+calcular una concentración con el volumen en mililitros:
+""")
+        + code("""
+moles = 0.0428 * ureg.mol
+volumen = 250 * ureg.mL
+
+concentracion = moles / volumen
+print(concentracion)                  # mol/mL: correcto, pero en unidades poco usuales
+print(concentracion.to("mol/L"))      # pint hace la conversión por ti
+""")
+        + md("Si combinas unidades incompatibles, pint lanza un `DimensionalityError` en lugar de darte un resultado sin sentido:")
+        + code("""
+masa = 5 * ureg.g
+volumen = 100 * ureg.mL
+
+masa + volumen      # ¿Sumar gramos con mililitros? Error a propósito
+""", error_esperado=True)
+        + md("""
+Las temperaturas en °C necesitan cuidado: 20 °C no es «el doble» de 10 °C. Crea la cantidad con
+`Q_(valor, ureg.degC)` y conviértela a kelvin antes de multiplicar o dividir.
+""")
+        + code("""
+T = Q_(25.0, ureg.degC)
+print(T.to("K"))
+""")
+        + md(r"""
+### **Ejercicio 7a: Gas ideal con unidades**
+
+Calcula la presión de 0.250 mol de un gas ideal a 25.0 °C en un recipiente de 500 mL, usando
+$R = 0.082057~\frac{\text{L·atm}}{\text{mol·K}}$ y $P = \frac{nRT}{V}$.
+
+- Guarda en `presion` el resultado en **atm** (usa `.to("atm")`).
+- Guarda en `presion_kpa` la misma presión en **kPa**.
+
+Observa que no necesitas convertir los mL ni los °C a mano.
+""")
+        + ejercicio("ej7a", """
+n = 0.250 * ureg.mol
+T = Q_(25.0, ureg.degC)
+V = ____
+R = 0.082057 * ureg("L * atm / (mol * K)")
+
+presion = ____
+presion_kpa = ____
+print(presion, presion_kpa)
+""")
+        + md("""
+### **Ejercicio 7b: Molaridad con unidades**
+
+Se disuelven 2.50 g de NaCl (58.44 g/mol) y se aforan a 250 mL. Calcula la molaridad en
+`molaridad`, como cantidad de pint expresada en mol/L.
+""")
+        + ejercicio("ej7b", """
+masa = ____
+masa_molar = 58.44 * ureg("g/mol")
+volumen = ____
+
+molaridad = ____
+print(molaridad)
+""")
+        + md("""
 ## **Resumen de la sesión**
 
 | Estructura | Sintaxis | ¿Mutable? | Acceso |
@@ -554,6 +649,10 @@ print(resolver_cramer_2x2(A, b), np.linalg.solve(A, b))
 **NumPy:** `np.array()` crea arreglos; las operaciones se aplican a todos los elementos a la vez
 (`arreglo**2`), las máscaras filtran (`arreglo[arreglo > 50]`), `@` es el producto matricial y
 `np.linalg` resuelve sistemas de ecuaciones, determinantes y valores propios.
+
+**pint:** `ureg = UnitRegistry()` crea el catálogo de unidades; `5 * ureg.mL` es una cantidad;
+`.to("L")` convierte; `Q_(25, ureg.degC)` crea temperaturas. Combinar unidades incompatibles
+produce un `DimensionalityError`, que es justo lo que queremos.
 
 **Tema extra, clases:** `class` define el molde; `__init__` asigna los atributos; los métodos son
 funciones que reciben `self` para acceder a los datos del objeto.

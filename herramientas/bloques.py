@@ -55,6 +55,8 @@ una celda que la **verifica automáticamente**, como en los cursos de [Kaggle Le
 4. Si te atoras, quita el `#` de `ejN.pista()` para recibir una pista, o de `ejN.solucion()`
    para ver una solución. **Intenta resolverlo antes de ver la solución.**
 5. Ejecuta `progreso()` en cualquier momento para ver tu avance en la sesión.
+6. Si usas el asistente de IA de Colab, sigue las reglas de la sección *Uso responsable de la IA*
+   (Sesión 1): intenta primero, pregunta para **entender** y verifica siempre el resultado.
 
 > 📋 **Registro de avance.** Si tu docente lo solicita, escribe en la celda de configuración tu
 > número de cuenta (o el alias que te asignen) y la clave del grupo. Así el equipo docente sabe

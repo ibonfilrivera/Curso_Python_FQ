@@ -1,0 +1,65 @@
+name: Pruebas del curso
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: pruebas-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  # Nunca enviar datos a la hoja de registro real durante las pruebas
+  CURSO_PYTHON_SIN_REGISTRO: "1"
+  MPLBACKEND: Agg
+
+jobs:
+  pruebas:
+    name: Verificador y notebooks
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Descargar el repositorio
+        uses: actions/checkout@v4
+
+      - name: Instalar Python 3.12 (la versión de Google Colab)
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pruebas/requirements.txt
+
+      - name: Instalar dependencias
+        run: pip install -r pruebas/requirements.txt
+
+      - name: Estilo del código (ruff)
+        run: ruff check verificador herramientas pruebas
+
+      - name: Sintaxis del Apps Script
+        run: >
+          python -c "import esprima;
+          esprima.parseScript(open('seguimiento/registro_apps_script.gs', encoding='utf-8').read());
+          print('Apps Script: sintaxis correcta')"
+
+      - name: Los notebooks generados coinciden con sus fuentes
+        run: |
+          python herramientas/construir_notebooks.py
+          git diff --exit-code -- notebooks_kaggle soluciones seguimiento/Tablero_docente.ipynb \
+            || { echo "::error::Regenera los notebooks con 'python herramientas/construir_notebooks.py' y súbelos."; exit 1; }
+
+      - name: Los datos de Lambert-Beer son reproducibles
+        run: |
+          python herramientas/generar_datos_lambert_beer.py
+          git diff --exit-code -- data/lambert_beer_kmno4.csv
+
+      - name: Pruebas del verificador (pytest)
+        run: pytest -q pruebas
+
+      - name: Ejecutar solucionarios, notebooks del estudiante y tablero docente
+        run: python pruebas/ejecutar_notebooks.py

@@ -1,0 +1,7 @@
+line-length = 100
+
+[lint]
+select = ["E", "F", "W", "B"]
+# E501: las cadenas con texto de los notebooks son largas a propósito.
+# B905: zip() sin strict= es intencional en el verificador.
+ignore = ["E501", "B905"]

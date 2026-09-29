@@ -1,0 +1,18 @@
+# Bibliotecas que usan los notebooks (las mismas que en Google Colab)
+numpy
+pandas
+scipy
+matplotlib
+sympy
+rdkit
+pint
+
+# Generación y ejecución de notebooks
+nbformat
+nbclient
+ipykernel
+
+# Pruebas y estilo
+pytest
+ruff
+esprima

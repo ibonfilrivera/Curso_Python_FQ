@@ -1,6 +1,7 @@
 """Ejercicios de la Sesión 2: estructuras de datos, ciclos y clases."""
 
-from .nucleo import (Incorrecto, Sesion, ____, comparar_numero, lista_no_vacia, obtener,
+from .nucleo import (Incorrecto, Sesion, ____, comparar_cantidad, comparar_numero,
+                     lista_no_vacia, obtener,
                      obtener_funcion, probar_funcion)
 
 sesion = Sesion("Sesión 2", "S2")
@@ -81,7 +82,7 @@ print(mis_asignaturas)
 # --- Ejercicio 2: diccionarios -----------------------------------------------
 
 def _ej2a(ns):
-    comparar_numero("masa_molar_hno3", obtener(ns, "masa_molar_hno3"), 1.0 + 14.0 + 3 * 16.0)
+    comparar_numero("masa_molar_hno3", obtener(ns, "masa_molar_hno3"), 1.0 + 14.0 + 3 * 16.0, unidades="g/mol")
 
 
 ej2a = sesion.agregar(
@@ -102,7 +103,7 @@ def _ej2b(ns):
     if "hierro" not in masas:
         raise Incorrecto('Agrega la clave "hierro" al diccionario `masas_molares`.')
     comparar_numero('masas_molares["hierro"]', masas["hierro"], 55.85, rel=2e-3)
-    comparar_numero("masa_molar_fe2o3", masa_fe2o3, 2 * masas["hierro"] + 3 * 16.0)
+    comparar_numero("masa_molar_fe2o3", masa_fe2o3, 2 * masas["hierro"] + 3 * 16.0, unidades="g/mol")
 
 
 ej2b = sesion.agregar(
@@ -269,6 +270,60 @@ print(resolver_cramer_2x2(A, b), np.linalg.solve(A, b))
 """)
 
 
+# --- Ejercicio 7: unidades con pint -------------------------------------------------
+
+R_ATM_EXACTA = 0.082057   # atm·L/(mol·K)
+
+
+def _ej7a(ns):
+    presion = obtener(ns, "presion")
+    esperado = 0.250 * R_ATM_EXACTA * 298.15 / 0.500
+    comparar_cantidad("presion", presion, esperado, "atm", rel=2e-3)
+    presion_kpa = obtener(ns, "presion_kpa")
+    comparar_cantidad("presion_kpa", presion_kpa, esperado * 101.325, "kPa", rel=2e-3)
+    if f"{presion_kpa.units:~}" != "kPa":
+        raise Incorrecto("`presion_kpa` tiene el valor correcto, pero exprésala en kPa con "
+                         '`presion.to("kPa")`.')
+    return f"P = {esperado:.2f} atm. pint convirtió los mL y los °C por ti."
+
+
+ej7a = sesion.agregar(
+    "ej7a", "Gas ideal con unidades", _ej7a,
+    pista="Multiplica cada número por su unidad (`500 * ureg.mL`). La temperatura en °C debe "
+          'convertirse antes de multiplicar: `T.to("K")`. Al final, `.to("atm")` expresa el '
+          "resultado en atmósferas.",
+    solucion="""
+n = 0.250 * ureg.mol
+T = Q_(25.0, ureg.degC)
+V = 500 * ureg.mL
+R = 0.082057 * ureg("L * atm / (mol * K)")
+
+presion = (n * R * T.to("K") / V).to("atm")
+presion_kpa = presion.to("kPa")
+print(f"P = {presion:.3f~P} = {presion_kpa:.1f~P}")
+""")
+
+
+def _ej7b(ns):
+    molaridad = obtener(ns, "molaridad")
+    comparar_cantidad("molaridad", molaridad, 2.50 / MM_NACL / 0.250, "mol/L", rel=2e-3)
+    return "Aunque el volumen estaba en mL, las unidades cuadran solas."
+
+
+ej7b = sesion.agregar(
+    "ej7b", "Molaridad con unidades", _ej7b,
+    pista='Divide la masa entre la masa molar y entre el volumen, todos con unidades, y '
+          'termina con `.to("mol/L")`. No conviertas los mL a mano.',
+    solucion="""
+masa = 2.50 * ureg.g
+masa_molar = 58.44 * ureg("g/mol")
+volumen = 250 * ureg.mL
+
+molaridad = (masa / masa_molar / volumen).to("mol/L")
+print(f"c = {molaridad:.4f~P}")
+""")
+
+
 # --- Autoevaluación -----------------------------------------------------------
 
 def _fibonacci(n):
@@ -357,8 +412,8 @@ def _extra1(ns):
     masa = getattr(nacl, "masa_molar", None)
     if masa is not None and abs(masa - 35.45) < 0.01:
         raise Incorrecto("35.45 g/mol es la masa molar del cloro, no la del NaCl.")
-    comparar_numero("cloruro_sodio.masa_molar", masa, MM_NACL, rel=2e-3)
-    comparar_numero("moles_nacl", obtener(ns, "moles_nacl"), 15 / MM_NACL, rel=2e-3)
+    comparar_numero("cloruro_sodio.masa_molar", masa, MM_NACL, rel=2e-3, unidades="g/mol")
+    comparar_numero("moles_nacl", obtener(ns, "moles_nacl"), 15 / MM_NACL, rel=2e-3, unidades="mol")
 
 
 extra1 = sesion.agregar(
@@ -384,7 +439,7 @@ def _extra2(ns):
                    muestra.calcular_molalidad, [((), {}, 5 / MM_NACL / 0.100)])
     probar_funcion("Disolucion(5, 100, 103, 58.44).calcular_moles",
                    muestra.calcular_moles, [((), {}, 5 / MM_NACL)])
-    comparar_numero("moles_50g", obtener(ns, "moles_50g"), 50 / MM_NACL, rel=2e-3)
+    comparar_numero("moles_50g", obtener(ns, "moles_50g"), 50 / MM_NACL, rel=2e-3, unidades="mol")
 
 
 extra2 = sesion.agregar(

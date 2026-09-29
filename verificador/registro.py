@@ -6,6 +6,7 @@ el número de intento y el mensaje del verificador. Nunca se envía el código.
 """
 
 import json
+import os
 import threading
 import urllib.request
 from datetime import datetime, timezone
@@ -16,8 +17,14 @@ _TIEMPO_LIMITE = 8   # segundos
 _estado = {"alumno": None, "clave": None}
 
 
+def _desactivado_por_entorno():
+    """Las pruebas automáticas (CI) definen esta variable para no escribir en la hoja real."""
+    return bool(os.environ.get("CURSO_PYTHON_SIN_REGISTRO"))
+
+
 def activo():
-    return bool(configuracion.URL_REGISTRO and _estado["alumno"])
+    return bool(configuracion.URL_REGISTRO and _estado["alumno"]
+                and not _desactivado_por_entorno())
 
 
 def _enviar(datos):
@@ -50,7 +57,7 @@ def _evento(sesion, ejercicio, evento, intento=0, detalle=""):
 
 def iniciar(sesion, alumno="", clave=""):
     """Activa el registro. Se llama desde la celda de configuración del notebook."""
-    if not configuracion.URL_REGISTRO:
+    if not configuracion.URL_REGISTRO or _desactivado_por_entorno():
         print("ℹ️ Registro de avance desactivado (el equipo docente no lo ha configurado).")
         return
     alumno, clave = str(alumno).strip(), str(clave).strip()

@@ -373,6 +373,69 @@ print(f"T1 = {T1} K")
 print(f"T2 = {T2} K")
 """)
         + md("""
+## **Uso responsable de la IA en Colab**
+
+Colab incluye un asistente de inteligencia artificial (Gemini) que puede explicar código,
+sugerir cómo corregir un error o escribir funciones completas. Es una herramienta útil, pero en un
+curso cuyo objetivo es **aprender a programar** conviene usarla con criterio. Las opciones y
+nombres de los botones pueden cambiar según la versión de Colab.
+
+**✅ Buenos usos**
+- Pedir que te **explique** un mensaje de error o una línea de código que no entiendes.
+- Preguntar **por qué** algo funciona, o pedir un ejemplo parecido pero distinto al ejercicio.
+- Revisar tu propio código **después** de intentarlo: «¿qué casos no estoy considerando?».
+
+**⚠️ Usos que te quitan el aprendizaje**
+- Pedir la solución de un ejercicio antes de intentarlo. Primero intenta; después usa
+  `ejN.pista()`. La IA viene al final, no al principio.
+- Copiar código que no sabrías explicar línea por línea.
+
+**🔍 La IA se equivoca, y con seguridad**
+- Puede inventar funciones que no existen, confundir unidades o usar datos químicos incorrectos
+  (masas molares, constantes). Contrasta con tus apuntes o con una fuente confiable.
+- **Verifica siempre** con `ejN.verificar()`, con un caso que sepas resolver a mano y revisando las
+  unidades.
+
+**🔒 Cuida la información**
+- No compartas datos personales, resultados de investigación no publicados ni información
+  confidencial del laboratorio.
+
+**📝 Sé transparente**
+- Si usas IA en una tarea o en un reporte, indícalo y describe para qué la usaste, según las
+  reglas de tu profesor/a y de la Facultad.
+
+> 💡 **Una buena forma de preguntar:** *«Explícame qué hace esta función y por qué da este
+> error. No me des el código corregido.»*
+""")
+        + md("""
+### **Ejercicio 5: Revisa el código de un asistente de IA**
+
+Se le pidió a un asistente de IA: *«Escribe una función en Python que calcule la molaridad de una
+disolución a partir de la masa del soluto en gramos, su masa molar y el volumen en mililitros»*.
+Esta fue su respuesta:
+
+```python
+def calcular_molaridad(masa_g, masa_molar, volumen_ml):
+    \"\"\"Devuelve la molaridad (mol/L) de una disolución.\"\"\"
+    moles = masa_g / masa_molar
+    return moles / volumen_ml
+```
+
+El código se ve correcto y se ejecuta sin errores… pero tiene un problema.
+
+1. Pruébala con un caso que sepas resolver a mano: 5.844 g de NaCl (58.44 g/mol) en 100 mL
+   deberían dar **1.0 mol/L**.
+2. Encuentra el error y corrige la función.
+""")
+        + ejercicio("ej5", """
+def calcular_molaridad(masa_g, masa_molar, volumen_ml):
+    \"\"\"Devuelve la molaridad (mol/L) de una disolución.\"\"\"
+    moles = masa_g / masa_molar
+    return moles / volumen_ml
+
+print(calcular_molaridad(5.844, 58.44, 100.0))   # ¿Da 1.0 mol/L?
+""")
+        + md("""
 ## **Resumen de la sesión**
 
 **Tipos de datos:** `int` (enteros), `float` (decimales), `str` (texto), `bool` (`True`/`False`).
@@ -384,6 +447,8 @@ print(f"T2 = {T2} K")
 - `def nombre(parámetros): ... return resultado`: funciones.
 
 **Buenas prácticas:**
+- Intenta primero; usa la pista y la IA para entender, no para saltarte el ejercicio. Verifica
+  siempre lo que te propone un asistente.
 - Usa nombres de variables descriptivos (`masa_molar_hcl` en lugar de `m`).
 - Anota las unidades en comentarios.
 - Separa tu código en *datos → cálculo → resultado*.

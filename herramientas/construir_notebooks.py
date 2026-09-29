@@ -54,6 +54,9 @@ def _celdas(bloques, modulo, solucionario):
 
 
 def _guardar(celdas, ruta):
+    # Identificadores fijos: así, regenerar sin cambios de contenido no modifica los archivos
+    for numero, celda in enumerate(celdas):
+        celda["id"] = f"celda-{numero:03d}"
     nb = new_notebook(cells=celdas)
     nb.metadata = {
         "colab": {"provenance": [], "toc_visible": True},

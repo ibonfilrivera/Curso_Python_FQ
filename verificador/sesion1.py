@@ -1,6 +1,6 @@
 """Ejercicios de la Sesión 1: variables, operaciones, condicionales y funciones."""
 
-from .nucleo import (Sesion, ____, comparar_numero, normalizar_texto,
+from .nucleo import (Incorrecto, Sesion, ____, comparar_numero, normalizar_texto,
                      obtener, obtener_funcion, probar_funcion)
 
 sesion = Sesion("Sesión 1", "S1")
@@ -32,8 +32,8 @@ print(f"x = {x}")
 # --- Ejercicio 2 -------------------------------------------------------------
 
 def _ej2a(ns):
-    comparar_numero("masa_molar_hcn", obtener(ns, "masa_molar_hcn"), MM_HCN, rel=5e-3)
-    comparar_numero("moles_hcn", obtener(ns, "moles_hcn"), 10.0 / MM_HCN, rel=5e-3)
+    comparar_numero("masa_molar_hcn", obtener(ns, "masa_molar_hcn"), MM_HCN, rel=5e-3, unidades="g/mol")
+    comparar_numero("moles_hcn", obtener(ns, "moles_hcn"), 10.0 / MM_HCN, rel=5e-3, unidades="mol")
 
 
 ej2a = sesion.agregar(
@@ -112,7 +112,7 @@ print("Na–Cl:", clasificar_enlace(abs(chi_Na - chi_Cl)))
 
 def _ej4(ns):
     n_agua = obtener(ns, "n_agua")
-    comparar_numero("n_agua", n_agua, 50.0 / MM_AGUA, rel=5e-3)
+    comparar_numero("n_agua", n_agua, 50.0 / MM_AGUA, rel=5e-3, unidades="mol")
     funcion = obtener_funcion(ns, "calcular_temperatura")
     casos = [
         ((1.0, 22.4, 1.0), {}, 1.0 * 22.4 / (1.0 * R_ATM)),
@@ -122,8 +122,8 @@ def _ej4(ns):
     probar_funcion("calcular_temperatura", funcion, casos,
                    comparar=lambda o, e: abs(o - e) / e < 2e-3)
     n = 50.0 / MM_AGUA
-    comparar_numero("T1", obtener(ns, "T1"), 3.0 * 20.0 / (n * R_ATM), rel=5e-3)
-    comparar_numero("T2", obtener(ns, "T2"), 6.3 * 1.2 / (n * R_ATM), rel=5e-3)
+    comparar_numero("T1", obtener(ns, "T1"), 3.0 * 20.0 / (n * R_ATM), rel=5e-3, unidades="K")
+    comparar_numero("T2", obtener(ns, "T2"), 6.3 * 1.2 / (n * R_ATM), rel=5e-3, unidades="K")
 
 
 ej4 = sesion.agregar(
@@ -144,10 +144,45 @@ print(f"T1 = {T1:.2f} K, T2 = {T2:.2f} K")
 """)
 
 
+# --- Ejercicio 5: revisar código generado por IA ------------------------------------
+
+def _ej5(ns):
+    funcion = obtener_funcion(ns, "calcular_molaridad")
+    casos = [((5.844, 58.44, 100.0), 1.0), ((2.50, 58.44, 250.0), 2.50 / 58.44 / 0.250),
+             ((10.0, 40.0, 500.0), 0.5)]
+    for args, esperado in casos:
+        llamada = f"calcular_molaridad{args}"
+        try:
+            obtenido = funcion(*args)
+        except Exception as e:
+            raise Incorrecto(f"Al llamar `{llamada}` ocurrió un error: "
+                             f"`{type(e).__name__}: {e}`") from None
+        if obtenido is None:
+            raise Incorrecto(f"`{llamada}` devolvió `None`. ¿Olvidaste usar `return`?")
+        comparar_numero(llamada, obtenido, esperado, unidades="mol/L")
+    return ("Encontraste el error: la IA dividió entre mililitros y el resultado salía en mol/mL, "
+            "1000 veces menor. Por eso siempre hay que verificar lo que propone.")
+
+
+ej5 = sesion.agregar(
+    "ej5", "Revisar el código de un asistente de IA", _ej5,
+    pista="Lee el docstring: promete mol/L. ¿En qué unidades llega el volumen? Prueba la función "
+          "con 5.844 g de NaCl en 100 mL: deberías obtener 1.0 mol/L.",
+    solucion="""
+def calcular_molaridad(masa_g, masa_molar, volumen_ml):
+    \"\"\"Devuelve la molaridad (mol/L) de una disolución.\"\"\"
+    moles = masa_g / masa_molar
+    volumen_l = volumen_ml / 1000     # La IA olvidó convertir mL a L
+    return moles / volumen_l
+
+print(calcular_molaridad(5.844, 58.44, 100.0))   # 1.0 mol/L
+""")
+
+
 # --- Autoevaluación -----------------------------------------------------------
 
 def _auto1(ns):
-    comparar_numero("T_K", obtener(ns, "T_K"), 300 + 273.15)
+    comparar_numero("T_K", obtener(ns, "T_K"), 300 + 273.15, unidades="K")
 
 
 auto1 = sesion.agregar(
@@ -161,7 +196,7 @@ print(f"T = {T_K} K")
 
 
 def _auto2(ns):
-    comparar_numero("C_2", obtener(ns, "C_2"), 0.5 * 10.0 / 50.0)
+    comparar_numero("C_2", obtener(ns, "C_2"), 0.5 * 10.0 / 50.0, unidades="mol/L")
 
 
 auto2 = sesion.agregar(
@@ -184,8 +219,8 @@ def _auto3(ns):
     horas = distancia_km / 5
     energia = horas * 240
     comparar_numero("numero_pasos", obtener(ns, "numero_pasos"), pasos, rel=5e-3)
-    comparar_numero("tiempo_h", obtener(ns, "tiempo_h"), horas, rel=5e-3)
-    comparar_numero("energia_kcal", obtener(ns, "energia_kcal"), energia, rel=5e-3)
+    comparar_numero("tiempo_h", obtener(ns, "tiempo_h"), horas, rel=5e-3, unidades="hour")
+    comparar_numero("energia_kcal", obtener(ns, "energia_kcal"), energia, rel=5e-3, unidades="kcal")
     comparar_numero("costo_por_paso", obtener(ns, "costo_por_paso"), energia / pasos, rel=5e-3)
 
 
@@ -252,8 +287,8 @@ def _auto5(ns):
     casos = [((-5.0,), {}, "espontanea"), ((0.0,), {}, "equilibrio"),
              ((12.5,), {}, "no espontanea")]
     probar_funcion("clasificar_reaccion", clasificar, casos, comparar=_mismo_criterio)
-    comparar_numero("delta_g_25", obtener(ns, "delta_g_25"), 206.1 - 298.15 * 0.215)
-    comparar_numero("T_inversion", obtener(ns, "T_inversion"), 206.1 / 0.215, rel=5e-3)
+    comparar_numero("delta_g_25", obtener(ns, "delta_g_25"), 206.1 - 298.15 * 0.215, unidades="kJ/mol")
+    comparar_numero("T_inversion", obtener(ns, "T_inversion"), 206.1 / 0.215, rel=5e-3, unidades="K")
     return ("A 25 °C la reacción no es espontánea; por encima de ≈ 959 K el término "
             "TΔS domina y ΔG se vuelve negativo.")
 
