@@ -257,7 +257,9 @@ def test_registro_envia_resultados_sin_codigo(servidor, ns, capsys):
             break
         time.sleep(0.05)
     eventos = [(d["ejercicio"], d["evento"]) for d in _AppsScriptFalso.recibidos]
-    assert eventos == [("", "inicio"), ("ej1", "correcto"), ("ej3", "pista")]
+    # "inicio" se envía de forma síncrona; los demás van en hilos y pueden llegar en otro orden
+    assert eventos[0] == ("", "inicio")
+    assert sorted(eventos[1:]) == [("ej1", "correcto"), ("ej3", "pista")]
     assert all(set(d) == {"clave", "alumno", "sesion", "ejercicio", "evento", "intento",
                           "detalle", "marca_tiempo"} for d in _AppsScriptFalso.recibidos)
 
@@ -277,3 +279,75 @@ def test_variable_de_entorno_desactiva_el_registro(monkeypatch, capsys):
     s1.iniciar_registro("A01", "clave-prueba")
     assert "desactivado" in capsys.readouterr().out
     assert not registro.activo()
+
+
+# --- Proyecto final: valoración potenciométrica -------------------------------------------
+
+@pytest.fixture
+def crudo():
+    return pd.read_csv(RAIZ / "data/Amine new.csv", skiprows=[1, 2], encoding="utf-8-sig")
+
+
+def _titulacion(crudo):
+    titulacion = crudo.iloc[:, :2].dropna().astype(float)
+    titulacion.columns = ["V_uL", "pH"]
+    return titulacion.sort_values("V_uL").reset_index(drop=True)
+
+
+def test_proyecto_columnas_duplicadas(ns, crudo, capsys):
+    duplicada = crudo.iloc[:, [5, 6]].dropna().astype(float)
+    duplicada.columns = ["V_uL", "pH"]
+    ns.update(crudo=crudo, titulacion=pd.concat([_titulacion(crudo), duplicada]).sort_values("V_uL"))
+    estado, salida = verificar(s3.pf1, capsys)
+    assert estado == "incorrecto" and "repiten" in salida
+
+
+def test_proyecto_derivadas_reproducen_el_articulo(ns, crudo, capsys):
+    titulacion = _titulacion(crudo)
+    V, pH = titulacion["V_uL"].to_numpy(), titulacion["pH"].to_numpy()
+    primera = np.gradient(pH, V)
+    segunda = np.gradient(primera, V)
+    j = int(np.argmax(primera))
+    k = j - 1 if segunda[j] < 0 else j
+    v_d2 = V[k] - segunda[k] * (V[k + 1] - V[k]) / (segunda[k + 1] - segunda[k])
+    ns.update(titulacion=titulacion, primera=primera, segunda=segunda, V_eq_d1=V[j],
+              pKa_aparente=pH[j], V_eq_d2=v_d2, pH_eq_d2=float(np.interp(v_d2, V, pH)))
+    assert verificar(s3.pf2, capsys)[0] == "correcto"
+    assert abs(pH[j] - s3.PKA_LITERATURA) < 0.05          # 8.53 frente a 8.5 del artículo
+    ns["V_eq_d1"] = V[j] / 1000                            # En mL por error
+    estado, salida = verificar(s3.pf2, capsys)
+    assert estado == "incorrecto" and "factor de 0.001" in salida
+
+
+def test_proyecto_derivada_sin_volumen(ns, crudo, capsys):
+    titulacion = _titulacion(crudo)
+    ns.update(titulacion=titulacion, primera=np.gradient(titulacion["pH"].to_numpy()),
+              segunda=np.zeros(len(titulacion)))
+    estado, salida = verificar(s3.pf2, capsys)
+    assert estado == "incorrecto" and "np.gradient" in salida
+
+
+def test_proyecto_tabla_1(ns, capsys):
+    def leer_origin(archivo):
+        return pd.read_csv(RAIZ / "data" / archivo, skiprows=[1, 2], encoding="utf-8-sig")
+
+    def solo_el_maximo(V, pH, n):                  # Error típico: ignora n y la segunda transición
+        derivada = np.gradient(pH, V)
+        i = int(np.argmax(derivada))
+        return [(V[i], pH[i])]
+
+    ns.update(leer_origin=leer_origin, inflexiones=solo_el_maximo, tabla_pka=pd.DataFrame())
+    estado, salida = verificar(s3.pf4, capsys)
+    assert estado == "incorrecto" and "F-PEG-GA" in salida
+
+    filas = []
+    for nombre, (archivo, pkas) in s3.TABLA_1.items():
+        datos = leer_origin(archivo).iloc[:, :2].dropna().astype(float)
+        datos = datos.sort_values(datos.columns[0]).drop_duplicates(datos.columns[0])
+        V, pH = datos.iloc[:, 0].to_numpy(), datos.iloc[:, 1].to_numpy()
+        for (v, p), articulo in zip(s3._inflexiones_referencia(V, pH, len(pkas)), pkas):
+            assert abs(p - articulo) < 0.05             # Coincide con la Tabla 1 del artículo
+            filas.append({"nanoparticula": nombre, "V_eq": v, "pKa_aparente": p,
+                          "pKa_articulo": articulo})
+    ns.update(inflexiones=s3._inflexiones_referencia, tabla_pka=pd.DataFrame(filas))
+    assert verificar(s3.pf4, capsys)[0] == "correcto"

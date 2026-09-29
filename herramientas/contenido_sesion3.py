@@ -16,6 +16,7 @@ una base de datos con casi 10 000 compuestos.
 - Leer, filtrar, agrupar y resumir datos de laboratorio con Pandas.
 - Determinar experimentalmente la ley de Lambert-Beer y su intervalo de validez.
 - Representar moléculas y buscar subestructuras con RDKit.
+- *Si hay tiempo:* determinar el pKa aparente de nanopartículas a partir de una valoración real.
 """, carpeta, archivo)
         + instrucciones(3)
         + md("""
@@ -518,6 +519,275 @@ print(f"{n_benceno} compuestos contienen un anillo bencénico")
 **Para seguir aprendiendo:**
 - [Kaggle Learn: Pandas](https://www.kaggle.com/learn/pandas) y [Data Visualization](https://www.kaggle.com/learn/data-visualization).
 - [Tutorial de introducción de RDKit](https://www.rdkit.org/docs/GettingStartedInPython.html).
+""")
+        + md("""
+# **Proyecto final (opcional): pKa aparente de nanopartículas**
+
+> ⏱️ Este proyecto cierra el curso **si queda tiempo** en la Sesión 3; también puede terminarse
+> en casa. Integra lo aprendido: Pandas para leer y limpiar, NumPy y SciPy para derivar y
+> suavizar, y Matplotlib para reportar.
+
+### Contexto científico
+
+Analizaremos **valoraciones potenciométricas reales** de *fluorosomas*: nanopartículas
+autoensambladas basadas en PEG (`F-PEG-k`) cuya superficie se funcionalizó con distintos grupos
+`k`. Los grupos ionizables de la superficie determinan la carga de la partícula y su potencial
+zeta (ζ). Por eso su pKa aparente importa en nanomedicina: indica si la partícula cambia de carga
+en los microambientes ácidos de tumores o lisosomas (pH ≈ 5.0–6.5), donde se busca liberar
+fármacos.
+
+**Objetivo:** para cada curva, determinar el **volumen de equivalencia** de la transición de
+neutralización y el **pKa aparente** correspondiente, siguiendo el procedimiento del artículo:
+
+1. Calcular la derivada dpH/dV de la curva de valoración.
+2. El **punto de inflexión** (máximo de dpH/dV, donde d²pH/dV² cruza por cero) identifica la
+   equivalencia de la transición de neutralización: su volumen es V_eq.
+3. El **pH en ese volumen** es el pKa aparente de la nanopartícula.
+
+En la **Tabla 1** del artículo se reportan estos pKa aparentes:
+
+| Nanopartícula | Grupo en la superficie | pKa aparente | Archivo en `data/` |
+| :--- | :--- | :-: | :--- |
+| F-PEG-NH2 | Amino | 8.5 | `Amine new.csv` |
+| F-PEG-Gln | Glutamina | 6.9 | `Gln.csv` |
+| F-PEG-GA | Ácido glutámico | 6.3 y 8.3 | `+-.csv` |
+| F-PEG-SA | Ácido succínico | 8.0 | `SucA.csv` |
+""")
+        + md("""
+> 📌 **Nota: pKa aparente frente a pKa clásico.** El pKa **clásico** es una constante
+> termodinámica de una molécula aislada en disolución diluida; en la valoración de un ácido débil
+> corresponde al pH en la semiequivalencia, cuando la mitad del ácido está neutralizada. En una
+> nanopartícula, los grupos ionizables están anclados a una superficie: la carga que se acumula,
+> la cercanía entre grupos vecinos, el entorno local de la cubierta de PEG y la fuerza iónica
+> modifican la facilidad con la que cada grupo cede o acepta un protón, y la ionización se
+> reparte en un intervalo amplio de pH. Por eso la literatura habla de un **pKa aparente**,
+> definido de forma operativa por el procedimiento de medición; en este estudio, el pH en el punto
+> de inflexión de la transición de neutralización. No es el mismo número que el pKa clásico del
+> grupo en una molécula pequeña, y solo es comparable entre sistemas medidos con el mismo
+> protocolo.
+""")
+        + md("""
+### Los datos
+
+Los archivos se exportaron desde el proyecto de Origin del laboratorio. Origin escribe **tres
+filas de encabezado** (nombre, unidades y comentario) y agrega columnas con las derivadas que
+calculó; en `Amine new.csv`, además, repite al final los mismos datos de volumen y pH. El volumen
+de NaOH está en **µL**.
+""")
+        + code(f"""
+from urllib.parse import quote
+
+def leer_origin(archivo):
+    \"\"\"Lee un CSV exportado desde Origin (3 filas de encabezado) de la carpeta data/.\"\"\"
+    ruta_local = Path("../data") / archivo
+    fuente = ruta_local if ruta_local.exists() else f"{URL_CRUDA}/data/{{quote(archivo)}}"
+    # La fila 0 tiene los nombres; las filas 1 y 2 (unidades y comentarios) se omiten
+    return pd.read_csv(fuente, skiprows=[1, 2], encoding="utf-8-sig")
+
+crudo = leer_origin("Amine new.csv")
+print(f"{{crudo.shape[0]}} filas × {{crudo.shape[1]}} columnas: {{list(crudo.columns)}}")
+crudo.head()
+""")
+        + md("""
+### **Fase 1: Ingesta y limpieza**
+
+Empezamos con F-PEG-NH2. Construye el DataFrame `titulacion` con las columnas `V_uL` y `pH` a
+partir de las **dos primeras** columnas de `crudo`: sin valores nulos, con tipo `float` y ordenado
+por volumen. Calcularemos las derivadas nosotros mismos, así que no usaremos las de Origin.
+""")
+        + ejercicio("pf1", """
+titulacion = crudo.iloc[:, ____].copy()
+titulacion.columns = ["V_uL", "pH"]
+titulacion = (titulacion.____()
+              .astype(float)
+              .sort_values("V_uL")
+              .reset_index(drop=True))
+
+titulacion.head()
+""")
+        + md("""
+### **Fase 2: Volumen de equivalencia y pKa aparente por derivadas**
+
+`np.gradient(y, x)` calcula la derivada punto a punto con diferencias finitas, igual que Origin.
+
+1. Calcula `primera` (dpH/dV) y `segunda` (d²pH/dV²).
+2. **Primera derivada:** guarda en `V_eq_d1` el volumen de su máximo y en `pKa_aparente` el pH
+   medido en ese punto. Este es el procedimiento del artículo.
+3. **Segunda derivada:** entre dos puntos vecinos cambia de signo. Interpola linealmente el
+   volumen donde vale cero (`V_eq_d2`) y el pH correspondiente (`pH_eq_d2`).
+""")
+        + ejercicio("pf2", """
+V = titulacion["V_uL"].to_numpy()
+pH = titulacion["pH"].to_numpy()
+
+primera = ____
+segunda = ____
+
+j = np.argmax(primera)
+V_eq_d1 = ____
+pKa_aparente = ____
+
+# La segunda derivada cambia de signo entre los índices k y k + 1
+k = j - 1 if segunda[j] < 0 else j
+V_eq_d2 = V[k] - segunda[k] * (V[k + 1] - V[k]) / (segunda[k + 1] - segunda[k])
+pH_eq_d2 = ____        # Interpola con np.interp(V_eq_d2, V, pH)
+
+print(f"Primera derivada: V_eq = {V_eq_d1} µL, pKa aparente = {pKa_aparente}")
+print(f"Segunda derivada: V_eq = {V_eq_d2} µL, pH = {pH_eq_d2}")
+""")
+        + md("""
+### **Fase 3: ¿Qué tan sensible es el resultado? Suavizado con un spline**
+
+Las diferencias finitas solo «ven» los puntos medidos, cada 20 µL cerca del salto. Un **spline
+cúbico suavizado** (`UnivariateSpline`) permite evaluar la curva y su derivada entre los puntos,
+y sirve para estimar qué tanto depende el pKa aparente del método. El parámetro `s` controla el
+suavizado (prueba `s=0.05`).
+
+Guarda el spline en `spline` y el volumen y el pH del máximo de su derivada en `V_eq_spline` y
+`pH_eq_spline`.
+""")
+        + ejercicio("pf3", """
+from scipy.interpolate import UnivariateSpline
+
+spline = UnivariateSpline(V, pH, k=3, s=____)
+V_fina = np.linspace(V.min(), V.max(), 5000)
+pH_suave = spline(V_fina)
+primera_suave = spline.derivative()(V_fina)
+
+V_eq_spline = ____
+pH_eq_spline = ____
+print(f"Spline: V_eq = {V_eq_spline} µL, pH = {pH_eq_spline}")
+""")
+        + md("""
+### **Fase 4: Todas las nanopartículas frente a la Tabla 1**
+
+Algunas curvas tienen más de una transición: F-PEG-GA muestra **dos** máximos en dpH/dV, uno por
+cada tipo de grupo ionizable.
+
+1. Completa la función `inflexiones(V, pH, n)`, que devuelve una lista con `(V_eq, pKa_aparente)`
+   de los `n` máximos **más altos** de dpH/dV, ordenados por volumen. `find_peaks` de
+   `scipy.signal` encuentra todos los máximos locales de un arreglo. Si dos máximos tienen
+   exactamente la misma altura, se elige el de menor volumen, igual que `np.argmax`; el
+   ordenamiento `kind="stable"` lo garantiza.
+2. Aplícala a los cuatro archivos y construye el DataFrame `tabla_pka` con las columnas
+   `nanoparticula`, `V_eq`, `pKa_aparente` y `pKa_articulo` (una fila por transición).
+""")
+        + ejercicio("pf4", """
+from scipy.signal import find_peaks
+
+def inflexiones(V, pH, n):
+    \"\"\"Volumen y pH de los n máximos más altos de dpH/dV, ordenados por volumen.\"\"\"
+    derivada = np.gradient(pH, V)
+    picos, _ = find_peaks(derivada)
+    mayores = sorted(picos[np.argsort(-derivada[picos], kind="stable")[:____]])
+    return [(V[i], pH[i]) for i in mayores]
+
+tabla_1 = {                      # nanopartícula: (archivo, pKa aparentes de la Tabla 1)
+    "F-PEG-NH2": ("Amine new.csv", [8.5]),
+    "F-PEG-Gln": ("Gln.csv", [6.9]),
+    "F-PEG-GA": ("+-.csv", [6.3, 8.3]),
+    "F-PEG-SA": ("SucA.csv", [8.0]),
+}
+
+filas = []
+curvas = {}
+for nanoparticula, (archivo, pkas_articulo) in tabla_1.items():
+    datos = leer_origin(archivo).iloc[:, :2].dropna().astype(float)
+    datos.columns = ["V", "pH"]
+    datos = datos.sort_values("V").drop_duplicates("V")
+    curvas[nanoparticula] = datos
+    encontradas = inflexiones(datos["V"].to_numpy(), datos["pH"].to_numpy(), ____)
+    for (v_eq, pka), pka_articulo in zip(encontradas, pkas_articulo):
+        filas.append({"nanoparticula": nanoparticula, "V_eq": v_eq,
+                      "pKa_aparente": pka, "pKa_articulo": pka_articulo})
+
+tabla_pka = pd.DataFrame(filas)
+tabla_pka["diferencia"] = tabla_pka["pKa_aparente"] - tabla_pka["pKa_articulo"]
+tabla_pka.round(2)
+""")
+        + md("""
+### **Fase 5: Reporte**
+
+1. Crea la figura `fig_proyecto` con tres paneles: (1) curva de F-PEG-NH2 con el volumen de
+   equivalencia, (2) su primera derivada con V_eq marcado y (3) los pKa aparentes calculados
+   contra los del artículo. El primer panel ya está hecho como ejemplo.
+2. Reúne los resultados en el diccionario `resultados` y guárdalo en
+   `resultados_titulacion.json`.
+""")
+        + ejercicio("pf5", """
+import json
+
+fig_proyecto, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(16, 4.3))
+
+# Panel 1 (ejemplo): curva de F-PEG-NH2, volumen de equivalencia y valor del artículo
+ax1.plot(V, pH, "o", ms=3, color="gray", label="Experimental")
+ax1.plot(V_fina, pH_suave, color="tab:blue", label="Spline cúbico")
+ax1.axhline(8.5, color="tab:green", linestyle=":", label="pKa aparente del artículo (8.5)")
+ax1.axvline(V_eq_d1, color="tab:red", linestyle="--", label="V_eq")
+ax1.set_xlabel("V de NaOH (µL)")
+ax1.set_ylabel("pH")
+ax1.legend(fontsize=8)
+
+# Panel 2: primera derivada con V_eq marcado
+ax2.plot(____, ____, color="tab:purple")
+ax2.axvline(V_eq_d1, color="tab:red", linestyle="--")
+ax2.set_xlabel(____)
+ax2.set_ylabel(____)
+
+# Panel 3: pKa aparente calculado contra el del artículo
+ax3.plot([6, 9], [6, 9], color="gray", linestyle=":", label="Coincidencia perfecta")
+ax3.plot(tabla_pka["pKa_articulo"], ____, "o", ms=8)
+ax3.set_xlabel(____)
+ax3.set_ylabel(____)
+ax3.legend()
+
+fig_proyecto.tight_layout()
+plt.show()
+
+resultados = {
+    "V_eq_uL": float(V_eq_d1),
+    "pKa_aparente": ____,
+    "pH_eq_d2": ____,
+    "pH_eq_spline": ____,
+    "pKa_articulo": 8.5,
+    "comparacion": tabla_pka.to_dict("records"),
+}
+with open("resultados_titulacion.json", "w", encoding="utf-8") as archivo:
+    json.dump(resultados, archivo, indent=2, ensure_ascii=False)
+""")
+        + md("""
+### **Para discutir**
+
+- **Reproducibilidad:** ¿qué tan cerca quedaron tus pKa aparentes de la Tabla 1? ¿Qué diferencia
+  considerarías aceptable?
+- **Sensibilidad al método:** en F-PEG-NH2, la primera derivada, la segunda derivada y el spline
+  dan valores distintos. El salto es tan abrupto que el pH cambia más de una unidad en 20 µL. ¿Qué
+  incertidumbre le asignarías al pKa aparente?
+- **Dos transiciones:** ¿por qué F-PEG-GA tiene dos pKa aparentes? Piensa en los grupos ionizables
+  del ácido glutámico.
+- **Nanomedicina:** con estos pKa aparentes, ¿qué nanopartículas cambiarían su estado de
+  ionización entre la sangre (pH 7.4) y un lisosoma (pH ≈ 5)?
+
+### **Para ir más allá**
+
+- **Tus propias gráficas:** usa el diccionario `curvas` para dibujar las cuatro valoraciones y sus
+  derivadas en una misma figura (`plt.subplots(2, 4)`) y marca en cada una los pKa aparentes que
+  encontraste junto a los de la Tabla 1.
+- **Ruido:** la derivada de `Gln.csv` es ruidosa y tiene dos máximos de **exactamente** la misma
+  altura, en pH 6.92 y 7.20; el criterio de desempate decide el resultado. Suaviza la curva con un
+  spline y compara: ¿qué incertidumbre tiene el pKa aparente de F-PEG-Gln?
+- **Réplica:** `amine.csv` es otra valoración de F-PEG-NH2, con lecturas cada 50 µL. ¿Reproduce el
+  pKa aparente de `Amine new.csv`? ¿Qué podría explicar la diferencia?
+- **Escalas:** el eje horizontal de `SucA.csv` llega a unos 30 000 unidades, mucho más que las
+  demás curvas; podría registrar otra magnitud, como el tiempo del titulador. ¿Por qué el pKa
+  aparente no cambia si el eje está en otra escala, y el V_eq sí?
+
+### **Referencias**
+
+- Artículo: *Self-Assembled PEG-Based Fluorosomes for Cellular Internalization*. *ACS Applied
+  Nano Materials*. [doi:10.1021/acsanm.5c05222](https://doi.org/10.1021/acsanm.5c05222)
+- Datos: repositorio en Zenodo, registro 21227471.
+  [zenodo.org/records/21227471](https://zenodo.org/records/21227471) (licencia CC-BY 4.0)
 """)
         + cierre()
     )

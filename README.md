@@ -13,7 +13,7 @@ y Química Teórica. Curso intensivo de 12 horas (3 sesiones de 4 horas) en Goog
 | :--- | :--- | :--- | :---: |
 | **1** | Tipos de datos, operaciones, `if`/`elif`/`else`, funciones, uso responsable de la IA | Moles y moléculas, gases ideales, tipo de enlace, ΔG | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ibonfilrivera/Curso_Python_FQ/blob/main/notebooks_kaggle/Sesion_1.ipynb) |
 | **2** | Listas, tuplas, diccionarios, `for`, `while`, NumPy, unidades con pint · *extra:* clases | Masas molares, vida media, control de calidad, gases y disoluciones con unidades | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ibonfilrivera/Curso_Python_FQ/blob/main/notebooks_kaggle/Sesion_2.ipynb) |
-| **3** | SciPy, Matplotlib, Pandas, RDKit | Cinética, ley de Lambert-Beer, regla de Lipinski, solubilidad | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ibonfilrivera/Curso_Python_FQ/blob/main/notebooks_kaggle/Sesion_3.ipynb) |
+| **3** | SciPy, Matplotlib, Pandas, RDKit · *proyecto final opcional* | Cinética, ley de Lambert-Beer, regla de Lipinski, solubilidad, pKa aparente de nanopartículas | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ibonfilrivera/Curso_Python_FQ/blob/main/notebooks_kaggle/Sesion_3.ipynb) |
 
 ## ✅ Ejercicios con verificación automática
 
@@ -55,7 +55,7 @@ Curso_Python_FQ/
 ├── herramientas/         Generador de los notebooks y de los datos simulados
 ├── pruebas/              Pruebas automáticas (pytest y ejecución de todos los notebooks)
 ├── .github/workflows/    Integración continua en GitHub Actions
-└── data/                 curated_solubility.csv (AqSolDB), lambert_beer_kmno4.csv
+└── data/                 AqSolDB, datos de Lambert-Beer y del proyecto final
 ```
 
 ## 🛠️ Para el equipo docente: modificar el material
@@ -104,6 +104,17 @@ El resultado aparece en la pestaña **Actions** y en la insignia de arriba. Las 
 `data/lambert_beer_kmno4.csv` contiene lecturas **simuladas** de un espectrofotómetro (KMnO₄ a
 525 nm, estándares por triplicado y una muestra problema, con desviación de la linealidad por luz
 parásita). Se regenera con `python herramientas/generar_datos_lambert_beer.py`.
+
+Los archivos `Amine new.csv`, `Gln.csv`, `+-.csv` y `SucA.csv` contienen valoraciones
+potenciométricas reales de nanopartículas F-PEG-k (k = NH2, Gln, GA y SA; volumen de NaOH en
+µL), y `amine.csv` es una réplica de F-PEG-NH2. Se usan en el **proyecto final** de la Sesión 3
+(opcional, si hay tiempo): en cada curva, el volumen de equivalencia es el punto de inflexión
+(máximo de dpH/dV) y el pH en ese volumen es el pKa aparente, que se compara con la Tabla 1 del
+artículo. Los archivos se exportaron desde Origin y tienen tres filas de encabezado.
+
+- Artículo: *Self-Assembled PEG-Based Fluorosomes for Cellular Internalization*, *ACS Applied
+  Nano Materials*. [doi:10.1021/acsanm.5c05222](https://doi.org/10.1021/acsanm.5c05222)
+- Datos: [Zenodo, registro 21227471](https://zenodo.org/records/21227471) (CC-BY 4.0).
 
 `data/curated_solubility.csv` es **AqSolDB**: solubilidad acuosa curada de 9 982 compuestos con
 descriptores moleculares. Sorkun, M. C., Khetan, A. y Er, S. *Scientific Data* **6**, 143 (2019).

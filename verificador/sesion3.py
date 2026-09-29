@@ -1,9 +1,9 @@
-"""Ejercicios de la Sesión 3: SciPy, NumPy, Matplotlib, Pandas y RDKit."""
+"""Ejercicios de la Sesión 3: SciPy, Matplotlib, Pandas, RDKit y el proyecto final."""
 
 import math
 
-from .nucleo import (Incorrecto, Pendiente, Sesion, ____, _tiene_espacios, comparar_numero,
-                     obtener, obtener_funcion)
+from .nucleo import (Incorrecto, Pendiente, Sesion, ____, _PorCompletar, _tiene_espacios,
+                     comparar_numero, obtener, obtener_funcion)
 
 sesion = Sesion("Sesión 3", "S3")
 progreso = sesion.progreso
@@ -376,6 +376,354 @@ n_benceno = int(df["tiene_benceno"].sum())
 print(f"{n_benceno} de {len(df)} moléculas contienen un anillo bencénico")
 """)
 
+
+# --- Proyecto final (opcional): curva de valoración potenciométrica ---------------------
+
+PKA_LITERATURA = 8.5              # pKa aparente de F-PEG-NH2 reportado en la Tabla 1 del artículo
+
+# Tabla 1 del artículo: archivo de cada nanopartícula y sus pKa aparentes (uno por transición)
+TABLA_1 = {
+    "F-PEG-NH2": ("Amine new.csv", [8.5]),
+    "F-PEG-Gln": ("Gln.csv", [6.9]),
+    "F-PEG-GA": ("+-.csv", [6.3, 8.3]),
+    "F-PEG-SA": ("SucA.csv", [8.0]),
+}
+
+
+def _titulacion(ns):
+    """DataFrame del estudiante con columnas V_uL y pH, ya revisado."""
+    titulacion = obtener(ns, "titulacion")
+    if not hasattr(titulacion, "columns") or not {"V_uL", "pH"} <= set(titulacion.columns):
+        raise Incorrecto('`titulacion` debe ser un DataFrame con las columnas "V_uL" y "pH".')
+    return titulacion
+
+
+def _derivadas(titulacion):
+    """Primera y segunda derivada por diferencias finitas, como las calcula Origin."""
+    import numpy as np
+    V = titulacion["V_uL"].to_numpy(float)
+    pH = titulacion["pH"].to_numpy(float)
+    primera = np.gradient(pH, V)
+    segunda = np.gradient(primera, V)
+    return V, pH, primera, segunda
+
+
+def _cruce_segunda(V, segunda, j):
+    """Volumen donde la segunda derivada cruza por cero junto al máximo de la primera."""
+    k = j - 1 if segunda[j] < 0 else j
+    return V[k] - segunda[k] * (V[k + 1] - V[k]) / (segunda[k + 1] - segunda[k])
+
+
+def _pf1(ns):
+    crudo = obtener(ns, "crudo")
+    titulacion = _titulacion(ns)
+    import numpy as np
+    if titulacion[["V_uL", "pH"]].isna().any().any():
+        raise Incorrecto("`titulacion` todavía tiene valores nulos; usa `.dropna()`.")
+    if not titulacion["V_uL"].is_monotonic_increasing:
+        raise Incorrecto('Ordena `titulacion` por volumen con `.sort_values("V_uL")`.')
+    esperado = crudo.iloc[:, :2].dropna().astype(float)
+    if len(titulacion) != len(esperado):
+        raise Incorrecto(f"`titulacion` tiene {len(titulacion)} filas y se esperaban "
+                         f"{len(esperado)}. Usa solo las dos primeras columnas: las últimas "
+                         "repiten los mismos datos.")
+    if not np.allclose(np.sort(titulacion["pH"]), np.sort(esperado.iloc[:, 1])):
+        raise Incorrecto("Los valores de pH no coinciden con la segunda columna del archivo.")
+    return f"{len(titulacion)} lecturas, de {titulacion['V_uL'].max():.0f} µL de NaOH en total."
+
+
+pf1 = sesion.agregar(
+    "pf1", "(Proyecto) Ingesta y limpieza", _pf1,
+    pista="`crudo.iloc[:, :2]` toma las dos primeras columnas (volumen y pH). Renómbralas, "
+          "quita los nulos con `.dropna()`, convierte a `float` y ordena por volumen.",
+    solucion="""
+titulacion = crudo.iloc[:, :2].copy()
+titulacion.columns = ["V_uL", "pH"]
+titulacion = (titulacion.dropna()
+              .astype(float)
+              .sort_values("V_uL")
+              .reset_index(drop=True))
+
+print(f"{len(titulacion)} lecturas entre {titulacion['V_uL'].min():.0f} y "
+      f"{titulacion['V_uL'].max():.0f} µL")
+titulacion.head()
+""")
+
+
+def _pf2(ns):
+    titulacion = _titulacion(ns)
+    import numpy as np
+    V, pH, primera, segunda = _derivadas(titulacion)
+    for nombre, esperado in (("primera", primera), ("segunda", segunda)):
+        obtenido = obtener(ns, nombre)
+        if np.shape(obtenido) != np.shape(esperado) or not np.allclose(obtenido, esperado):
+            raise Incorrecto(f"`{nombre}` no coincide con la derivada esperada. Usa "
+                             "`np.gradient(y, V)` con el volumen como segundo argumento.")
+    j = int(np.argmax(primera))
+    comparar_numero("V_eq_d1", obtener(ns, "V_eq_d1"), V[j], unidades="uL")
+    comparar_numero("pKa_aparente", obtener(ns, "pKa_aparente"), pH[j], rel=1e-3)
+    v_cruce = _cruce_segunda(V, segunda, j)
+    comparar_numero("V_eq_d2", obtener(ns, "V_eq_d2"), v_cruce, rel=1e-3, unidades="uL")
+    comparar_numero("pH_eq_d2", obtener(ns, "pH_eq_d2"), float(np.interp(v_cruce, V, pH)),
+                    rel=1e-3)
+    return (f"Máximo de dpH/dV en {V[j]:.0f} µL (pH {pH[j]:.2f}); la segunda derivada cruza por "
+            f"cero en {v_cruce:.1f} µL (pH {np.interp(v_cruce, V, pH):.2f}). El artículo "
+            f"reporta pKa aparente = {PKA_LITERATURA}.")
+
+
+pf2 = sesion.agregar(
+    "pf2", "(Proyecto) Primera y segunda derivada", _pf2,
+    pista="`np.gradient(pH, V)` calcula dpH/dV punto a punto y `np.gradient(primera, V)` la "
+          "segunda derivada. El índice del máximo es `np.argmax(primera)`. La segunda derivada "
+          "cambia de signo entre dos puntos vecinos: interpola linealmente dónde vale cero.",
+    solucion="""
+V = titulacion["V_uL"].to_numpy()
+pH = titulacion["pH"].to_numpy()
+
+primera = np.gradient(pH, V)          # dpH/dV (µL⁻¹)
+segunda = np.gradient(primera, V)     # d²pH/dV² (µL⁻²)
+
+# Método de la primera derivada: el punto de inflexión es su máximo
+j = np.argmax(primera)
+V_eq_d1 = V[j]
+pKa_aparente = pH[j]
+
+# Método de la segunda derivada: el punto de inflexión es donde cruza por cero
+k = j - 1 if segunda[j] < 0 else j
+V_eq_d2 = V[k] - segunda[k] * (V[k + 1] - V[k]) / (segunda[k + 1] - segunda[k])
+pH_eq_d2 = np.interp(V_eq_d2, V, pH)
+
+print(f"Primera derivada: V = {V_eq_d1:.0f} µL, pH = {pKa_aparente:.2f}")
+print(f"Segunda derivada: V = {V_eq_d2:.1f} µL, pH = {pH_eq_d2:.2f}")
+""")
+
+
+def _pf3(ns):
+    titulacion = _titulacion(ns)
+    spline = obtener(ns, "spline")
+    V_fina = obtener(ns, "V_fina")
+    import numpy as np
+    if not hasattr(spline, "derivative"):
+        raise Incorrecto("`spline` debe ser un `UnivariateSpline` de `scipy.interpolate`.")
+    if len(V_fina) < 500:
+        raise Incorrecto("Usa una malla fina de al menos 500 volúmenes con `np.linspace`.")
+    residuo = np.sqrt(np.mean((spline(titulacion["V_uL"]) - titulacion["pH"]) ** 2))
+    if residuo > 0.1:
+        raise Incorrecto(f"El spline se aleja en promedio {residuo:.3f} unidades de pH de los "
+                         "datos: el suavizado es excesivo. Reduce el parámetro `s`.")
+    v_eq = V_fina[int(np.argmax(spline.derivative()(V_fina)))]
+    comparar_numero("V_eq_spline", obtener(ns, "V_eq_spline"), v_eq, rel=1e-3, unidades="uL")
+    comparar_numero("pH_eq_spline", obtener(ns, "pH_eq_spline"), float(spline(v_eq)), rel=1e-3)
+    return (f"Con el spline, la inflexión está en {v_eq:.0f} µL y pH {float(spline(v_eq)):.2f}. "
+            "Compara con las diferencias finitas: el salto es tan abrupto que el pH en la "
+            "inflexión depende del método.")
+
+
+pf3 = sesion.agregar(
+    "pf3", "(Proyecto) Suavizado con spline", _pf3,
+    pista="`UnivariateSpline(V, pH, k=3, s=0.05)` ajusta un spline cúbico. Evalúa su derivada "
+          "(`spline.derivative()`) en `V_fina` y busca el máximo con `np.argmax`.",
+    solucion="""
+from scipy.interpolate import UnivariateSpline
+
+spline = UnivariateSpline(V, pH, k=3, s=0.05)
+V_fina = np.linspace(V.min(), V.max(), 5000)
+pH_suave = spline(V_fina)
+primera_suave = spline.derivative()(V_fina)
+
+V_eq_spline = V_fina[np.argmax(primera_suave)]
+pH_eq_spline = float(spline(V_eq_spline))
+print(f"Spline: V = {V_eq_spline:.0f} µL, pH = {pH_eq_spline:.2f}")
+""")
+
+
+def _inflexiones_referencia(V, pH, n):
+    """Los n máximos más altos de dpH/dV, ordenados por volumen: [(V_eq, pH), ...]."""
+    import numpy as np
+    from scipy.signal import find_peaks
+    primera = np.gradient(pH, V)
+    picos, _ = find_peaks(primera)
+    mayores = sorted(picos[np.argsort(-primera[picos], kind="stable")[:n]])
+    return [(float(V[i]), float(pH[i])) for i in mayores]
+
+
+def _pf4(ns):
+    leer_origin = obtener_funcion(ns, "leer_origin")
+    inflexiones = obtener_funcion(ns, "inflexiones")
+    tabla = obtener(ns, "tabla_pka")
+    import numpy as np
+    esperado = []
+    for nombre, (archivo, pkas) in TABLA_1.items():
+        datos = leer_origin(archivo).iloc[:, :2].dropna().astype(float)
+        datos = datos.sort_values(datos.columns[0]).drop_duplicates(datos.columns[0])
+        V, pH = datos.iloc[:, 0].to_numpy(), datos.iloc[:, 1].to_numpy()
+        referencia = _inflexiones_referencia(V, pH, len(pkas))
+        try:
+            obtenido = inflexiones(V, pH, len(pkas))
+        except Exception as e:
+            raise Incorrecto(f"`inflexiones(V, pH, {len(pkas)})` falló con los datos de {nombre}: "
+                             f"`{type(e).__name__}: {e}`") from None
+        if obtenido is None:
+            raise Incorrecto("`inflexiones` devolvió `None`. ¿Olvidaste usar `return`?")
+        if len(obtenido) != len(referencia) or not np.allclose(
+                np.asarray(obtenido, dtype=float), np.asarray(referencia), rtol=1e-6):
+            devuelto = [(round(float(v)), round(float(p), 2)) for v, p in obtenido]
+            raise Incorrecto(f"Para {nombre}, `inflexiones` devolvió {devuelto}, pero se esperaba "
+                             f"{[(round(v), round(p, 2)) for v, p in referencia]}. Toma los "
+                             "máximos **más altos** de dpH/dV (en un empate, el de menor volumen) y "
+                             "ordénalos por volumen.")
+        esperado += [(nombre, p, articulo) for (_, p), articulo in zip(referencia, pkas)]
+    if not hasattr(tabla, "columns") or not {"nanoparticula", "pKa_aparente",
+                                             "pKa_articulo"} <= set(tabla.columns):
+        raise Incorrecto('`tabla_pka` debe ser un DataFrame con las columnas "nanoparticula", '
+                         '"V_eq", "pKa_aparente" y "pKa_articulo".')
+    if len(tabla) != len(esperado):
+        raise Incorrecto(f"`tabla_pka` tiene {len(tabla)} filas y se esperaban {len(esperado)}: "
+                         "una por transición (F-PEG-GA tiene dos).")
+    filas = sorted(zip(tabla["nanoparticula"], tabla["pKa_aparente"], tabla["pKa_articulo"]))
+    for (nombre, p, articulo), (n2, p2, a2) in zip(sorted(esperado), filas):
+        if nombre != n2 or abs(p - p2) > 1e-6 or abs(articulo - a2) > 1e-6:
+            raise Incorrecto(f"La fila de {nombre} no coincide: se esperaba pKa aparente "
+                             f"{p:.2f} y {articulo} en el artículo.")
+    diferencia = max(abs(p - a) for _, p, a in esperado)
+    return (f"Las {len(esperado)} transiciones coinciden con la Tabla 1 con una diferencia "
+            f"máxima de {diferencia:.2f} unidades de pH.")
+
+
+pf4 = sesion.agregar(
+    "pf4", "(Proyecto) Comparación con la Tabla 1", _pf4,
+    pista="Dentro de `inflexiones`, calcula `np.gradient(pH, V)`, encuentra todos sus máximos "
+          "con `find_peaks`, quédate con los `n` de mayor altura con "
+          "`np.argsort(-derivada[picos], kind=\"stable\")` y devuelve "
+          "`(V[i], pH[i])` para cada uno, ordenados por volumen.",
+    solucion="""
+from scipy.signal import find_peaks
+
+def inflexiones(V, pH, n):
+    \"\"\"Volumen y pH de los n máximos más altos de dpH/dV, ordenados por volumen.\"\"\"
+    derivada = np.gradient(pH, V)
+    picos, _ = find_peaks(derivada)
+    mayores = sorted(picos[np.argsort(-derivada[picos], kind="stable")[:n]])
+    return [(V[i], pH[i]) for i in mayores]
+
+tabla_1 = {                      # nanopartícula: (archivo, pKa aparentes de la Tabla 1)
+    "F-PEG-NH2": ("Amine new.csv", [8.5]),
+    "F-PEG-Gln": ("Gln.csv", [6.9]),
+    "F-PEG-GA": ("+-.csv", [6.3, 8.3]),
+    "F-PEG-SA": ("SucA.csv", [8.0]),
+}
+
+filas = []
+curvas = {}
+for nanoparticula, (archivo, pkas_articulo) in tabla_1.items():
+    datos = leer_origin(archivo).iloc[:, :2].dropna().astype(float)
+    datos.columns = ["V", "pH"]
+    datos = datos.sort_values("V").drop_duplicates("V")
+    curvas[nanoparticula] = datos
+    encontradas = inflexiones(datos["V"].to_numpy(), datos["pH"].to_numpy(), len(pkas_articulo))
+    for (v_eq, pka), pka_articulo in zip(encontradas, pkas_articulo):
+        filas.append({"nanoparticula": nanoparticula, "V_eq": v_eq,
+                      "pKa_aparente": pka, "pKa_articulo": pka_articulo})
+
+tabla_pka = pd.DataFrame(filas)
+tabla_pka["diferencia"] = tabla_pka["pKa_aparente"] - tabla_pka["pKa_articulo"]
+tabla_pka.round(2)
+""")
+
+
+def _pf5(ns):
+    resultados = obtener(ns, "resultados")
+    figura = obtener(ns, "fig_proyecto")
+    from matplotlib.figure import Figure
+    if not isinstance(figura, Figure) or len(figura.axes) < 3:
+        raise Incorrecto("`fig_proyecto` debe ser una figura con al menos 3 paneles: "
+                         "`fig_proyecto, ejes = plt.subplots(1, 3)`.")
+    sin_etiquetas = [i + 1 for i, ax in enumerate(figura.axes[:3])
+                     if not ax.get_xlabel().strip() or not ax.get_ylabel().strip()]
+    if sin_etiquetas:
+        raise Incorrecto(f"Al panel {sin_etiquetas[0]} le faltan etiquetas en los ejes.")
+    variables = {"V_eq_uL": "V_eq_d1", "pKa_aparente": "pKa_aparente",
+                 "pH_eq_d2": "pH_eq_d2", "pH_eq_spline": "pH_eq_spline"}
+    claves = set(variables) | {"pKa_articulo", "comparacion"}
+    if not isinstance(resultados, dict) or not claves <= set(resultados):
+        raise Incorrecto(f"`resultados` debe ser un diccionario con las claves {sorted(claves)}.")
+    if any(isinstance(valor, _PorCompletar) for valor in resultados.values()):
+        raise Pendiente("Sustituye los `____` del diccionario `resultados`.")
+    import json
+    import os
+    if not os.path.exists("resultados_titulacion.json"):
+        raise Incorrecto("Guarda `resultados` en el archivo `resultados_titulacion.json` con "
+                         "`json.dump`.")
+    try:
+        with open("resultados_titulacion.json", encoding="utf-8") as archivo:
+            guardado = json.load(archivo)
+    except ValueError:
+        raise Incorrecto("`resultados_titulacion.json` está incompleto o dañado: vuelve a "
+                         "ejecutar la celda que lo guarda.") from None
+    for clave, variable in variables.items():
+        comparar_numero(f'resultados["{clave}"]', guardado.get(clave),
+                        float(obtener(ns, variable)), rel=1e-6)
+    comparar_numero('resultados["pKa_articulo"]', guardado.get("pKa_articulo"), PKA_LITERATURA)
+    if len(guardado.get("comparacion", [])) != sum(len(p) for _, p in TABLA_1.values()):
+        raise Incorrecto('`resultados["comparacion"]` debe contener las filas de `tabla_pka`: '
+                         'usa `tabla_pka.to_dict("records")`.')
+    return "Proyecto completo: figura del reporte y resultados guardados en JSON."
+
+
+pf5 = sesion.agregar(
+    "pf5", "(Proyecto) Reporte final", _pf5,
+    pista="Crea tres paneles con `plt.subplots(1, 3)`: curva de F-PEG-NH2 con la inflexión, sus "
+          "derivadas con V_eq marcado (`ax.axvline`) y la comparación de `tabla_pka` con el "
+          "artículo. Guarda el diccionario con `json.dump(resultados, archivo)`.",
+    solucion="""
+import json
+
+fig_proyecto, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(16, 4.3))
+
+ax1.plot(V, pH, "o", ms=3, color="gray", label="Experimental")
+ax1.plot(V_fina, pH_suave, color="tab:blue", label="Spline cúbico")
+ax1.axhline(8.5, color="tab:green", linestyle=":", label="pKa aparente del artículo (8.5)")
+ax1.axvline(V_eq_d1, color="tab:red", linestyle="--", label=f"V_eq = {V_eq_d1:.0f} µL")
+ax1.set_xlabel("V de NaOH (µL)")
+ax1.set_ylabel("pH")
+ax1.set_title("Curva de valoración de F-PEG-NH2")
+ax1.legend(fontsize=8)
+
+ax2.plot(V, primera, color="tab:purple", label="dpH/dV")
+ax2.axvline(V_eq_d1, color="tab:red", linestyle="--")
+ax2.set_xlabel("V de NaOH (µL)")
+ax2.set_ylabel("dpH/dV (µL⁻¹)")
+ax2.set_title("Primera y segunda derivada")
+ax2b = ax2.twinx()                    # Segundo eje y para la segunda derivada
+ax2b.plot(V, segunda, color="tab:orange", alpha=0.7, label="d²pH/dV²")
+ax2b.axhline(0, color="gray", linewidth=0.8)
+ax2b.set_ylabel("d²pH/dV² (µL⁻²)")
+ax2.legend(loc="upper left", fontsize=8)
+ax2b.legend(loc="upper right", fontsize=8)
+
+ax3.plot([6, 9], [6, 9], color="gray", linestyle=":", label="Coincidencia perfecta")
+for nanoparticula, grupo in tabla_pka.groupby("nanoparticula"):
+    ax3.plot(grupo["pKa_articulo"], grupo["pKa_aparente"], "o", ms=8, label=nanoparticula)
+ax3.set_xlabel("pKa aparente del artículo (Tabla 1)")
+ax3.set_ylabel("pKa aparente calculado")
+ax3.set_title("Comparación con la literatura")
+ax3.legend(fontsize=8)
+
+fig_proyecto.tight_layout()
+plt.show()
+
+resultados = {
+    "V_eq_uL": float(V_eq_d1),
+    "pKa_aparente": float(pKa_aparente),
+    "pH_eq_d2": float(pH_eq_d2),
+    "pH_eq_spline": float(pH_eq_spline),
+    "pKa_articulo": 8.5,
+    "comparacion": tabla_pka.to_dict("records"),
+}
+with open("resultados_titulacion.json", "w", encoding="utf-8") as archivo:
+    json.dump(resultados, archivo, indent=2, ensure_ascii=False)
+print(json.dumps(resultados, indent=2, ensure_ascii=False))
+""")
 
 __all__ = ["____", "progreso", "iniciar_registro"] + [e.clave for e in sesion.ejercicios]
 sesion.bienvenida()
