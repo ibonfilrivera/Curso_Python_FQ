@@ -2,6 +2,8 @@
 
 import math
 
+import os
+
 from .nucleo import (Incorrecto, Pendiente, Sesion, ____, _PorCompletar, _tiene_espacios,
                      comparar_numero, obtener, obtener_funcion)
 
@@ -55,10 +57,11 @@ ajustes = {
     1: linregress(tiempo, ln_conc),
     2: linregress(tiempo, inv_conc),
 }
+mejor_orden = 0
 for orden, ajuste in ajustes.items():
     print(f"Orden {orden}: r² = {ajuste.rvalue**2:.5f}")
-
-mejor_orden = max(ajustes, key=lambda o: ajustes[o].rvalue**2)
+    if ajuste.rvalue**2 > ajustes[mejor_orden].rvalue**2:
+        mejor_orden = orden
 k = -ajustes[1].slope
 print(f"Mejor ajuste: orden {mejor_orden}, k = {k:.4f} min⁻¹")
 """)
@@ -361,8 +364,8 @@ def _ej6(ns):
 
 ej6 = sesion.agregar(
     "ej6", "Búsqueda de subestructuras", _ej6,
-    pista="Crea el patrón una sola vez con `Chem.MolFromSmarts(\"c1ccccc1\")` y, dentro de "
-          "la función, devuelve `mol.HasSubstructMatch(patron)` (o `False` si `mol` es `None`).",
+    pista="`df[\"Mols\"].apply(tiene_benceno)` aplica la función a cada molécula. Para contar, "
+          "suma la columna: `int(df[\"tiene_benceno\"].sum())`.",
     solucion="""
 patron_benceno = Chem.MolFromSmarts("c1ccccc1")
 
@@ -592,10 +595,8 @@ def _pf4(ns):
 
 pf4 = sesion.agregar(
     "pf4", "(Proyecto) Comparación con la Tabla 1", _pf4,
-    pista="Dentro de `inflexiones`, calcula `np.gradient(pH, V)`, encuentra todos sus máximos "
-          "con `find_peaks`, quédate con los `n` de mayor altura con "
-          "`np.argsort(-derivada[picos], kind=\"stable\")` y devuelve "
-          "`(V[i], pH[i])` para cada uno, ordenados por volumen.",
+    pista="El número de transiciones de cada nanopartícula es `len(pkas_articulo)`: F-PEG-GA tiene "
+          "dos y las demás, una.",
     solucion="""
 from scipy.signal import find_peaks
 
@@ -724,6 +725,10 @@ with open("resultados_titulacion.json", "w", encoding="utf-8") as archivo:
     json.dump(resultados, archivo, indent=2, ensure_ascii=False)
 print(json.dumps(resultados, indent=2, ensure_ascii=False))
 """)
+
+# Ejercicios adicionales del equipo docente (contenido_extra/sesion3/)
+globals().update(sesion.cargar_adicionales(
+    os.path.join(os.path.dirname(__file__), "adicionales_sesion3.json")))
 
 __all__ = ["____", "progreso", "iniciar_registro"] + [e.clave for e in sesion.ejercicios]
 sesion.bienvenida()

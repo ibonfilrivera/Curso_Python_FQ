@@ -8,10 +8,11 @@ on:
 
 concurrency:
   group: pruebas-${{ github.ref }}
-  cancel-in-progress: true
+  # En main no se cancela una ejecución en curso: podría estar subiendo notebooks regenerados
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
-  contents: read
+  contents: write   # Para subir los notebooks regenerados a main
 
 env:
   # Nunca enviar datos a la hoja de registro real durante las pruebas
@@ -27,6 +28,8 @@ jobs:
     steps:
       - name: Descargar el repositorio
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # Historial completo para saber qué archivos cambió el push
 
       - name: Instalar Python 3.12 (la versión de Google Colab)
         uses: actions/setup-python@v5
@@ -47,11 +50,26 @@ jobs:
           esprima.parseScript(open('seguimiento/registro_apps_script.gs', encoding='utf-8').read());
           print('Apps Script: sintaxis correcta')"
 
-      - name: Los notebooks generados coinciden con sus fuentes
+      - name: Regenerar notebooks (incluye el material de contenido_extra/)
+        run: python herramientas/construir_notebooks.py
+
+      - name: Nadie editó a mano los notebooks generados
+        if: github.event_name == 'push'
+        env:
+          ANTES: ${{ github.event.before }}
         run: |
-          python herramientas/construir_notebooks.py
-          git diff --exit-code -- notebooks_kaggle soluciones seguimiento/Tablero_docente.ipynb \
-            || { echo "::error::Regenera los notebooks con 'python herramientas/construir_notebooks.py' y súbelos."; exit 1; }
+          GENERADOS="notebooks_kaggle soluciones seguimiento/Tablero_docente.ipynb verificador/adicionales_sesion1.json verificador/adicionales_sesion2.json verificador/adicionales_sesion3.json"
+          if git diff --quiet -- $GENERADOS; then
+            echo "Los notebooks generados están al día."
+            exit 0
+          fi
+          if [ -n "$ANTES" ] && [ "$ANTES" != "0000000000000000000000000000000000000000" ] \
+             && [ -n "$(git diff --name-only "$ANTES" HEAD -- $GENERADOS)" ]; then
+            echo "::error::Se editaron a mano notebooks generados. Pon el material nuevo en contenido_extra/ (ver contenido_extra/README.md) o pide a la coordinación que traslade los cambios con herramientas/comparar_notebook.py."
+            git diff --stat -- $GENERADOS
+            exit 1
+          fi
+          echo "Hay material nuevo: los notebooks regenerados se subirán al final si las pruebas pasan."
 
       - name: Los datos de Lambert-Beer son reproducibles
         run: |
@@ -63,3 +81,16 @@ jobs:
 
       - name: Ejecutar solucionarios, notebooks del estudiante y tablero docente
         run: python pruebas/ejecutar_notebooks.py
+
+      - name: Subir los notebooks regenerados
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          git add notebooks_kaggle soluciones seguimiento/Tablero_docente.ipynb verificador/adicionales_sesion*.json
+          if git diff --cached --quiet; then
+            echo "Nada que actualizar."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Regenerar notebooks con el material de contenido_extra/ (automático)"
+          git push

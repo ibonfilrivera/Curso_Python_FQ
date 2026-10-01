@@ -5,19 +5,18 @@ from bloques import cierre, code, ejercicio, encabezado, instrucciones, md
 
 def fuente(carpeta, archivo):
     return (
-        encabezado(2, "Estructuras de datos, ciclos y NumPy", """
-En la sesión anterior aprendimos los tipos de datos, las operaciones y los condicionales
-(`if`, `elif`, `else`). Ahora aprenderemos a **guardar colecciones de datos** (`list`, `tuple`,
-`dict`), a **repetir instrucciones** con los ciclos `for` y `while`, y a hacer cálculos con
-vectores y matrices usando **NumPy**, cuidando las unidades con **pint**. Si queda tiempo, veremos como tema extra una introducción
-a la programación orientada a objetos.
+        encabezado(2, "Estructuras de datos, decisiones y ciclos", """
+En la sesión anterior aprendimos los tipos de datos, las operaciones, NumPy y las unidades con
+pint. Ahora aprenderemos a **guardar colecciones de datos** (`list`, `tuple`, `dict`), a **tomar
+decisiones** con condicionales (`if`, `elif`, `else`) y a **repetir instrucciones** con los ciclos
+`for` y `while`. Si queda tiempo, veremos dos temas extra: cómo escribir nuestras propias
+**funciones** y una introducción a la **programación orientada a objetos**.
 
 **Al terminar podrás:**
 - Crear, consultar y modificar listas, tuplas y diccionarios.
+- Comparar valores y usar `if`, `elif` y `else` para clasificar resultados.
 - Recorrer colecciones con `for` y repetir cálculos con `while`.
 - Filtrar datos experimentales de forma automática, con ciclos y con máscaras de NumPy.
-- Operar con vectores y matrices y resolver sistemas de ecuaciones con NumPy.
-- Evitar errores de unidades (como los factores de 1000) con la biblioteca pint.
 """, carpeta, archivo)
         + instrucciones(2)
         + md("""
@@ -194,6 +193,149 @@ masa_molar_fe2o3 = ____
 print(f"M(Fe₂O₃) = {masa_molar_fe2o3} g/mol")
 """)
         + md("""
+## **Variables booleanas y comparaciones**
+
+Una variable booleana solo puede valer `True` (verdadero) o `False` (falso). Se obtienen al
+comparar valores con los operadores `<`, `<=`, `>`, `>=`, `==` (igual) y `!=` (diferente).
+
+> ⚠️ `=` **asigna** un valor; `==` **compara** dos valores.
+""")
+        + code("""
+ph = 4
+
+# ¿El pH es menor que 7?
+ph < 7
+""")
+        + code("""
+# ¿El pH es exactamente igual a 7?
+ph == 7
+""")
+        + code("""
+# ¿El pH es mayor o igual que 7?
+ph >= 7
+""")
+        + code("""
+# ¿El pH es diferente de 7?
+ph != 7
+""")
+        + md("""
+## **El condicional `if`**
+
+Las estructuras `if`, `elif` y `else` controlan el flujo del programa con base en
+**condiciones**:
+
+- `if`: ejecuta un bloque de código si la condición es verdadera.
+- `elif` (*else if*): evalúa una nueva condición si las anteriores fueron falsas. Puede haber
+  varios.
+- `else`: se ejecuta si ninguna condición anterior fue verdadera. Es opcional.
+
+Los bloques se delimitan con **sangría** (4 espacios) después de los dos puntos `:`.
+""")
+        + code("""
+# Clasificamos el estado de agregación del agua a 1 atm según su temperatura
+T_fusion = 0          # °C
+T_ebullicion = 100    # °C
+
+T = float(input("¿A qué temperatura está el agua? (°C): "))
+
+if T > T_ebullicion:
+    print("El agua está en fase gaseosa.")
+elif T < T_fusion:      # Solo se evalúa si la condición del if fue falsa
+    print("El agua está en fase sólida.")
+else:                   # Se ejecuta cuando todas las condiciones anteriores son falsas
+    print("El agua está en fase líquida.")
+""")
+        + md("""
+## **Operadores lógicos**
+
+Para combinar condiciones usamos `and`, `or` y `not`:
+
+| A | B | `A and B` | `A or B` | `not A` |
+| :-: | :-: | :-: | :-: | :-: |
+| `True` | `True` | `True` | `True` | `False` |
+| `True` | `False` | `False` | `True` | `False` |
+| `False` | `True` | `False` | `True` | `True` |
+| `False` | `False` | `False` | `False` | `True` |
+""")
+        + code("""
+# Clasificamos disoluciones según su pH combinando condiciones con 'and'
+ph = 8
+
+if 0 <= ph < 7:                 # Equivale a (ph >= 0) and (ph < 7)
+    print("La disolución es ácida.")
+elif ph == 7:
+    print("La disolución es neutra.")
+elif (ph > 7) and (ph <= 14):
+    print("La disolución es básica.")
+else:
+    print("El pH está fuera del intervalo 0–14.")
+""")
+        + md(r"""
+### **Ejercicio 3: Clasificación de enlaces**
+
+Según la diferencia de electronegatividad $\Delta \chi$ entre dos átomos, podemos predecir el tipo
+de enlace que forman:
+
+- Covalente no polar: $\Delta \chi < 0.5$
+- Covalente polar: $0.5 \leq \Delta \chi < 1.7$
+- Iónico: $\Delta \chi \geq 1.7$
+
+Usa `if`, `elif` y `else` para guardar en `tipo_enlace` uno de los textos `"covalente no polar"`,
+`"covalente polar"` o `"iónico"`, según el valor de `delta_chi`. La función `abs()` da el valor
+absoluto de la diferencia.
+
+Cuando funcione con Na–Cl, cambia los átomos (por ejemplo, C–H u O–H) y vuelve a ejecutar la celda
+y la verificación.
+""")
+        + code("""
+# Electronegatividades de Pauling
+chi_H = 2.20
+chi_C = 2.55
+chi_N = 3.04
+chi_O = 3.44
+chi_F = 3.98
+chi_Na = 0.93
+chi_Mg = 1.31
+chi_Cl = 3.16
+""")
+        + ejercicio("ej3", """
+delta_chi = abs(chi_Na - chi_Cl)
+
+if ____:
+    tipo_enlace = "covalente no polar"
+elif ____:
+    tipo_enlace = ____
+else:
+    tipo_enlace = ____
+
+print(f"Δχ = {delta_chi:.2f} → enlace {tipo_enlace}")
+""")
+        + md(r"""
+### **Ejercicio 4: Temperatura de un gas ideal**
+
+Despejando $PV = nRT$ obtenemos $T = \frac{PV}{nR}$, con $R = 0.0821~\frac{\text{atm·L}}{\text{mol·K}}$.
+
+1. Calcula la cantidad de sustancia `n_agua` en 50.0 g de agua.
+2. Calcula a qué temperatura se cumplen las siguientes condiciones y guarda los resultados en
+   `T1` y `T2`:
+   - $P = 3.0~\text{atm},~V = 20.0~\text{L}$
+   - $P = 6.3~\text{atm},~V = 1.2~\text{L}$
+
+> 🤔 **Para reflexionar:** ¿tiene sentido físico tratar al agua como gas ideal a esas
+> temperaturas? ¿En qué fase estaría realmente?
+""")
+        + ejercicio("ej4", """
+m_agua = 50.0       # g
+MM_agua = ____      # g/mol
+n_agua = ____
+R = 0.0821          # atm·L/(mol·K)
+
+T1 = ____           # P = 3.0 atm, V = 20.0 L
+T2 = ____           # P = 6.3 atm, V = 1.2 L
+print(f"T1 = {T1} K")
+print(f"T2 = {T2} K")
+""")
+        + md("""
 ## **El ciclo `for`**
 
 Repite un bloque de código **para cada elemento** de una secuencia (lista, tupla, texto,
@@ -317,14 +459,14 @@ for n in range(1, 101):   # Como máximo 100 repeticiones
 print(f"Se necesitan {n} vidas medias.")
 """)
         + md("""
-### **Ejercicio 3: Ahorros**
+### **Ejercicio 5: Ahorros**
 
 Ahorras \\$300 pesos al mes para comprar un celular que cuesta \\$7,000 pesos.
 
 1. Con un `for`, construye la lista `ahorros` con lo que habrás ahorrado a los 10, 20 y 30 meses.
 2. Con un `while`, calcula `meses_necesarios` para poder comprar el celular.
 """)
-        + ejercicio("ej3", """
+        + ejercicio("ej5", """
 precio_celular = 7000
 ahorro_mensual = 300
 
@@ -369,14 +511,14 @@ print(f"Se generaron {len(mediciones)} mediciones. Las primeras 10: {mediciones[
 print(f"Mínimo: {min(mediciones)} ppm, máximo: {max(mediciones)} ppm")
 """)
         + md("""
-### **Ejercicio 4: Clasificación de muestras**
+### **Ejercicio 6: Clasificación de muestras**
 
 Recorre `mediciones` y construye dos listas con los **índices** (posiciones) de las muestras:
 
 - `indices_peligrosas`: concentración mayor a 50 ppm y menor o igual a 100 ppm.
 - `indices_criticas`: concentración mayor a 100 ppm.
 """)
-        + ejercicio("ej4", """
+        + ejercicio("ej6", """
 indices_peligrosas = []
 indices_criticas = []
 
@@ -387,247 +529,19 @@ print(f"Muestras peligrosas: {len(indices_peligrosas)}")
 print(f"Muestras críticas: {len(indices_criticas)}")
 """)
         + md("""
-## **Introducción a NumPy**
-
-Las listas de Python son flexibles, pero lentas para cálculos numéricos. **NumPy** es la
-biblioteca base del cómputo científico en Python: ofrece los **arreglos** (`np.array`), que
-permiten operar con todos los elementos a la vez, sin escribir un ciclo, y son mucho más rápidos.
-
-Una **biblioteca** es un conjunto de funciones que alguien más escribió y que podemos reutilizar.
-Se carga con `import`, y es costumbre darle un alias corto:
+Con los arreglos de NumPy (Sesión 1) y las comparaciones de esta sesión, el mismo filtrado
+se hace **sin ciclo**: una comparación produce un arreglo de `True`/`False` (una *máscara*) que
+sirve para seleccionar elementos.
 """)
         + code("""
-import time
-
 import numpy as np
-""")
-        + md("Comparemos el tiempo para elevar al cuadrado un millón de números con una lista y con un arreglo:")
-        + code("""
-lista = list(range(1_000_000))
-arreglo = np.array(lista)
 
-inicio = time.perf_counter()
-cuadrados_lista = [valor**2 for valor in lista]
-tiempo_lista = time.perf_counter() - inicio
-
-inicio = time.perf_counter()
-cuadrados_arreglo = arreglo**2          # Operación vectorizada: sin ciclo explícito
-tiempo_arreglo = time.perf_counter() - inicio
-
-print(f"Con lista:   {tiempo_lista * 1000:.1f} ms")
-print(f"Con arreglo: {tiempo_arreglo * 1000:.1f} ms  ({tiempo_lista / tiempo_arreglo:.0f} veces más rápido)")
-""")
-        + md("""
-Con arreglos, el ejercicio de las muestras peligrosas se resuelve **sin ciclo**: una comparación
-produce un arreglo de `True`/`False` (una *máscara*) que sirve para filtrar.
-""")
-        + code("""
 concentraciones = np.array(mediciones)
 
 peligrosas = (concentraciones > 50) & (concentraciones <= 100)   # Máscara booleana
 print(f"Peligrosas: {peligrosas.sum()} muestras")
 print(f"Índices: {np.where(peligrosas)[0]}")
 print(f"Concentración promedio de las peligrosas: {concentraciones[peligrosas].mean():.1f} ppm")
-""")
-        + md("Los arreglos representan vectores y matrices, y permiten las operaciones del álgebra lineal:")
-        + code("""
-matriz_A = np.array([[1, 2],
-                     [3, 4]])
-matriz_B = np.array([[5, 6],
-                     [7, 8]])
-
-# Producto elemento a elemento (NO es el producto de matrices)
-print("A * B =\\n", matriz_A * matriz_B)
-
-# Producto matricial (filas por columnas)
-print("A @ B =\\n", matriz_A @ matriz_B)
-
-# Transpuesta
-print("Aᵀ =\\n", matriz_A.T)
-""")
-        + md("""
-Al igual que las listas, los arreglos se indexan; además podemos extraer filas o columnas
-completas con **rebanadas** (*slicing*): `arr[fila, columna]`, donde `:` significa "todas".
-""")
-        + code("""
-arr = np.arange(9).reshape(3, 3)    # Números del 0 al 8 acomodados en una matriz 3×3
-print(arr, "forma:", arr.shape)
-
-print("Primera fila:", arr[0])
-print("Elemento (0, 1):", arr[0, 1])
-print("Primera columna:", arr[:, 0])
-
-arr[0, :] = [10, 20, 30]            # Reemplazamos la primera fila
-print(arr)
-""")
-        + md("El módulo `np.linalg` contiene las funciones más comunes de álgebra lineal:")
-        + code("""
-print("Determinante de A:", np.linalg.det(matriz_A))
-
-valores_propios, vectores_propios = np.linalg.eig(matriz_A)
-print("Valores propios:", valores_propios)
-print("Vectores propios (columnas):\\n", vectores_propios)
-""")
-        + code("""
-# Resolver el sistema   2x +  y +  z = 10
-#                        x -  y + 2z =  5
-#                       3x + 2y -  z =  7
-coeficientes = np.array([[2,  1,  1],
-                         [1, -1,  2],
-                         [3,  2, -1]])
-resultados = np.array([10, 5, 7])
-
-solucion = np.linalg.solve(coeficientes, resultados)
-print("x, y, z =", solucion)
-""")
-        + md(r"""
-### **Ejercicio 5: Matriz de rotación**
-
-Para rotar un vector en $\mathbb{R}^2$ un ángulo $\theta$ se multiplica por la matriz de rotación:
-
-$$R(\theta) = \begin{pmatrix}
-\cos\theta & -\sin\theta \\
-\sin\theta & \cos\theta
-\end{pmatrix}$$
-
-Escribe la función `rotar_vector(vector, angulo_grados)` que devuelva el vector rotado.
-""")
-        + ejercicio("ej5", """
-def rotar_vector(vector, angulo_grados):
-    theta = ____
-    R = ____
-    return ____
-
-print(rotar_vector([1, 0], 90))   # Debe dar aproximadamente [0, 1]
-""")
-        + md(r"""
-### **Ejercicio 6: Regla de Cramer**
-
-Para un sistema de $2 \times 2$
-
-$$\begin{aligned}
-ax + by &= e \\
-cx + dy &= f
-\end{aligned}$$
-
-la regla de Cramer da $x = \frac{\Delta_x}{\Delta}$ y $y = \frac{\Delta_y}{\Delta}$, con
-
-$$\Delta = \begin{vmatrix} a & b \\ c & d \end{vmatrix}, \quad
-\Delta_x = \begin{vmatrix} e & b \\ f & d \end{vmatrix}, \quad
-\Delta_y = \begin{vmatrix} a & e \\ c & f \end{vmatrix}$$
-
-Escribe `resolver_cramer_2x2(A, b)` que devuelva un arreglo `[x, y]`, y compara tu resultado
-con `np.linalg.solve`.
-""")
-        + ejercicio("ej6", """
-def resolver_cramer_2x2(A, b):
-    A = np.array(A, dtype=float)
-    delta = ____
-
-    A_x = A.copy()
-    A_x[:, 0] = b
-    A_y = ____
-    ____
-
-    return ____
-
-A = np.array([[3, 2], [4, -1]])
-b = np.array([12, 5])
-print(resolver_cramer_2x2(A, b), np.linalg.solve(A, b))
-""")
-        + md("""
-## **Unidades con pint**
-
-Muchos errores en los cálculos químicos no son de programación sino de **unidades**: usar mL
-donde iban L, g donde iban kg o °C donde iba K. El resultado sale 1000 veces más grande o más
-pequeño, y Python no se queja porque solo ve números.
-
-La biblioteca **pint** une cada número con su unidad. Así, las conversiones se hacen solas y
-Python se detiene si intentas combinar unidades incompatibles.
-""")
-        + code("""
-try:
-    import pint
-except ImportError:                     # Si no está instalada (por ejemplo, en Colab)
-    import subprocess
-    subprocess.run([sys.executable, "-m", "pip", "install", "-q", "pint"], check=True)
-
-from pint import UnitRegistry
-
-ureg = UnitRegistry()     # Catálogo de unidades
-Q_ = ureg.Quantity        # Atajo para crear cantidades, útil con temperaturas
-""")
-        + md("Una **cantidad** es un número multiplicado por una unidad. Con `.to()` se convierte a otra unidad:")
-        + code("""
-volumen = 250 * ureg.mL
-masa = 2.5 * ureg.kg
-
-print(volumen.to("L"))
-print(masa.to("g"))
-print((1 * ureg.atm).to("kPa"))
-print(f"{(8.314 * ureg('J/(mol*K)')).to('L*atm/(mol*K)'):.5f}")   # R en otras unidades
-""")
-        + md("""
-Las unidades se multiplican y se dividen junto con los números. Veamos el error típico de
-calcular una concentración con el volumen en mililitros:
-""")
-        + code("""
-moles = 0.0428 * ureg.mol
-volumen = 250 * ureg.mL
-
-concentracion = moles / volumen
-print(concentracion)                  # mol/mL: correcto, pero en unidades poco usuales
-print(concentracion.to("mol/L"))      # pint hace la conversión por ti
-""")
-        + md("Si combinas unidades incompatibles, pint lanza un `DimensionalityError` en lugar de darte un resultado sin sentido:")
-        + code("""
-masa = 5 * ureg.g
-volumen = 100 * ureg.mL
-
-masa + volumen      # ¿Sumar gramos con mililitros? Error a propósito
-""", error_esperado=True)
-        + md("""
-Las temperaturas en °C necesitan cuidado: 20 °C no es «el doble» de 10 °C. Crea la cantidad con
-`Q_(valor, ureg.degC)` y conviértela a kelvin antes de multiplicar o dividir.
-""")
-        + code("""
-T = Q_(25.0, ureg.degC)
-print(T.to("K"))
-""")
-        + md(r"""
-### **Ejercicio 7a: Gas ideal con unidades**
-
-Calcula la presión de 0.250 mol de un gas ideal a 25.0 °C en un recipiente de 500 mL, usando
-$R = 0.082057~\frac{\text{L·atm}}{\text{mol·K}}$ y $P = \frac{nRT}{V}$.
-
-- Guarda en `presion` el resultado en **atm** (usa `.to("atm")`).
-- Guarda en `presion_kpa` la misma presión en **kPa**.
-
-Observa que no necesitas convertir los mL ni los °C a mano.
-""")
-        + ejercicio("ej7a", """
-n = 0.250 * ureg.mol
-T = Q_(25.0, ureg.degC)
-V = ____
-R = 0.082057 * ureg("L * atm / (mol * K)")
-
-presion = ____
-presion_kpa = ____
-print(presion, presion_kpa)
-""")
-        + md("""
-### **Ejercicio 7b: Molaridad con unidades**
-
-Se disuelven 2.50 g de NaCl (58.44 g/mol) y se aforan a 250 mL. Calcula la molaridad en
-`molaridad`, como cantidad de pint expresada en mol/L.
-""")
-        + ejercicio("ej7b", """
-masa = ____
-masa_molar = 58.44 * ureg("g/mol")
-volumen = ____
-
-molaridad = ____
-print(molaridad)
 """)
         + md("""
 ## **Resumen de la sesión**
@@ -641,51 +555,56 @@ print(molaridad)
 **Funciones y métodos útiles:** `len()`, `max()`, `min()`, `sum()`, `lista.append(x)`,
 `lista.remove(x)`, `range()`, `enumerate()`, `dic.items()`.
 
+**Decisiones:** las comparaciones (`<`, `<=`, `==`, `!=`…) producen `True` o `False`; `if`,
+`elif` y `else` ejecutan bloques según esas condiciones, que se combinan con `and`, `or` y `not`.
+
 **Ciclos:**
 - `for`: recorre cada elemento de una secuencia.
 - `while`: repite mientras una condición sea verdadera. ¡Asegúrate de que en algún momento sea falsa!
 - `break`: sale del ciclo.
 
-**NumPy:** `np.array()` crea arreglos; las operaciones se aplican a todos los elementos a la vez
-(`arreglo**2`), las máscaras filtran (`arreglo[arreglo > 50]`), `@` es el producto matricial y
-`np.linalg` resuelve sistemas de ecuaciones, determinantes y valores propios.
+**NumPy con comparaciones:** una comparación con un arreglo produce una máscara de
+`True`/`False` que filtra sin ciclo: `arreglo[arreglo > 50]`.
 
-**pint:** `ureg = UnitRegistry()` crea el catálogo de unidades; `5 * ureg.mL` es una cantidad;
-`.to("L")` convierte; `Q_(25, ureg.degC)` crea temperaturas. Combinar unidades incompatibles
-produce un `DimensionalityError`, que es justo lo que queremos.
+**Tema extra 1, funciones:** `def nombre(parámetros): ... return resultado`. Los parámetros pueden
+tener valores predeterminados (`R=0.0821`).
 
-**Tema extra, clases:** `class` define el molde; `__init__` asigna los atributos; los métodos son
+**Tema extra 2, clases:** `class` define el molde; `__init__` asigna los atributos; los métodos son
 funciones que reciben `self` para acceder a los datos del objeto.
 """)
         + md("## **Ejercicios de autoevaluación**")
         + md("""
 ### **Autoevaluación 1: Serie de Fibonacci con `for`**
 
-Escribe la función `fibonacci_for(n)` que **devuelva una lista** con los primeros `n` números de
-la serie de Fibonacci, $F_n = F_{n-1} + F_{n-2}$. Los primeros elementos son 0 y 1, así que
-`fibonacci_for(6)` debe devolver `[0, 1, 1, 2, 3, 5]`.
-
-¿Tu función funciona también con `n = 1` y `n = 2`?
+En la serie de Fibonacci, cada número es la suma de los dos anteriores, $F_n = F_{n-1} + F_{n-2}$,
+y los primeros son 0 y 1: `[0, 1, 1, 2, 3, 5, ...]`. Con un ciclo `for`, construye la lista `serie`
+con los primeros `n = 10` números.
 """)
         + ejercicio("auto1", """
-def fibonacci_for(n):
+n = 10
+serie = [0, 1]
+
+for _ in range(n - 2):          # Faltan n - 2 números
     ____
 
-fibonacci_for(10)
+print(serie)
 """)
         + md("""
 ### **Autoevaluación 2: Serie de Fibonacci con `while`**
 
-Resuelve el mismo problema con un ciclo `while` en la función `fibonacci_while(n)`.
+Construye ahora la lista `serie_while` con los primeros **15** números de Fibonacci, usando un
+ciclo `while`.
 
-> 🤔 ¿Por qué la condición correcta es `len(serie) < n` y no `len(serie) <= n`? Prueba ambas y
-> compara los resultados.
+> 🤔 ¿Por qué la condición correcta es `len(serie_while) < 15` y no `len(serie_while) <= 15`?
+> Prueba ambas y compara los resultados.
 """)
         + ejercicio("auto2", """
-def fibonacci_while(n):
+serie_while = [0, 1]
+
+while ____:
     ____
 
-fibonacci_while(10)
+print(serie_while)
 """)
         + md("""
 ### **Autoevaluación 3: Limpieza de una lista**
@@ -704,11 +623,143 @@ for dato in mediciones_sucias:
 
 print(f"Datos listos para analizar: {datos_limpios}")
 """)
-        + md("""
-## **Tema extra: programación orientada a objetos**
+        + md(r"""
+### **Autoevaluación 4: Fórmula de Gauss**
 
-> ⏱️ Esta sección se cubre **solo si hay tiempo** en clase; también puedes estudiarla por tu cuenta.
-> No es necesaria para la Sesión 3.
+La suma de los primeros $n$ números naturales es:
+
+$$S_n = \frac{n(n+1)}{2}$$
+
+Úsala para sumar los primeros 100, 200 y 300 números naturales (`suma_100`, `suma_200` y
+`suma_300`). Después comprueba el primer resultado sumando los números uno por uno con
+`sum(range(1, 101))` y guárdalo en `comprobacion`.
+""")
+        + ejercicio("auto4", """
+suma_100 = ____
+suma_200 = ____
+suma_300 = ____
+
+comprobacion = ____
+print(suma_100, suma_200, suma_300, comprobacion)
+""")
+        + md(r"""
+### **Autoevaluación 5: Espontaneidad de una reacción**
+
+El reformado de metano con vapor produce monóxido de carbono e hidrógeno:
+
+$$\text{CH}_4(g) + \text{H}_2\text{O}(g) \rightarrow \text{CO}(g) + 3\,\text{H}_2(g)$$
+
+con $\Delta H^\circ = 206.1~\text{kJ/mol}$ y $\Delta S^\circ = 215~\text{J/(mol·K)}$.
+
+1. Calcula $\Delta G = \Delta H - T\Delta S$ a 25 °C, en kJ/mol (`delta_g_25`). Cuida las unidades
+   de $\Delta S$.
+2. Con `if`, `elif` y `else`, guarda en `clasificacion` el texto `"espontánea"` ($\Delta G < 0$),
+   `"equilibrio"` ($\Delta G = 0$) o `"no espontánea"` ($\Delta G > 0$).
+3. **Reto:** ¿a partir de qué temperatura la reacción se vuelve espontánea? (`T_inversion`)
+""")
+        + ejercicio("auto5", """
+delta_h = 206.1                  # kJ/mol
+delta_s = ____                   # kJ/(mol·K)
+T = 25 + 273.15                  # K
+
+delta_g_25 = ____
+
+if ____:
+    clasificacion = "espontánea"
+elif ____:
+    clasificacion = "equilibrio"
+else:
+    clasificacion = "no espontánea"
+print(f"ΔG = {delta_g_25} kJ/mol → {clasificacion}")
+
+T_inversion = ____
+print(f"La reacción es espontánea por encima de {T_inversion} K")
+""")
+        + md("""
+# **Temas extra (si hay tiempo): funciones y clases**
+
+> ⏱️ Estos temas se cubren **solo si hay tiempo** en clase; también puedes estudiarlos por tu
+> cuenta. No son necesarios para la Sesión 3: ahí, cuando aparece una función, basta con leerla y
+> ejecutarla.
+""")
+        + md("""
+## **Tema extra 1: funciones**
+
+Las funciones son bloques de código reutilizable que realizan una tarea específica. Ayudan a
+organizar el código, hacerlo más legible y evitar repeticiones. Su estructura básica es:
+
+```python
+def nombre_funcion(parametro1, parametro2):
+    resultado = parametro1 + parametro2
+    return resultado          # Devuelve el resultado a quien llamó a la función
+```
+
+Ya conoces varias funciones de Python: `print()`, `input()`, `type()` y `abs()` (valor absoluto).
+""")
+        + md(r"""
+### **Ejemplo: ley de los gases ideales**
+
+**Objetivo:** calcular la presión despejando $PV = nRT$:
+
+$$P = \frac{nRT}{V}$$
+
+donde $n$ es la cantidad de sustancia (mol), $T$ la temperatura (K), $V$ el volumen (L) y $R$ la
+constante de los gases, $0.0821~\frac{\text{atm·L}}{\text{mol·K}}$.
+
+Algunos parámetros pueden tener un **valor predeterminado** (como `R=0.0821`); los demás deben
+proporcionarse obligatoriamente.
+""")
+        + code("""
+def calcular_presion(n, T, V, R=0.0821):
+    \"\"\"Presión (atm) de un gas ideal a partir de n (mol), T (K) y V (L).\"\"\"
+    return n * R * T / V
+
+P_atm = calcular_presion(1.0, 298.15, 22.4)   # R toma su valor predeterminado
+print(f"La presión calculada es {P_atm:.2f} atm")
+""")
+        + md("Podemos indicar los argumentos por su nombre y cambiar el valor predeterminado:")
+        + code("""
+P = calcular_presion(n=1, T=273.15, V=22.4)
+print(f"En condiciones normales: {P:.2f} atm")
+
+# Con R en unidades del SI, V debe estar en m³ y el resultado sale en Pa
+P_pa = calcular_presion(n=1, T=273.15, V=0.0224, R=8.314)
+print(f"En unidades del SI: {P_pa:.0f} Pa")
+""")
+        + md(r"""
+### **Extra 1: Una función para clasificar enlaces**
+
+Convierte tu solución del Ejercicio 3 en la función `clasificar_enlace(delta_chi)`, que **devuelva**
+(con `return`) el tipo de enlace. Así podrás clasificar cualquier enlace con una sola línea.
+""")
+        + ejercicio("extra1", """
+def clasificar_enlace(delta_chi):
+    ____
+
+# Prueba tu función con distintos enlaces
+print("C–H:", clasificar_enlace(abs(chi_C - chi_H)))
+print("O–H:", clasificar_enlace(abs(chi_O - chi_H)))
+print("Na–Cl:", clasificar_enlace(abs(chi_Na - chi_Cl)))
+""")
+        + md(r"""
+### **Extra 2: Una función para la fórmula de Gauss**
+
+Escribe la función `formula_gauss(n)` que devuelva $\frac{n(n+1)}{2}$ y úsala para calcular de
+nuevo `suma_100`, `suma_200` y `suma_300`.
+""")
+        + ejercicio("extra2", """
+def formula_gauss(n):
+    ____
+
+suma_100 = formula_gauss(100)
+suma_200 = formula_gauss(200)
+suma_300 = formula_gauss(300)
+print(suma_100, suma_200, suma_300)
+""")
+        + md("""
+## **Tema extra 2: programación orientada a objetos**
+
+Este tema se apoya en el anterior: los métodos de una clase son funciones.
 
 Hasta ahora hemos usado variables sueltas y funciones. En la práctica, los datos suelen estar
 agrupados: una sustancia tiene nombre, fórmula y masa molar. Para agruparlos usamos **clases**.
@@ -748,12 +799,12 @@ masa_muestra = 150.0   # g
 print(f"En {masa_muestra} g de {etanol.formula} hay {etanol.gramos_a_moles(masa_muestra):.4f} mol.")
 """)
         + md("""
-### **Extra 1: Objeto cloruro de sodio**
+### **Extra 3: Objeto cloruro de sodio**
 
 Crea el objeto `cloruro_sodio` con la clase `Sustancia` (nombre, fórmula `"NaCl"` y masa molar
 correcta). Después usa su método para calcular los moles en 15 g de NaCl (`moles_nacl`).
 """)
-        + ejercicio("extra1", """
+        + ejercicio("extra3", """
 cloruro_sodio = ____
 moles_nacl = ____
 
@@ -783,7 +834,7 @@ print(f"% m/m: {muestra.porcentaje_masa_masa():.2f} %")
 print(f"% m/v: {muestra.porcentaje_masa_volumen():.2f} %")
 """)
         + md("""
-### **Extra 2: Métodos de la clase `Disolucion`**
+### **Extra 4: Métodos de la clase `Disolucion`**
 
 Completa la clase `Disolucion` con tres métodos nuevos:
 
@@ -794,7 +845,7 @@ Completa la clase `Disolucion` con tres métodos nuevos:
 Después calcula los moles en una disolución con 50 g de NaCl, 100 g de agua y 120 mL de volumen
 final (`moles_50g`).
 """)
-        + ejercicio("extra2", """
+        + ejercicio("extra4", """
 class Disolucion:
     def __init__(self, masa_soluto, masa_disolvente, volumen_ml, masa_molar):
         self.masa_soluto = masa_soluto

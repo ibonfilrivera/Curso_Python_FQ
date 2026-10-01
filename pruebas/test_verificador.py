@@ -59,31 +59,24 @@ def test_limite_de_enlace(ns, capsys):
             return "covalente no polar"
         return "covalente polar" if delta < 1.7 else "iónico"
     ns["clasificar_enlace"] = clasificar_enlace
-    estado, salida = verificar(s1.ej3, capsys)
+    estado, salida = verificar(s2.extra1, capsys)
     assert estado == "incorrecto" and "clasificar_enlace(0.5)" in salida
 
 
 def test_texto_acepta_mayusculas_y_acentos(ns, capsys):
     ns["clasificar_enlace"] = lambda d: ("Covalente no polar." if d < 0.5
                                          else "Covalente polar" if d < 1.7 else "IONICO")
-    assert verificar(s1.ej3, capsys)[0] == "correcto"
+    assert verificar(s2.extra1, capsys)[0] == "correcto"
 
 
 def test_codigo_de_ia_con_error_de_mililitros(ns, capsys):
-    ns["calcular_molaridad"] = lambda m, mm, v: m / mm / v
-    estado, salida = verificar(s1.ej5, capsys)
+    ns["molaridad"] = 5.844 / 58.44 / 100.0                # Código original de la IA: mol/mL
+    estado, salida = verificar(s1.ej6, capsys)
     assert estado == "incorrecto" and "factor de 0.001" in salida
-    ns["calcular_molaridad"] = lambda m, mm, v: m / mm / (v / 1000)
-    assert verificar(s1.ej5, capsys)[0] == "correcto"
-
-
-def test_codigo_de_ia_que_falla_o_no_devuelve(ns, capsys):
-    ns["calcular_molaridad"] = lambda m, mm, v: m / 0
-    estado, salida = verificar(s1.ej5, capsys)
-    assert estado == "incorrecto" and "ZeroDivisionError" in salida
-    ns["calcular_molaridad"] = lambda m, mm, v: None
-    estado, salida = verificar(s1.ej5, capsys)
-    assert estado == "incorrecto" and "return" in salida
+    ns["molaridad"] = 5.844 / 58.44 / (100.0 / 1000)
+    assert verificar(s1.ej6, capsys)[0] == "correcto"
+    ns["molaridad"] = 5.844 * ureg.g / (58.44 * ureg("g/mol")) / (100 * ureg.mL)   # Con pint
+    assert verificar(s1.ej6, capsys)[0] == "correcto"
 
 
 def test_masa_molar_del_cloro(ns, capsys):
@@ -96,19 +89,33 @@ def test_masa_molar_del_cloro(ns, capsys):
 
     ns.update(Sustancia=Sustancia, cloruro_sodio=Sustancia("NaCl", "NaCl", 35.45),
               moles_nacl=15 / 35.45)
-    estado, salida = verificar(s2.extra1, capsys)
+    estado, salida = verificar(s2.extra3, capsys)
     assert estado == "incorrecto" and "cloro" in salida
 
 
-def test_cramer_con_truncamiento_entero(ns, capsys):
-    def resolver_cramer_2x2(A, b):
-        A_x, A_y = A.copy(), A.copy()
-        A_x[:, 0], A_y[:, 1] = b, b
-        d = np.linalg.det(A)
-        return np.array([np.linalg.det(A_x) / d, np.linalg.det(A_y) / d])
-    ns["resolver_cramer_2x2"] = resolver_cramer_2x2
-    estado, salida = verificar(s2.ej6, capsys)
-    assert estado == "incorrecto" and "dtype=float" in salida
+def test_rotacion_con_grados_en_lugar_de_radianes(ns, capsys):
+    R = np.array([[np.cos(90), -np.sin(90)], [np.sin(90), np.cos(90)]])
+    ns.update(R=R, v_rotado=R @ np.array([3, 4]))
+    estado, salida = verificar(s1.ej3, capsys)
+    assert estado == "incorrecto" and "radianes" in salida
+
+
+def test_rotacion_con_producto_elemento_a_elemento(ns, capsys):
+    R = np.array([[0.0, -1.0], [1.0, 0.0]])
+    ns.update(R=R, v_rotado=R * np.array([3, 4]))
+    estado, salida = verificar(s1.ej3, capsys)
+    assert estado == "incorrecto" and "R @ v" in salida
+
+
+def test_cramer_con_columna_equivocada(ns, capsys):
+    A = np.array([[3, 2], [4, -1]], dtype=float)
+    A_y = A.copy()
+    A_y[:, 0] = [12, 5]                                     # Sustituyó la primera columna
+    delta = np.linalg.det(A)
+    ns.update(delta=delta, x=2.0, y=np.linalg.det(A_y) / delta)
+    assert verificar(s1.ej4, capsys)[0] == "incorrecto"
+    ns["y"] = 3.0
+    assert verificar(s1.ej4, capsys)[0] == "correcto"
 
 
 def test_grafica_sin_etiquetas(ns, capsys):
@@ -129,7 +136,7 @@ def test_espacios_sin_llenar_quedan_pendientes(ns, capsys):
 
     # Así queda la función cuando el estudiante ejecuta la celda sin completarla
     exec("def formula_gauss(n):\n    ____\n", {"____": nucleo.____}, ns)
-    assert verificar(s1.auto4, capsys)[0] == "pendiente"
+    assert verificar(s2.extra2, capsys)[0] == "pendiente"
 
 
 def test_variable_inexistente_queda_pendiente(ns, capsys):
@@ -163,19 +170,19 @@ def test_dimension_incorrecta(ns, capsys):
 
 def test_ejercicio_de_pint_exige_unidades(ns, capsys):
     ns["molaridad"] = 0.1711
-    estado, salida = verificar(s2.ej7b, capsys)
+    estado, salida = verificar(s1.ej5b, capsys)
     assert estado == "incorrecto" and "sin unidades" in salida
     ns["molaridad"] = (2.50 * ureg.g / (58.44 * ureg("g/mol")) / (250 * ureg.mL))
-    assert verificar(s2.ej7b, capsys)[0] == "correcto"
+    assert verificar(s1.ej5b, capsys)[0] == "correcto"
 
 
 def test_gas_ideal_con_pint(ns, capsys):
     presion = (0.250 * ureg.mol * 0.082057 * ureg("L*atm/(mol*K)")
                * ureg.Quantity(25.0, ureg.degC).to("K") / (500 * ureg.mL)).to("atm")
     ns.update(presion=presion, presion_kpa=presion.to("kPa"))
-    assert verificar(s2.ej7a, capsys)[0] == "correcto"
+    assert verificar(s1.ej5a, capsys)[0] == "correcto"
     ns["presion_kpa"] = presion.to("Pa")
-    estado, salida = verificar(s2.ej7a, capsys)
+    estado, salida = verificar(s1.ej5a, capsys)
     assert estado == "incorrecto" and "kPa" in salida
 
 
@@ -351,3 +358,86 @@ def test_proyecto_tabla_1(ns, capsys):
                           "pKa_articulo": articulo})
     ns.update(inflexiones=s3._inflexiones_referencia, tabla_pka=pd.DataFrame(filas))
     assert verificar(s3.pf4, capsys)[0] == "correcto"
+
+
+def test_energia_libre_sin_convertir_entropia(ns, capsys):
+    T = np.array([298.15, 500.0, 750.0, 1000.0, 1250.0])
+    ns.update(delta_g=206.1 - T * 215, T_inversion=206.1 / 215)
+    estado, salida = verificar(s1.auto5, capsys)
+    assert estado == "incorrecto" and "1000" in salida
+
+
+# --- Material adicional del equipo docente (contenido_extra/) --------------------------------
+
+def test_material_adicional_de_la_plantilla(tmp_path, ns, capsys):
+    import shutil
+    sys.path.insert(0, str(RAIZ / "herramientas"))
+    import adicionales
+    from bloques import code, ejercicio, md, variante
+
+    (tmp_path / "sesion1").mkdir()
+    shutil.copy(RAIZ / "contenido_extra/plantilla_material_adicional.ipynb",
+                tmp_path / "sesion1/01_ejemplo.ipynb")
+    bloques, espec = adicionales.procesar_sesion(1, md, code, ejercicio, variante, carpeta=tmp_path)
+
+    assert [e["clave"] for e in espec] == ["adic1", "adic2"]
+    assert espec[0]["revisar"][0]["valor"] == pytest.approx(39.45 / 50.0)
+    iniciales = [b[2] for b in bloques if b[0] == "ejercicio"]
+    assert "densidad = ____" in iniciales[0] and "masa = 39.45" in iniciales[0]
+    assert any(b[0] == "variante" for b in bloques)          # Ejercicio sin verificación
+
+    ruta = tmp_path / "adicionales.json"
+    ruta.write_text(json.dumps(espec), encoding="utf-8")
+    sesion = nucleo.Sesion("Prueba", "SP")
+    adic = sesion.cargar_adicionales(str(ruta))
+    ns["densidad"] = 0.789
+    assert verificar(adic["adic1"], capsys)[0] == "correcto"
+    ns["densidad"] = 789.0 * ureg("kg/m^3")                    # Con pint y otras unidades
+    assert verificar(adic["adic1"], capsys)[0] == "correcto"
+    ns["densidad"] = 0.789 * 1000
+    estado, salida = verificar(adic["adic1"], capsys)
+    assert estado == "incorrecto" and "factor de 1000" in salida
+    ns["corregidas"] = np.array([0.203, 0.418, 0.636])
+    assert verificar(adic["adic2"], capsys)[0] == "correcto"
+
+
+def test_material_adicional_con_errores_claros(tmp_path):
+    sys.path.insert(0, str(RAIZ / "herramientas"))
+    import adicionales
+    with pytest.raises(adicionales.ErrorAdicional, match="densidad = ..."):
+        adicionales.version_estudiante("for i in range(3):\n    densidad = i", ["densidad"])
+    with pytest.raises(adicionales.ErrorAdicional, match="título"):
+        adicionales.leer_marcas("#@ejercicio\nx = 1")
+
+
+def test_placeholder_en_cadenas_con_formato():
+    assert f"{nucleo.____:.3f}" == "____"
+
+
+# --- Sesión 2 sin funciones ------------------------------------------------------------------
+
+def test_enlace_con_if_usa_el_delta_del_estudiante(ns, capsys):
+    ns.update(delta_chi=abs(0.93 - 3.16), tipo_enlace="Iónico")
+    assert verificar(s2.ej3, capsys)[0] == "correcto"
+    ns.update(delta_chi=0.5, tipo_enlace="covalente no polar")      # Límite mal resuelto
+    estado, salida = verificar(s2.ej3, capsys)
+    assert estado == "incorrecto" and "0.5 ya es covalente polar" in salida
+    ns.update(delta_chi="0.5", tipo_enlace="covalente polar")
+    estado, salida = verificar(s2.ej3, capsys)
+    assert estado == "incorrecto" and "número" in salida
+
+
+def test_fibonacci_sin_funciones(ns, capsys):
+    ns.update(n=10, serie=[0, 1, 1, 2, 3, 5, 8, 13, 21, 34])
+    assert verificar(s2.auto1, capsys)[0] == "correcto"
+    ns["serie_while"] = [0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610]   # 16: <=
+    estado, salida = verificar(s2.auto2, capsys)
+    assert estado == "incorrecto" and "< 15" in salida
+
+
+def test_espontaneidad_con_if(ns, capsys):
+    ns.update(delta_g_25=206.1 - 298.15 * 0.215, clasificacion="espontánea", T_inversion=958.6)
+    estado, salida = verificar(s2.auto5, capsys)
+    assert estado == "incorrecto" and "no espontánea" in salida
+    ns["clasificacion"] = "No espontanea"
+    assert verificar(s2.auto5, capsys)[0] == "correcto"

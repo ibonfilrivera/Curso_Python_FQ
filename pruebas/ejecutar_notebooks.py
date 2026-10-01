@@ -25,7 +25,7 @@ RAIZ = Path(__file__).resolve().parent.parent
 # Ejercicios cuyo código inicial está mal a propósito (no tienen ____): en el notebook del
 # estudiante sin resolver deben mostrar ❌, no ✏️.
 INCORRECTOS_A_PROPOSITO = {
-    "Sesion_1.ipynb": {"ej5"},   # Código de un asistente de IA con un error de unidades
+    "Sesion_1.ipynb": {"ej6"},   # Código de un asistente de IA con un error de unidades
 }
 
 # Sin ventanas de Matplotlib ni envíos a la hoja de registro real

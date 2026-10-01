@@ -1,7 +1,8 @@
-"""Ejercicios de la Sesión 1: variables, operaciones, condicionales y funciones."""
+"""Ejercicios de la Sesión 1: variables, operaciones, NumPy, unidades e IA responsable."""
 
-from .nucleo import (Incorrecto, Sesion, ____, comparar_numero, normalizar_texto,
-                     obtener, obtener_funcion, probar_funcion)
+import os
+
+from .nucleo import (Incorrecto, Sesion, ____, comparar_cantidad, comparar_numero, obtener)
 
 sesion = Sesion("Sesión 1", "S1")
 progreso = sesion.progreso
@@ -9,8 +10,7 @@ iniciar_registro = sesion.iniciar_registro
 
 NA = 6.022e23          # mol⁻¹
 MM_HCN = 27.03         # g/mol
-MM_AGUA = 18.015       # g/mol
-R_ATM = 0.0821         # atm·L/(mol·K)
+MM_NACL = 58.44        # g/mol
 
 
 # --- Ejercicio 1 -------------------------------------------------------------
@@ -66,116 +66,148 @@ print(f"Moléculas de HCN: {moleculas_hcn:.3e}")
 """)
 
 
-# --- Ejercicio 3 -------------------------------------------------------------
-
-def _mismo_enlace(obtenido, esperado):
-    if not isinstance(obtenido, str):
-        return False
-    texto = normalizar_texto(obtenido)
-    if texto.startswith("enlace "):
-        texto = texto[len("enlace "):]
-    return texto == normalizar_texto(esperado)
-
+# --- Ejercicio 3: NumPy, matriz de rotación -----------------------------------------
 
 def _ej3(ns):
-    funcion = obtener_funcion(ns, "clasificar_enlace")
-    casos = [
-        ((0.0,), {}, "covalente no polar"),
-        ((0.35,), {}, "covalente no polar"),
-        ((0.5,), {}, "covalente polar"),
-        ((1.2,), {}, "covalente polar"),
-        ((1.7,), {}, "iónico"),
-        ((2.1,), {}, "iónico"),
-    ]
-    probar_funcion("clasificar_enlace", funcion, casos, comparar=_mismo_enlace)
-    return "Tu función clasifica correctamente todos los casos, incluidos los límites 0.5 y 1.7."
+    import numpy as np
+    R = obtener(ns, "R")
+    v_rotado = obtener(ns, "v_rotado")
+    esperada = np.array([[0.0, -1.0], [1.0, 0.0]])
+    if np.shape(R) != (2, 2):
+        raise Incorrecto("`R` debe ser una matriz de 2 × 2 creada con `np.array`.")
+    if np.allclose(R, [[np.cos(90), -np.sin(90)], [np.sin(90), np.cos(90)]]):
+        raise Incorrecto("Usaste 90 en lugar de `theta`: `np.cos` y `np.sin` trabajan en "
+                         "radianes, por eso convertimos con `np.radians(90)`.")
+    if not np.allclose(R, esperada, atol=1e-9):
+        raise Incorrecto("`R` no es la matriz de rotación de 90°. Revisa el orden y los signos: "
+                         "[[cos θ, −sen θ], [sen θ, cos θ]].")
+    if np.shape(v_rotado) != (2,) or not np.allclose(v_rotado, [-4.0, 3.0], atol=1e-9):
+        raise Incorrecto("`v_rotado` no es correcto. El producto matriz-vector se escribe "
+                         "`R @ v`; `R * v` multiplica elemento a elemento.")
+    return "El vector (3, 4) rotado 90° es (−4, 3): conserva su longitud de 5."
 
 
 ej3 = sesion.agregar(
-    "ej3", "Clasificación de enlaces", _ej3,
-    pista="Usa `if`, `elif` y `else` dentro de la función y devuelve el texto con "
-          "`return`. Cuida los límites: 0.5 ya es *covalente polar* y 1.7 ya es *iónico*.",
+    "ej3", "Rotación de un vector", _ej3,
+    pista="`theta` ya está en radianes: usa `np.cos(theta)` y `np.sin(theta)`. El producto "
+          "matriz-vector es `R @ v`.",
     solucion="""
-def clasificar_enlace(delta_chi):
-    if delta_chi < 0.5:
-        return "covalente no polar"
-    elif delta_chi < 1.7:
-        return "covalente polar"
-    else:
-        return "iónico"
-
-print("Na–Cl:", clasificar_enlace(abs(chi_Na - chi_Cl)))
+theta = np.radians(90)
+R = np.array([[np.cos(theta), -np.sin(theta)],
+              [np.sin(theta),  np.cos(theta)]])
+v = np.array([3, 4])
+v_rotado = R @ v
+print(v_rotado)
 """)
 
 
-# --- Ejercicio 4 -------------------------------------------------------------
+# --- Ejercicio 4: NumPy, regla de Cramer -------------------------------------------
 
 def _ej4(ns):
-    n_agua = obtener(ns, "n_agua")
-    comparar_numero("n_agua", n_agua, 50.0 / MM_AGUA, rel=5e-3, unidades="mol")
-    funcion = obtener_funcion(ns, "calcular_temperatura")
-    casos = [
-        ((1.0, 22.4, 1.0), {}, 1.0 * 22.4 / (1.0 * R_ATM)),
-        ((3.0, 20.0, 2.0), {}, 3.0 * 20.0 / (2.0 * R_ATM)),
-        ((6.3, 1.2, 0.5), {}, 6.3 * 1.2 / (0.5 * R_ATM)),
-    ]
-    probar_funcion("calcular_temperatura", funcion, casos,
-                   comparar=lambda o, e: abs(o - e) / e < 2e-3)
-    n = 50.0 / MM_AGUA
-    comparar_numero("T1", obtener(ns, "T1"), 3.0 * 20.0 / (n * R_ATM), rel=5e-3, unidades="K")
-    comparar_numero("T2", obtener(ns, "T2"), 6.3 * 1.2 / (n * R_ATM), rel=5e-3, unidades="K")
+    comparar_numero("delta", obtener(ns, "delta"), -11.0)
+    for nombre, esperado in (("x", 2.0), ("y", 3.0)):
+        comparar_numero(nombre, obtener(ns, nombre), esperado)
+    return "x = 2 y y = 3, igual que con `np.linalg.solve`."
 
 
 ej4 = sesion.agregar(
-    "ej4", "Temperatura de un gas ideal", _ej4,
-    pista="Despeja T de PV = nRT: T = PV / (nR). Calcula primero `n_agua` a partir de "
-          "50.0 g de agua (M ≈ 18.015 g/mol) y luego llama a tu función dos veces.",
+    "ej4", "Regla de Cramer", _ej4,
+    pista="Δ es `np.linalg.det(A)`. Para Δy copia `A` y sustituye su **segunda** columna por b: "
+          "`A_y[:, 1] = b`. Después, x = Δx / Δ y y = Δy / Δ.",
     solucion="""
-m_agua = 50.0      # g
-MM_agua = 18.015   # g/mol
-n_agua = m_agua / MM_agua
+A = np.array([[3, 2], [4, -1]], dtype=float)
+b = np.array([12, 5], dtype=float)
 
-def calcular_temperatura(P, V, n, R=0.0821):
-    return (P * V) / (n * R)
+delta = np.linalg.det(A)
 
-T1 = calcular_temperatura(P=3.0, V=20.0, n=n_agua)
-T2 = calcular_temperatura(P=6.3, V=1.2, n=n_agua)
-print(f"T1 = {T1:.2f} K, T2 = {T2:.2f} K")
+A_x = A.copy()
+A_x[:, 0] = b
+A_y = A.copy()
+A_y[:, 1] = b
+
+x = np.linalg.det(A_x) / delta
+y = np.linalg.det(A_y) / delta
+print(f"x = {x:.4f}, y = {y:.4f}")
+print("Con np.linalg.solve:", np.linalg.solve(A, b))
 """)
 
 
-# --- Ejercicio 5: revisar código generado por IA ------------------------------------
+# --- Ejercicio 5: unidades con pint -------------------------------------------------
 
-def _ej5(ns):
-    funcion = obtener_funcion(ns, "calcular_molaridad")
-    casos = [((5.844, 58.44, 100.0), 1.0), ((2.50, 58.44, 250.0), 2.50 / 58.44 / 0.250),
-             ((10.0, 40.0, 500.0), 0.5)]
-    for args, esperado in casos:
-        llamada = f"calcular_molaridad{args}"
-        try:
-            obtenido = funcion(*args)
-        except Exception as e:
-            raise Incorrecto(f"Al llamar `{llamada}` ocurrió un error: "
-                             f"`{type(e).__name__}: {e}`") from None
-        if obtenido is None:
-            raise Incorrecto(f"`{llamada}` devolvió `None`. ¿Olvidaste usar `return`?")
-        comparar_numero(llamada, obtenido, esperado, unidades="mol/L")
+R_ATM_EXACTA = 0.082057   # atm·L/(mol·K)
+
+
+def _ej5a(ns):
+    presion = obtener(ns, "presion")
+    esperado = 0.250 * R_ATM_EXACTA * 298.15 / 0.500
+    comparar_cantidad("presion", presion, esperado, "atm", rel=2e-3)
+    presion_kpa = obtener(ns, "presion_kpa")
+    comparar_cantidad("presion_kpa", presion_kpa, esperado * 101.325, "kPa", rel=2e-3)
+    if f"{presion_kpa.units:~}" != "kPa":
+        raise Incorrecto("`presion_kpa` tiene el valor correcto, pero exprésala en kPa con "
+                         '`presion.to("kPa")`.')
+    return f"P = {esperado:.2f} atm. pint convirtió los mL y los °C por ti."
+
+
+ej5a = sesion.agregar(
+    "ej5a", "Gas ideal con unidades", _ej5a,
+    pista="Multiplica cada número por su unidad (`500 * ureg.mL`). La temperatura en °C debe "
+          'convertirse antes de multiplicar: `T.to("K")`. Al final, `.to("atm")` expresa el '
+          "resultado en atmósferas.",
+    solucion="""
+n = 0.250 * ureg.mol
+T = Q_(25.0, ureg.degC)
+V = 500 * ureg.mL
+R = 0.082057 * ureg("L * atm / (mol * K)")
+
+presion = (n * R * T.to("K") / V).to("atm")
+presion_kpa = presion.to("kPa")
+print(f"P = {presion:.3f~P} = {presion_kpa:.1f~P}")
+""")
+
+
+def _ej5b(ns):
+    molaridad = obtener(ns, "molaridad")
+    comparar_cantidad("molaridad", molaridad, 2.50 / MM_NACL / 0.250, "mol/L", rel=2e-3)
+    return "Aunque el volumen estaba en mL, las unidades cuadran solas."
+
+
+ej5b = sesion.agregar(
+    "ej5b", "Molaridad con unidades", _ej5b,
+    pista='Divide la masa entre la masa molar y entre el volumen, todos con unidades, y '
+          'termina con `.to("mol/L")`. No conviertas los mL a mano.',
+    solucion="""
+masa = 2.50 * ureg.g
+masa_molar = 58.44 * ureg("g/mol")
+volumen = 250 * ureg.mL
+
+molaridad = (masa / masa_molar / volumen).to("mol/L")
+print(f"c = {molaridad:.4f~P}")
+""")
+
+
+# --- Ejercicio 6: revisar código generado por IA ------------------------------------
+
+def _ej6(ns):
+    comparar_numero("molaridad", obtener(ns, "molaridad"), 5.844 / 58.44 / 0.100,
+                    unidades="mol/L")
     return ("Encontraste el error: la IA dividió entre mililitros y el resultado salía en mol/mL, "
             "1000 veces menor. Por eso siempre hay que verificar lo que propone.")
 
 
-ej5 = sesion.agregar(
-    "ej5", "Revisar el código de un asistente de IA", _ej5,
-    pista="Lee el docstring: promete mol/L. ¿En qué unidades llega el volumen? Prueba la función "
-          "con 5.844 g de NaCl en 100 mL: deberías obtener 1.0 mol/L.",
+ej6 = sesion.agregar(
+    "ej6", "Revisar el código de un asistente de IA", _ej6,
+    pista="El comentario promete mol/L. ¿En qué unidades está el volumen? Con 5.844 g de NaCl "
+          "en 100 mL deberías obtener 1.0 mol/L.",
     solucion="""
-def calcular_molaridad(masa_g, masa_molar, volumen_ml):
-    \"\"\"Devuelve la molaridad (mol/L) de una disolución.\"\"\"
-    moles = masa_g / masa_molar
-    volumen_l = volumen_ml / 1000     # La IA olvidó convertir mL a L
-    return moles / volumen_l
+masa_g = 5.844          # g de NaCl
+masa_molar = 58.44      # g/mol
+volumen_ml = 100.0      # mL
 
-print(calcular_molaridad(5.844, 58.44, 100.0))   # 1.0 mol/L
+moles = masa_g / masa_molar
+volumen_l = volumen_ml / 1000          # La IA olvidó convertir mL a L
+molaridad = moles / volumen_l          # mol/L
+print(molaridad)
 """)
 
 
@@ -248,75 +280,63 @@ print(f"Costo por paso: {costo_por_paso:.4f} kcal/paso")
 
 
 def _auto4(ns):
-    funcion = obtener_funcion(ns, "formula_gauss")
-    casos = [((n,), {}, n * (n + 1) // 2) for n in (1, 10, 100, 1000)]
-    probar_funcion("formula_gauss", funcion, casos)
-    for n in (100, 200, 300):
-        comparar_numero(f"suma_{n}", obtener(ns, f"suma_{n}"), n * (n + 1) // 2)
+    import numpy as np
+    temperaturas = obtener(ns, "temperaturas_K")
+    esperado = np.array([-78.5, 0.0, 25.0, 37.0, 100.0]) + 273.15
+    if np.shape(temperaturas) != esperado.shape:
+        raise Incorrecto("`temperaturas_K` debe ser un arreglo con las 5 temperaturas.")
+    if not np.allclose(temperaturas, esperado):
+        raise Incorrecto("`temperaturas_K` no es correcto: suma 273.15 al arreglo completo.")
 
 
 auto4 = sesion.agregar(
-    "auto4", "Fórmula de Gauss", _auto4,
-    pista="La función debe devolver `n * (n + 1) / 2`. Usa `//` (división entera) si "
-          "quieres obtener un `int` en lugar de un `float`.",
+    "auto4", "Conversión de varias temperaturas", _auto4,
+    pista="Con un arreglo de NumPy, `temperaturas_C + 273.15` suma 273.15 a todos los "
+          "elementos a la vez.",
     solucion="""
-def formula_gauss(n):
-    return n * (n + 1) // 2
-
-suma_100 = formula_gauss(100)
-suma_200 = formula_gauss(200)
-suma_300 = formula_gauss(300)
-print(suma_100, suma_200, suma_300)
+temperaturas_C = np.array([-78.5, 0.0, 25.0, 37.0, 100.0])
+temperaturas_K = temperaturas_C + 273.15
+print(temperaturas_K)
 """)
-
-
-def _mismo_criterio(obtenido, esperado):
-    return isinstance(obtenido, str) and normalizar_texto(obtenido).removeprefix("en ") == esperado
 
 
 def _auto5(ns):
-    delta_g = obtener_funcion(ns, "calcular_delta_g")
-    casos = [
-        ((206.1, 215, 298.15), {}, 206.1 - 298.15 * 0.215),
-        ((-100.0, -50.0, 300.0), {}, -100.0 - 300.0 * -0.050),
-        ((10.0, 100.0, 100.0), {}, 0.0),
-    ]
-    probar_funcion("calcular_delta_g", delta_g, casos,
-                   comparar=lambda o, e: abs(o - e) < 1e-3 * max(1, abs(e)))
-    clasificar = obtener_funcion(ns, "clasificar_reaccion")
-    casos = [((-5.0,), {}, "espontanea"), ((0.0,), {}, "equilibrio"),
-             ((12.5,), {}, "no espontanea")]
-    probar_funcion("clasificar_reaccion", clasificar, casos, comparar=_mismo_criterio)
-    comparar_numero("delta_g_25", obtener(ns, "delta_g_25"), 206.1 - 298.15 * 0.215, unidades="kJ/mol")
-    comparar_numero("T_inversion", obtener(ns, "T_inversion"), 206.1 / 0.215, rel=5e-3, unidades="K")
-    return ("A 25 °C la reacción no es espontánea; por encima de ≈ 959 K el término "
-            "TΔS domina y ΔG se vuelve negativo.")
+    import numpy as np
+    T = np.array([298.15, 500.0, 750.0, 1000.0, 1250.0])
+    delta_g = obtener(ns, "delta_g")
+    esperado = 206.1 - T * 215 / 1000
+    if np.shape(delta_g) != esperado.shape:
+        raise Incorrecto("`delta_g` debe ser un arreglo con un valor por temperatura.")
+    if np.allclose(delta_g, 206.1 - T * 215):
+        raise Incorrecto("ΔS está en J/(mol·K) y ΔH en kJ/mol: divide ΔS entre 1000.")
+    if not np.allclose(delta_g, esperado, rtol=1e-3):
+        raise Incorrecto("`delta_g` no es correcto. Usa ΔG = ΔH − T·ΔS con el arreglo `T`.")
+    comparar_numero("T_inversion", obtener(ns, "T_inversion"), 206.1 / 0.215, rel=5e-3,
+                    unidades="K")
+    return "ΔG cambia de signo cerca de 959 K: a 1000 y 1250 K la reacción ya es espontánea."
 
 
 auto5 = sesion.agregar(
-    "auto5", "Espontaneidad de una reacción", _auto5,
-    pista="ΔS está en J/(mol·K) y ΔH en kJ/mol: divide ΔS entre 1000 dentro de la "
-          "función. Para `T_inversion` iguala ΔG = 0 y despeja T = ΔH / ΔS.",
+    "auto5", "Energía libre a varias temperaturas", _auto5,
+    pista="Convierte ΔS a kJ/(mol·K) dividiendo entre 1000. Con el arreglo `T`, la expresión "
+          "`delta_h - T * delta_s` calcula ΔG para todas las temperaturas. Para "
+          "`T_inversion`, iguala ΔG = 0: T = ΔH / ΔS.",
     solucion="""
-def calcular_delta_g(delta_h, delta_s, T):
-    \"\"\"ΔG en kJ/mol a partir de ΔH (kJ/mol), ΔS (J/(mol·K)) y T (K).\"\"\"
-    return delta_h - T * delta_s / 1000
+delta_h = 206.1                 # kJ/mol
+delta_s = 215 / 1000            # kJ/(mol·K)
+T = np.array([298.15, 500.0, 750.0, 1000.0, 1250.0])   # K
 
-def clasificar_reaccion(delta_g):
-    if delta_g < 0:
-        return "espontánea"
-    elif delta_g == 0:
-        return "equilibrio"
-    else:
-        return "no espontánea"
+delta_g = delta_h - T * delta_s
+print(delta_g.round(1))
 
-delta_g_25 = calcular_delta_g(206.1, 215, 25 + 273.15)
-print(f"ΔG = {delta_g_25:.2f} kJ/mol → {clasificar_reaccion(delta_g_25)}")
-
-T_inversion = 206.1 / (215 / 1000)
-print(f"La reacción es espontánea por encima de {T_inversion:.1f} K")
+T_inversion = delta_h / delta_s
+print(f"ΔG = 0 a {T_inversion:.1f} K")
 """)
 
+
+# Ejercicios adicionales del equipo docente (contenido_extra/sesion1/)
+globals().update(sesion.cargar_adicionales(
+    os.path.join(os.path.dirname(__file__), "adicionales_sesion1.json")))
 
 __all__ = ["____", "progreso", "iniciar_registro"] + [e.clave for e in sesion.ejercicios]
 sesion.bienvenida()

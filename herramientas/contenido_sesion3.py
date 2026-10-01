@@ -22,7 +22,7 @@ una base de datos con casi 10 000 compuestos.
         + md("""
 ## **Importar bibliotecas**
 
-Como vimos con NumPy en la sesión anterior, las bibliotecas se cargan con `import` y es
+Como vimos con NumPy en la Sesión 1, las bibliotecas se cargan con `import` y es
 costumbre darles un alias corto:
 """)
         + code("""
@@ -75,7 +75,17 @@ print(f"Pendiente: {ajuste.slope:.4f} L/mg")
 print(f"Ordenada:  {ajuste.intercept:.4f}")
 print(f"r²:        {ajuste.rvalue**2:.5f}")
 """)
-        + md("Con `curve_fit` de `scipy.optimize` podemos ajustar cualquier función, por ejemplo un polinomio de segundo grado:")
+        + md("""
+Con `curve_fit` de `scipy.optimize` podemos ajustar cualquier modelo, por ejemplo un polinomio
+de segundo grado. SciPy necesita que el modelo esté escrito como una **función de Python**, que se
+define con `def`. No hace falta que sepas escribirlas: basta con leer la función y ejecutarla. Si
+te interesa, consulta el tema extra de funciones de la Sesión 2.
+
+```python
+def cuadratica(x, a, b, c):      # Nombre del modelo y sus entradas: x y los parámetros
+    return a * x**2 + b * x + c  # Lo que el modelo calcula
+```
+""")
         + code("""
 from scipy.optimize import curve_fit
 
@@ -487,18 +497,20 @@ Draw.MolsToGridImage(df["Mols"][:8].tolist(), molsPerRow=4, subImgSize=(200, 200
 Con un patrón **SMARTS** podemos buscar fragmentos dentro de las moléculas. El anillo bencénico
 aromático se escribe `"c1ccccc1"`.
 
-1. Completa la función `tiene_benceno(mol)`, que devuelva `True` si la molécula contiene un
-   anillo bencénico (y `False` si `mol` es `None`).
-2. Aplícala para crear la columna `df["tiene_benceno"]`.
-3. Guarda en `n_benceno` cuántos compuestos contienen benceno.
+La función `tiene_benceno(mol)` de la celda siguiente ya está escrita: devuelve `True` si la
+molécula contiene un anillo bencénico y `False` en caso contrario (o si RDKit no pudo leer la
+molécula).
+
+1. Aplícala a la columna `"Mols"` con `.apply()` para crear la columna `df["tiene_benceno"]`.
+2. Guarda en `n_benceno` cuántos compuestos contienen benceno (`True` cuenta como 1 al sumar).
 """)
         + ejercicio("ej6", """
 patron_benceno = Chem.MolFromSmarts("c1ccccc1")
 
 def tiene_benceno(mol):
-    if mol is None:
+    if mol is None:              # SMILES que RDKit no pudo interpretar
         return False
-    return ____
+    return mol.HasSubstructMatch(patron_benceno)
 
 df["tiene_benceno"] = ____
 n_benceno = ____
@@ -664,13 +676,15 @@ print(f"Spline: V_eq = {V_eq_spline} µL, pH = {pH_eq_spline}")
 Algunas curvas tienen más de una transición: F-PEG-GA muestra **dos** máximos en dpH/dV, uno por
 cada tipo de grupo ionizable.
 
-1. Completa la función `inflexiones(V, pH, n)`, que devuelve una lista con `(V_eq, pKa_aparente)`
-   de los `n` máximos **más altos** de dpH/dV, ordenados por volumen. `find_peaks` de
-   `scipy.signal` encuentra todos los máximos locales de un arreglo. Si dos máximos tienen
-   exactamente la misma altura, se elige el de menor volumen, igual que `np.argmax`; el
-   ordenamiento `kind="stable"` lo garantiza.
-2. Aplícala a los cuatro archivos y construye el DataFrame `tabla_pka` con las columnas
-   `nanoparticula`, `V_eq`, `pKa_aparente` y `pKa_articulo` (una fila por transición).
+La función `inflexiones(V, pH, n)` de la celda siguiente ya está escrita. Devuelve una lista con
+`(V_eq, pKa_aparente)` de los `n` máximos **más altos** de dpH/dV, ordenados por volumen:
+`find_peaks` de `scipy.signal` encuentra todos los máximos locales, y si dos tienen exactamente la
+misma altura se elige el de menor volumen, igual que `np.argmax`.
+
+1. Completa la llamada a `inflexiones` con el número de transiciones que reporta el artículo para
+   cada nanopartícula (la longitud de `pkas_articulo`).
+2. Ejecuta la celda para construir el DataFrame `tabla_pka`, con una fila por transición, y
+   compara la columna `diferencia`.
 """)
         + ejercicio("pf4", """
 from scipy.signal import find_peaks
@@ -679,7 +693,7 @@ def inflexiones(V, pH, n):
     \"\"\"Volumen y pH de los n máximos más altos de dpH/dV, ordenados por volumen.\"\"\"
     derivada = np.gradient(pH, V)
     picos, _ = find_peaks(derivada)
-    mayores = sorted(picos[np.argsort(-derivada[picos], kind="stable")[:____]])
+    mayores = sorted(picos[np.argsort(-derivada[picos], kind="stable")[:n]])
     return [(V[i], pH[i]) for i in mayores]
 
 tabla_1 = {                      # nanopartícula: (archivo, pKa aparentes de la Tabla 1)

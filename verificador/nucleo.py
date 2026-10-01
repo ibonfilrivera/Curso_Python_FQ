@@ -29,6 +29,9 @@ class _PorCompletar:
     def __repr__(self):
         return "____"
 
+    def __format__(self, especificacion):      # Permite print(f"{x:.2f}") antes de completar
+        return "____"
+
     def _error(self, *args, **kwargs):
         raise TypeError("Sustituye ____ por tu respuesta antes de ejecutar la celda.")
 
@@ -332,6 +335,41 @@ class Ejercicio:
                 f"{self.clave}.pista() o {self.clave}.solucion()>")
 
 
+def _comprobacion_adicional(revisar):
+    """Crea la función de verificación de un ejercicio de contenido_extra/."""
+
+    def comprobar(ns):
+        for criterio in revisar:
+            nombre = criterio["variable"]
+            valor = obtener(ns, nombre)
+            esperado = criterio["valor"]
+            tipo = criterio["tipo"]
+            if tipo == "numero":
+                comparar_numero(nombre, valor, esperado, rel=criterio.get("tolerancia", 1e-3),
+                                unidades=criterio.get("unidades"))
+            elif tipo == "arreglo":
+                import numpy as np
+                if es_cantidad(valor) and criterio.get("unidades"):
+                    valor = valor.to(criterio["unidades"]).magnitude
+                try:
+                    arreglo = np.asarray(valor, dtype=float)
+                except (TypeError, ValueError):
+                    raise Incorrecto(f"`{nombre}` debería contener solo números.") from None
+                if arreglo.shape != np.shape(esperado):
+                    raise Incorrecto(f"`{nombre}` tiene {arreglo.size} elementos y se esperaban "
+                                     f"{np.size(esperado)}.")
+                if not np.allclose(arreglo, esperado, rtol=criterio.get("tolerancia", 1e-3),
+                                   atol=1e-12):
+                    raise Incorrecto(f"Los valores de `{nombre}` no son los esperados.")
+            elif tipo == "texto":
+                if not isinstance(valor, str) or normalizar_texto(valor) != normalizar_texto(esperado):
+                    raise Incorrecto(f"`{nombre}` vale {valor!r}, pero no es la respuesta esperada.")
+            elif valor != esperado:
+                raise Incorrecto(f"`{nombre}` vale {valor!r}, pero no es la respuesta esperada.")
+
+    return comprobar
+
+
 class Sesion:
     """Agrupa los ejercicios de un notebook y muestra el progreso."""
 
@@ -346,6 +384,26 @@ class Sesion:
         ejercicio = Ejercicio(clave, titulo, comprobar, pista, solucion, sesion=self.corto)
         self.ejercicios.append(ejercicio)
         return ejercicio
+
+    def cargar_adicionales(self, ruta):
+        """Agrega los ejercicios que el equipo docente definió en contenido_extra/.
+
+        `ruta` es el JSON que genera herramientas/construir_notebooks.py. Devuelve un
+        diccionario {clave: ejercicio} para publicarlos en el módulo de la sesión.
+        """
+        import json
+        import os
+        if not os.path.exists(ruta):
+            return {}
+        with open(ruta, encoding="utf-8") as archivo:
+            especificaciones = json.load(archivo)
+        nuevos = {}
+        for espec in especificaciones:
+            nuevos[espec["clave"]] = self.agregar(
+                espec["clave"], espec["titulo"], _comprobacion_adicional(espec["revisar"]),
+                pista=espec.get("pista") or "Revisa el enunciado y tus unidades.",
+                solucion=espec["solucion"])
+        return nuevos
 
     def iniciar_registro(self, alumno="", clave=""):
         """Activa el envío del avance al equipo docente (ver verificador/registro.py)."""

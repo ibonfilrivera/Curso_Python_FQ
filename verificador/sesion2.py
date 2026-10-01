@@ -1,20 +1,17 @@
-"""Ejercicios de la Sesión 2: estructuras de datos, ciclos y clases."""
+"""Ejercicios de la Sesión 2: estructuras de datos, condicionales y ciclos; funciones y clases como temas extra."""
 
-from .nucleo import (Incorrecto, Sesion, ____, comparar_cantidad, comparar_numero,
-                     lista_no_vacia, obtener,
-                     obtener_funcion, probar_funcion)
+import os
+
+from .nucleo import (Incorrecto, Pendiente, Sesion, ____, comparar_numero, es_numero, lista_no_vacia,
+                     normalizar_texto, obtener, obtener_funcion, probar_funcion)
 
 sesion = Sesion("Sesión 2", "S2")
 progreso = sesion.progreso
 iniciar_registro = sesion.iniciar_registro
 
 MM_NACL = 58.44   # g/mol
-
-
-def _cerca_arreglo(obtenido, esperado):
-    import numpy as np
-    obtenido = np.asarray(obtenido, dtype=float)
-    return obtenido.shape == np.shape(esperado) and np.allclose(obtenido, esperado, atol=1e-6)
+MM_AGUA = 18.015      # g/mol
+R_ATM = 0.0821         # atm·L/(mol·K)
 
 
 # --- Ejercicio 1: listas -----------------------------------------------------
@@ -117,9 +114,83 @@ print(f"M(Fe₂O₃) = {masa_molar_fe2o3:.2f} g/mol")
 """)
 
 
-# --- Ejercicio 3: for y while ------------------------------------------------
+# --- Ejercicio 3: condicionales --------------------------------------------------
+
+def _mismo_enlace(obtenido, esperado):
+    if not isinstance(obtenido, str):
+        return False
+    texto = normalizar_texto(obtenido)
+    if texto.startswith("enlace "):
+        texto = texto[len("enlace "):]
+    return texto == normalizar_texto(esperado)
+
+
+def _tipo_enlace(delta_chi):
+    if delta_chi < 0.5:
+        return "covalente no polar"
+    return "covalente polar" if delta_chi < 1.7 else "iónico"
+
 
 def _ej3(ns):
+    delta_chi = obtener(ns, "delta_chi")
+    if not es_numero(delta_chi):
+        raise Incorrecto("`delta_chi` debe ser un número: la diferencia de electronegatividades.")
+    tipo = obtener(ns, "tipo_enlace")
+    esperado = _tipo_enlace(float(delta_chi))
+    if not isinstance(tipo, str) or not _mismo_enlace(tipo, esperado):
+        raise Incorrecto(f"Con Δχ = {float(delta_chi):.2f}, `tipo_enlace` vale {tipo!r}, pero el "
+                         f"enlace es {esperado!r}. Revisa las condiciones y sus límites "
+                         "(0.5 ya es covalente polar y 1.7 ya es iónico).")
+    return (f"Correcto para Δχ = {float(delta_chi):.2f} ({esperado}). Cambia los átomos, por "
+            "ejemplo H y Cl o C y H, y vuelve a verificar.")
+
+
+ej3 = sesion.agregar(
+    "ej3", "Clasificación de enlaces", _ej3,
+    pista="Usa `if`, `elif` y `else` para asignar el texto a `tipo_enlace`. Cuida los límites: "
+          "0.5 ya es *covalente polar* y 1.7 ya es *iónico*.",
+    solucion="""
+delta_chi = abs(chi_Na - chi_Cl)
+
+if delta_chi < 0.5:
+    tipo_enlace = "covalente no polar"
+elif delta_chi < 1.7:
+    tipo_enlace = "covalente polar"
+else:
+    tipo_enlace = "iónico"
+
+print(f"Δχ = {delta_chi:.2f} → enlace {tipo_enlace}")
+""")
+
+
+# --- Ejercicio 4: gas ideal ---------------------------------------------------------
+
+def _ej4(ns):
+    n = 50.0 / MM_AGUA
+    comparar_numero("n_agua", obtener(ns, "n_agua"), n, rel=5e-3, unidades="mol")
+    comparar_numero("T1", obtener(ns, "T1"), 3.0 * 20.0 / (n * R_ATM), rel=5e-3, unidades="K")
+    comparar_numero("T2", obtener(ns, "T2"), 6.3 * 1.2 / (n * R_ATM), rel=5e-3, unidades="K")
+
+
+ej4 = sesion.agregar(
+    "ej4", "Temperatura de un gas ideal", _ej4,
+    pista="Despeja T de PV = nRT: T = PV / (nR). Calcula primero `n_agua` a partir de 50.0 g de "
+          "agua (M ≈ 18.015 g/mol).",
+    solucion="""
+m_agua = 50.0      # g
+MM_agua = 18.015   # g/mol
+n_agua = m_agua / MM_agua
+R = 0.0821         # atm·L/(mol·K)
+
+T1 = 3.0 * 20.0 / (n_agua * R)     # P = 3.0 atm, V = 20.0 L
+T2 = 6.3 * 1.2 / (n_agua * R)      # P = 6.3 atm, V = 1.2 L
+print(f"T1 = {T1:.2f} K, T2 = {T2:.2f} K")
+""")
+
+
+# --- Ejercicio 5: for y while ------------------------------------------------
+
+def _ej5(ns):
     ahorros = lista_no_vacia("ahorros", obtener(ns, "ahorros"), "completa el ciclo `for`.")
     if len(ahorros) != 3:
         raise Incorrecto("`ahorros` debe ser una lista con tres valores "
@@ -134,8 +205,8 @@ def _ej3(ns):
     comparar_numero("meses_necesarios", meses, 24)
 
 
-ej3 = sesion.agregar(
-    "ej3", "Ahorro para un celular", _ej3,
+ej5 = sesion.agregar(
+    "ej5", "Ahorro para un celular", _ej5,
     pista="Para el `while`, repite mientras `ahorro_total < precio_celular`, sumando "
           "$300 y un mes en cada vuelta.",
     solucion="""
@@ -156,9 +227,9 @@ print(f"Se necesitan {meses_necesarios} meses.")
 """)
 
 
-# --- Ejercicio 4: muestras peligrosas ----------------------------------------
+# --- Ejercicio 6: muestras peligrosas ----------------------------------------
 
-def _ej4(ns):
+def _ej6(ns):
     mediciones = obtener(ns, "mediciones")
     peligrosas = [i for i, c in enumerate(mediciones) if 50 < c <= 100]
     criticas = [i for i, c in enumerate(mediciones) if c > 100]
@@ -179,8 +250,8 @@ def _ej4(ns):
     return f"Hay {len(peligrosas)} muestras peligrosas y {len(criticas)} críticas."
 
 
-ej4 = sesion.agregar(
-    "ej4", "Detección de muestras peligrosas", _ej4,
+ej6 = sesion.agregar(
+    "ej6", "Detección de muestras peligrosas", _ej6,
     pista="`enumerate(mediciones)` te da, en cada vuelta, el índice y el valor. "
           "Una muestra es peligrosa si `50 < c <= 100` y crítica si `c > 100`.",
     solucion="""
@@ -195,132 +266,6 @@ for i, concentracion in enumerate(mediciones):
 
 print(f"Peligrosas: {len(indices_peligrosas)} → {indices_peligrosas}")
 print(f"Críticas: {len(indices_criticas)} → {indices_criticas}")
-""")
-
-
-# --- Ejercicio 5: NumPy, matriz de rotación ------------------------------------------
-
-def _ej5(ns):
-    funcion = obtener_funcion(ns, "rotar_vector")
-    r = 2 ** 0.5
-    casos = [
-        (([1, 0], 90), {}, [0.0, 1.0]),
-        (([0, 1], 90), {}, [-1.0, 0.0]),
-        (([2, 0], 180), {}, [-2.0, 0.0]),
-        (([1, 1], 45), {}, [0.0, r]),
-        (([3, 4], 0), {}, [3.0, 4.0]),
-    ]
-    probar_funcion("rotar_vector", funcion, casos, comparar=_cerca_arreglo)
-
-
-ej5 = sesion.agregar(
-    "ej5", "Rotación de un vector", _ej5,
-    pista="El ángulo llega en grados: conviértelo con `np.radians()`. El producto "
-          "matriz-vector se escribe `R @ v`.",
-    solucion="""
-def rotar_vector(vector, angulo_grados):
-    theta = np.radians(angulo_grados)
-    R = np.array([[np.cos(theta), -np.sin(theta)],
-                  [np.sin(theta),  np.cos(theta)]])
-    return R @ np.asarray(vector, dtype=float)
-
-print(rotar_vector([0, 1], 90))
-""")
-
-
-# --- Ejercicio 6: NumPy, regla de Cramer ---------------------------------------------
-
-def _ej6_numpy(ns):
-    funcion = obtener_funcion(ns, "resolver_cramer_2x2")
-    import numpy as np
-    casos = [
-        ((np.array([[3, 2], [4, -1]]), np.array([12, 5])), {}, [2.0, 3.0]),
-        ((np.array([[1, 1], [1, -1]]), np.array([0.5, 0.1])), {}, [0.3, 0.2]),
-        ((np.array([[2.0, 1.0], [1.0, 3.0]]), np.array([3.0, 5.0])), {}, [0.8, 1.4]),
-    ]
-    try:
-        probar_funcion("resolver_cramer_2x2", funcion, casos, comparar=_cerca_arreglo)
-    except Incorrecto as e:
-        if "0.5" in str(e):
-            raise Incorrecto(str(e) + " Si la matriz es de enteros, `copy()` conserva el "
-                             "tipo `int` y los decimales de `b` se truncan: usa "
-                             "`np.array(A, dtype=float)`.") from None
-        raise
-
-
-ej6 = sesion.agregar(
-    "ej6", "Regla de Cramer", _ej6_numpy,
-    pista="Construye Aₓ sustituyendo la primera columna de A por b (`Ax[:, 0] = b`) y A_y "
-          "sustituyendo la segunda. Trabaja con `dtype=float` para no perder decimales.",
-    solucion="""
-def resolver_cramer_2x2(A, b):
-    A = np.array(A, dtype=float)
-    delta = np.linalg.det(A)
-
-    A_x = A.copy()
-    A_x[:, 0] = b
-    A_y = A.copy()
-    A_y[:, 1] = b
-
-    return np.array([np.linalg.det(A_x), np.linalg.det(A_y)]) / delta
-
-A = np.array([[3, 2], [4, -1]])
-b = np.array([12, 5])
-print(resolver_cramer_2x2(A, b), np.linalg.solve(A, b))
-""")
-
-
-# --- Ejercicio 7: unidades con pint -------------------------------------------------
-
-R_ATM_EXACTA = 0.082057   # atm·L/(mol·K)
-
-
-def _ej7a(ns):
-    presion = obtener(ns, "presion")
-    esperado = 0.250 * R_ATM_EXACTA * 298.15 / 0.500
-    comparar_cantidad("presion", presion, esperado, "atm", rel=2e-3)
-    presion_kpa = obtener(ns, "presion_kpa")
-    comparar_cantidad("presion_kpa", presion_kpa, esperado * 101.325, "kPa", rel=2e-3)
-    if f"{presion_kpa.units:~}" != "kPa":
-        raise Incorrecto("`presion_kpa` tiene el valor correcto, pero exprésala en kPa con "
-                         '`presion.to("kPa")`.')
-    return f"P = {esperado:.2f} atm. pint convirtió los mL y los °C por ti."
-
-
-ej7a = sesion.agregar(
-    "ej7a", "Gas ideal con unidades", _ej7a,
-    pista="Multiplica cada número por su unidad (`500 * ureg.mL`). La temperatura en °C debe "
-          'convertirse antes de multiplicar: `T.to("K")`. Al final, `.to("atm")` expresa el '
-          "resultado en atmósferas.",
-    solucion="""
-n = 0.250 * ureg.mol
-T = Q_(25.0, ureg.degC)
-V = 500 * ureg.mL
-R = 0.082057 * ureg("L * atm / (mol * K)")
-
-presion = (n * R * T.to("K") / V).to("atm")
-presion_kpa = presion.to("kPa")
-print(f"P = {presion:.3f~P} = {presion_kpa:.1f~P}")
-""")
-
-
-def _ej7b(ns):
-    molaridad = obtener(ns, "molaridad")
-    comparar_cantidad("molaridad", molaridad, 2.50 / MM_NACL / 0.250, "mol/L", rel=2e-3)
-    return "Aunque el volumen estaba en mL, las unidades cuadran solas."
-
-
-ej7b = sesion.agregar(
-    "ej7b", "Molaridad con unidades", _ej7b,
-    pista='Divide la masa entre la masa molar y entre el volumen, todos con unidades, y '
-          'termina con `.to("mol/L")`. No conviertas los mL a mano.',
-    solucion="""
-masa = 2.50 * ureg.g
-masa_molar = 58.44 * ureg("g/mol")
-volumen = 250 * ureg.mL
-
-molaridad = (masa / masa_molar / volumen).to("mol/L")
-print(f"c = {molaridad:.4f~P}")
 """)
 
 
@@ -340,40 +285,46 @@ def _probar_fibonacci(ns, nombre):
 
 
 def _auto1(ns):
-    _probar_fibonacci(ns, "fibonacci_for")
+    serie = lista_no_vacia("serie", obtener(ns, "serie"), "completa el ciclo `for`.")
+    if serie == [0, 1]:
+        raise Pendiente("`serie` todavía es `[0, 1]`: completa el ciclo `for`.")
+    n = obtener(ns, "n")
+    if serie != _fibonacci(int(n)):
+        raise Incorrecto(f"`serie` tiene {len(serie)} elementos: {serie[:6]}… Debe tener los "
+                         f"primeros {n} números de Fibonacci, empezando con 0 y 1.")
+    return f"Los primeros {n} números de Fibonacci: {serie}."
 
 
 auto1 = sesion.agregar(
     "auto1", "Fibonacci con for", _auto1,
-    pista="Empieza con `serie = [0, 1]` y agrega `serie[-1] + serie[-2]` en cada vuelta. "
-          "¿Qué debe devolver la función si `n` es 1?",
+    pista="Empieza con `serie = [0, 1]` y repite `n - 2` veces: agrega `serie[-1] + serie[-2]`.",
     solucion="""
-def fibonacci_for(n):
-    \"\"\"Devuelve una lista con los primeros n números de Fibonacci.\"\"\"
-    serie = [0, 1][:n]          # Funciona también para n = 1
-    for _ in range(n - 2):
-        serie.append(serie[-1] + serie[-2])
-    return serie
-
-fibonacci_for(10)
+n = 10
+serie = [0, 1]
+for _ in range(n - 2):
+    serie.append(serie[-1] + serie[-2])
+print(serie)
 """)
 
 
 def _auto2(ns):
-    _probar_fibonacci(ns, "fibonacci_while")
+    serie = lista_no_vacia("serie_while", obtener(ns, "serie_while"),
+                           "completa el ciclo `while`.")
+    if serie == [0, 1]:
+        raise Pendiente("`serie_while` todavía es `[0, 1]`: completa el ciclo `while`.")
+    if serie != _fibonacci(15):
+        raise Incorrecto(f"`serie_while` tiene {len(serie)} elementos; debe tener los primeros 15 "
+                         "números de Fibonacci. ¿Usaste `len(serie_while) < 15`?")
 
 
 auto2 = sesion.agregar(
     "auto2", "Fibonacci con while", _auto2,
-    pista="Repite mientras `len(serie) < n`.",
+    pista="Repite mientras `len(serie_while) < 15`.",
     solucion="""
-def fibonacci_while(n):
-    serie = [0, 1][:n]
-    while len(serie) < n:
-        serie.append(serie[-1] + serie[-2])
-    return serie
-
-fibonacci_while(10)
+serie_while = [0, 1]
+while len(serie_while) < 15:
+    serie_while.append(serie_while[-1] + serie_while[-2])
+print(serie_while)
 """)
 
 
@@ -400,9 +351,126 @@ print(datos_limpios)
 """)
 
 
-# --- Tema extra: clases ------------------------------------------------------
+def _auto4(ns):
+    for n in (100, 200, 300):
+        comparar_numero(f"suma_{n}", obtener(ns, f"suma_{n}"), n * (n + 1) // 2)
+    comparar_numero("comprobacion", obtener(ns, "comprobacion"), 5050)
+
+
+auto4 = sesion.agregar(
+    "auto4", "Fórmula de Gauss", _auto4,
+    pista="Aplica `n * (n + 1) // 2` con n = 100, 200 y 300. Para comprobar, `sum(range(1, 101))` "
+          "suma los números del 1 al 100.",
+    solucion="""
+suma_100 = 100 * (100 + 1) // 2
+suma_200 = 200 * (200 + 1) // 2
+suma_300 = 300 * (300 + 1) // 2
+
+comprobacion = sum(range(1, 101))     # Sumando uno por uno
+print(suma_100, suma_200, suma_300, comprobacion)
+""")
+
+
+def _mismo_criterio(obtenido, esperado):
+    return isinstance(obtenido, str) and normalizar_texto(obtenido).removeprefix("en ") == esperado
+
+
+def _auto5(ns):
+    delta_g = 206.1 - 298.15 * 0.215
+    comparar_numero("delta_g_25", obtener(ns, "delta_g_25"), delta_g, unidades="kJ/mol")
+    clasificacion = obtener(ns, "clasificacion")
+    if not _mismo_criterio(clasificacion, "no espontanea"):
+        raise Incorrecto(f"`clasificacion` vale {clasificacion!r}. Con ΔG > 0 la reacción es "
+                         "«no espontánea»; revisa el orden de tus condiciones.")
+    comparar_numero("T_inversion", obtener(ns, "T_inversion"), 206.1 / 0.215, rel=5e-3,
+                    unidades="K")
+    return ("A 25 °C la reacción no es espontánea; por encima de ≈ 959 K el término TΔS domina "
+            "y ΔG se vuelve negativo.")
+
+
+auto5 = sesion.agregar(
+    "auto5", "Espontaneidad de una reacción", _auto5,
+    pista="ΔS está en J/(mol·K) y ΔH en kJ/mol: divide ΔS entre 1000. Con `if`, `elif` y `else` "
+          "asigna «espontánea», «equilibrio» o «no espontánea» a `clasificacion`.",
+    solucion="""
+delta_h = 206.1                  # kJ/mol
+delta_s = 215 / 1000             # kJ/(mol·K)
+T = 25 + 273.15                  # K
+
+delta_g_25 = delta_h - T * delta_s
+
+if delta_g_25 < 0:
+    clasificacion = "espontánea"
+elif delta_g_25 == 0:
+    clasificacion = "equilibrio"
+else:
+    clasificacion = "no espontánea"
+print(f"ΔG = {delta_g_25:.2f} kJ/mol → {clasificacion}")
+
+T_inversion = delta_h / delta_s
+print(f"La reacción es espontánea por encima de {T_inversion:.1f} K")
+""")
+
+
+# --- Tema extra: funciones -----------------------------------------------------
 
 def _extra1(ns):
+    funcion = obtener_funcion(ns, "clasificar_enlace")
+    casos = [
+        ((0.0,), {}, "covalente no polar"),
+        ((0.35,), {}, "covalente no polar"),
+        ((0.5,), {}, "covalente polar"),
+        ((1.2,), {}, "covalente polar"),
+        ((1.7,), {}, "iónico"),
+        ((2.1,), {}, "iónico"),
+    ]
+    probar_funcion("clasificar_enlace", funcion, casos, comparar=_mismo_enlace)
+    return "Tu función clasifica correctamente todos los casos, incluidos los límites 0.5 y 1.7."
+
+
+extra1 = sesion.agregar(
+    "extra1", "(Extra) Función para clasificar enlaces", _extra1,
+    pista="Usa `if`, `elif` y `else` dentro de la función y devuelve el texto con "
+          "`return`. Cuida los límites: 0.5 ya es *covalente polar* y 1.7 ya es *iónico*.",
+    solucion="""
+def clasificar_enlace(delta_chi):
+    if delta_chi < 0.5:
+        return "covalente no polar"
+    elif delta_chi < 1.7:
+        return "covalente polar"
+    else:
+        return "iónico"
+
+print("Na–Cl:", clasificar_enlace(abs(chi_Na - chi_Cl)))
+""")
+
+
+def _extra2(ns):
+    funcion = obtener_funcion(ns, "formula_gauss")
+    casos = [((n,), {}, n * (n + 1) // 2) for n in (1, 10, 100, 1000)]
+    probar_funcion("formula_gauss", funcion, casos)
+    for n in (100, 200, 300):
+        comparar_numero(f"suma_{n}", obtener(ns, f"suma_{n}"), n * (n + 1) // 2)
+
+
+extra2 = sesion.agregar(
+    "extra2", "(Extra) Función de Gauss", _extra2,
+    pista="La función debe devolver `n * (n + 1) / 2`. Usa `//` (división entera) si "
+          "quieres obtener un `int` en lugar de un `float`.",
+    solucion="""
+def formula_gauss(n):
+    return n * (n + 1) // 2
+
+suma_100 = formula_gauss(100)
+suma_200 = formula_gauss(200)
+suma_300 = formula_gauss(300)
+print(suma_100, suma_200, suma_300)
+""")
+
+
+# --- Tema extra: clases ------------------------------------------------------
+
+def _extra3(ns):
     Sustancia = obtener(ns, "Sustancia")
     nacl = obtener(ns, "cloruro_sodio")
     if not isinstance(nacl, Sustancia):
@@ -416,8 +484,8 @@ def _extra1(ns):
     comparar_numero("moles_nacl", obtener(ns, "moles_nacl"), 15 / MM_NACL, rel=2e-3, unidades="mol")
 
 
-extra1 = sesion.agregar(
-    "extra1", "(Extra) Objeto cloruro de sodio", _extra1,
+extra3 = sesion.agregar(
+    "extra3", "(Extra) Objeto cloruro de sodio", _extra3,
     pista="La masa molar del NaCl es la suma de Na (22.99) y Cl (35.45). Para los "
           "moles, llama al método: `cloruro_sodio.gramos_a_moles(15)`.",
     solucion="""
@@ -427,7 +495,7 @@ print(f"En 15 g de {cloruro_sodio.formula} hay {moles_nacl} mol.")
 """)
 
 
-def _extra2(ns):
+def _extra4(ns):
     Disolucion = obtener(ns, "Disolucion")
     muestra = Disolucion(5, 100, 103, MM_NACL)
     for metodo in ("calcular_molaridad", "calcular_molalidad", "calcular_moles"):
@@ -442,8 +510,8 @@ def _extra2(ns):
     comparar_numero("moles_50g", obtener(ns, "moles_50g"), 50 / MM_NACL, rel=2e-3, unidades="mol")
 
 
-extra2 = sesion.agregar(
-    "extra2", "(Extra) Métodos de la clase Disolucion", _extra2,
+extra4 = sesion.agregar(
+    "extra4", "(Extra) Métodos de la clase Disolucion", _extra4,
     pista="Molaridad = mol de soluto / L de disolución; molalidad = mol de soluto / kg "
           "de disolvente. Recuerda convertir mL → L y g → kg dividiendo entre 1000.",
     solucion="""
@@ -478,6 +546,10 @@ moles_50g = Disolucion(50, 100, 120, 58.44).calcular_moles()
 print(f"En 50 g de NaCl hay {moles_50g:.4f} mol")
 """)
 
+
+# Ejercicios adicionales del equipo docente (contenido_extra/sesion2/)
+globals().update(sesion.cargar_adicionales(
+    os.path.join(os.path.dirname(__file__), "adicionales_sesion2.json")))
 
 __all__ = ["____", "progreso", "iniciar_registro"] + [e.clave for e in sesion.ejercicios]
 sesion.bienvenida()

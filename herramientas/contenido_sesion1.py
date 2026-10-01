@@ -5,15 +5,18 @@ from bloques import cierre, code, ejercicio, encabezado, instrucciones, md
 
 def fuente(carpeta, archivo):
     return (
-        encabezado(1, "Fundamentos de Python para cálculos químicos", """
+        encabezado(1, "Fundamentos de Python, NumPy y unidades", """
 En esta sesión conoceremos el entorno de Google Colab, realizaremos operaciones básicas,
-tomaremos decisiones con condicionales y construiremos nuestras primeras funciones.
+trabajaremos con muchos datos a la vez usando **NumPy** y aprenderemos a cuidar las unidades con
+**pint**. Cerraremos con algunas reglas para usar con responsabilidad la inteligencia artificial
+de Colab.
 
 **Al terminar podrás:**
 - Distinguir los tipos de datos básicos (`int`, `float`, `str`, `bool`).
 - Traducir fórmulas químicas a expresiones de Python.
-- Usar `if`, `elif` y `else` para clasificar resultados.
-- Escribir funciones reutilizables con `def` y `return`.
+- Resumir datos experimentales y operar con vectores y matrices usando NumPy.
+- Evitar errores de unidades, como los factores de 1000, con la biblioteca pint.
+- Usar el asistente de IA para entender, no para saltarte el aprendizaje.
 """, carpeta, archivo)
         + instrucciones(1)
         + md("""
@@ -191,186 +194,237 @@ moleculas_hcn = ____
 print(f"Moléculas de HCN: {moleculas_hcn}")
 """)
         + md("""
-## **Variables booleanas y comparaciones**
+## **Introducción a NumPy**
 
-Una variable booleana solo puede valer `True` (verdadero) o `False` (falso). Se obtienen al
-comparar valores con los operadores `<`, `<=`, `>`, `>=`, `==` (igual) y `!=` (diferente).
+Hasta ahora cada variable guarda un solo número. En el laboratorio, en cambio, trabajamos con
+**muchos datos a la vez**: réplicas de una medición, una serie de temperaturas o las
+concentraciones de una curva de calibración.
 
-> ⚠️ `=` **asigna** un valor; `==` **compara** dos valores.
+**NumPy** es la biblioteca base del cómputo científico en Python. Una **biblioteca** es un
+conjunto de funciones que alguien más escribió y que podemos reutilizar; se carga con `import` y
+es costumbre darle un alias corto. NumPy ofrece los **arreglos** (`np.array`): colecciones de
+números, escritas entre corchetes `[ ]`, con las que podemos operar todos los elementos a la vez.
 """)
         + code("""
-ph = 4
+import numpy as np
+""")
+        + code("""
+# Cuatro réplicas de la valoración de una disolución de NaOH (mol/L)
+replicas = np.array([0.1012, 0.1008, 0.1015, 0.1010])
 
-# ¿El pH es menor que 7?
-ph < 7
+print("Número de réplicas:", len(replicas))
+print(f"Promedio: {replicas.mean():.4f} mol/L")
+print(f"Desviación estándar: {replicas.std(ddof=1):.4f} mol/L")   # ddof=1: muestral
+print(f"Mínimo y máximo: {replicas.min()} y {replicas.max()} mol/L")
 """)
+        + md("Una operación con un arreglo se aplica a **todos** sus elementos, sin tener que repetirla uno por uno:")
         + code("""
-# ¿El pH es exactamente igual a 7?
-ph == 7
+temperaturas_C = np.array([0.0, 25.0, 37.0, 100.0])
+print("En kelvin:", temperaturas_C + 273.15)
+
+# Moles de soluto en distintos volúmenes de una disolución 0.1 mol/L
+volumenes_L = np.array([0.010, 0.025, 0.050])
+print("Moles:", 0.1 * volumenes_L)
 """)
+        + md("Los arreglos representan vectores y matrices, y permiten las operaciones del álgebra lineal:")
         + code("""
-# ¿El pH es mayor o igual que 7?
-ph >= 7
-""")
-        + code("""
-# ¿El pH es diferente de 7?
-ph != 7
+matriz_A = np.array([[1, 2],
+                     [3, 4]])
+matriz_B = np.array([[5, 6],
+                     [7, 8]])
+
+# Producto elemento a elemento (NO es el producto de matrices)
+print("A * B =\\n", matriz_A * matriz_B)
+
+# Producto matricial (filas por columnas)
+print("A @ B =\\n", matriz_A @ matriz_B)
+
+# Transpuesta
+print("Aᵀ =\\n", matriz_A.T)
 """)
         + md("""
-## **El condicional `if`**
-
-Las estructuras `if`, `elif` y `else` controlan el flujo del programa con base en
-**condiciones**:
-
-- `if`: ejecuta un bloque de código si la condición es verdadera.
-- `elif` (*else if*): evalúa una nueva condición si las anteriores fueron falsas. Puede haber
-  varios.
-- `else`: se ejecuta si ninguna condición anterior fue verdadera. Es opcional.
-
-Los bloques se delimitan con **sangría** (4 espacios) después de los dos puntos `:`.
+Cada elemento de un arreglo tiene una **posición** (índice) que empieza en **0**. Además podemos
+extraer filas o columnas completas con **rebanadas** (*slicing*): `arr[fila, columna]`, donde `:`
+significa "todas".
 """)
         + code("""
-# Clasificamos el estado de agregación del agua a 1 atm según su temperatura
-T_fusion = 0          # °C
-T_ebullicion = 100    # °C
+arr = np.arange(9).reshape(3, 3)    # Números del 0 al 8 acomodados en una matriz 3×3
+print(arr, "forma:", arr.shape)
 
-T = float(input("¿A qué temperatura está el agua? (°C): "))
+print("Primera fila:", arr[0])
+print("Elemento (0, 1):", arr[0, 1])
+print("Primera columna:", arr[:, 0])
 
-if T > T_ebullicion:
-    print("El agua está en fase gaseosa.")
-elif T < T_fusion:      # Solo se evalúa si la condición del if fue falsa
-    print("El agua está en fase sólida.")
-else:                   # Se ejecuta cuando todas las condiciones anteriores son falsas
-    print("El agua está en fase líquida.")
+arr[0, :] = [10, 20, 30]            # Reemplazamos la primera fila
+print(arr)
 """)
-        + md("""
-## **Operadores lógicos**
+        + md("El módulo `np.linalg` contiene las funciones más comunes de álgebra lineal:")
+        + code("""
+print("Determinante de A:", np.linalg.det(matriz_A))
 
-Para combinar condiciones usamos `and`, `or` y `not`:
-
-| A | B | `A and B` | `A or B` | `not A` |
-| :-: | :-: | :-: | :-: | :-: |
-| `True` | `True` | `True` | `True` | `False` |
-| `True` | `False` | `False` | `True` | `False` |
-| `False` | `True` | `False` | `True` | `True` |
-| `False` | `False` | `False` | `False` | `True` |
+valores_propios, vectores_propios = np.linalg.eig(matriz_A)
+print("Valores propios:", valores_propios)
+print("Vectores propios (columnas):\\n", vectores_propios)
 """)
         + code("""
-# Clasificamos disoluciones según su pH combinando condiciones con 'and'
-ph = 8
+# Resolver el sistema   2x +  y +  z = 10
+#                        x -  y + 2z =  5
+#                       3x + 2y -  z =  7
+coeficientes = np.array([[2,  1,  1],
+                         [1, -1,  2],
+                         [3,  2, -1]])
+resultados = np.array([10, 5, 7])
 
-if 0 <= ph < 7:                 # Equivale a (ph >= 0) and (ph < 7)
-    print("La disolución es ácida.")
-elif ph == 7:
-    print("La disolución es neutra.")
-elif (ph > 7) and (ph <= 14):
-    print("La disolución es básica.")
-else:
-    print("El pH está fuera del intervalo 0–14.")
-""")
-        + md("""
-## **Funciones**
-
-Las funciones son bloques de código reutilizable que realizan una tarea específica. Ayudan a
-organizar el código, hacerlo más legible y evitar repeticiones. Su estructura básica es:
-
-```python
-def nombre_funcion(parametro1, parametro2):
-    resultado = parametro1 + parametro2
-    return resultado          # Devuelve el resultado a quien llamó a la función
-```
-
-Ya conoces varias funciones de Python: `print()`, `input()`, `type()` y `abs()` (valor absoluto).
+solucion = np.linalg.solve(coeficientes, resultados)
+print("x, y, z =", solucion)
 """)
         + md(r"""
-## **Práctica dirigida: ley de los gases ideales**
+### **Ejercicio 3: Matriz de rotación**
 
-**Objetivo:** calcular la presión despejando $PV = nRT$:
+Para rotar un vector en $\mathbb{R}^2$ un ángulo $\theta$ se multiplica por la matriz de rotación:
 
-$$P = \frac{nRT}{V}$$
+$$R(\theta) = \begin{pmatrix}
+\cos\theta & -\sin\theta \\
+\sin\theta & \cos\theta
+\end{pmatrix}$$
 
-donde $n$ es la cantidad de sustancia (mol), $T$ la temperatura (K), $V$ el volumen (L) y $R$ la
-constante de los gases, $0.0821~\frac{\text{atm·L}}{\text{mol·K}}$.
-
-Algunos parámetros pueden tener un **valor predeterminado** (como `R=0.0821`); los demás deben
-proporcionarse obligatoriamente.
-""")
-        + code("""
-def calcular_presion(n, T, V, R=0.0821):
-    \"\"\"Presión (atm) de un gas ideal a partir de n (mol), T (K) y V (L).\"\"\"
-    return n * R * T / V
-
-P_atm = calcular_presion(1.0, 298.15, 22.4)   # R toma su valor predeterminado
-print(f"La presión calculada es {P_atm:.2f} atm")
-""")
-        + md("Podemos indicar los argumentos por su nombre y cambiar el valor predeterminado:")
-        + code("""
-P = calcular_presion(n=1, T=273.15, V=22.4)
-print(f"En condiciones normales: {P:.2f} atm")
-
-# Con R en unidades del SI, V debe estar en m³ y el resultado sale en Pa
-P_pa = calcular_presion(n=1, T=273.15, V=0.0224, R=8.314)
-print(f"En unidades del SI: {P_pa:.0f} Pa")
-""")
-        + md(r"""
-### **Ejercicio 3: Clasificación de enlaces**
-
-Según la diferencia de electronegatividad $\Delta \chi$ entre dos átomos, podemos predecir el tipo
-de enlace que forman:
-
-- Covalente no polar: $\Delta \chi < 0.5$
-- Covalente polar: $0.5 \leq \Delta \chi < 1.7$
-- Iónico: $\Delta \chi \geq 1.7$
-
-Escribe la función `clasificar_enlace(delta_chi)` que **devuelva** (con `return`) uno de los textos
-`"covalente no polar"`, `"covalente polar"` o `"iónico"`. Después úsala con los valores de
-electronegatividad (escala de Pauling) de la celda siguiente.
-""")
-        + code("""
-# Electronegatividades de Pauling
-chi_H = 2.20
-chi_C = 2.55
-chi_N = 3.04
-chi_O = 3.44
-chi_F = 3.98
-chi_Na = 0.93
-chi_Mg = 1.31
-chi_Cl = 3.16
+Construye la matriz `R` para θ = 90° y guarda en `v_rotado` el vector (3, 4) rotado. Recuerda
+que `np.cos` y `np.sin` trabajan en **radianes**.
 """)
         + ejercicio("ej3", """
-def clasificar_enlace(delta_chi):
-    ____
+theta = np.radians(90)            # 90° en radianes
+R = np.array([[____, ____],
+              [____, ____]])
+v = np.array([3, 4])
 
-# Prueba tu función con distintos enlaces
-print("C–H:", clasificar_enlace(abs(chi_C - chi_H)))
-print("O–H:", clasificar_enlace(abs(chi_O - chi_H)))
-print("Na–Cl:", clasificar_enlace(abs(chi_Na - chi_Cl)))
+v_rotado = ____
+print(v_rotado)
 """)
         + md(r"""
-### **Ejercicio 4: Temperatura de un gas ideal**
+### **Ejercicio 4: Regla de Cramer**
 
-1. Calcula la cantidad de sustancia `n_agua` en 50.0 g de agua.
-2. Define la función `calcular_temperatura(P, V, n, R=0.0821)` que devuelva $T = \frac{PV}{nR}$.
-3. Calcula a qué temperatura se cumplen las siguientes condiciones y guarda los resultados en
-   `T1` y `T2`:
-   - $P = 3.0~\text{atm},~V = 20.0~\text{L}$
-   - $P = 6.3~\text{atm},~V = 1.2~\text{L}$
+Para un sistema de $2 \times 2$
 
-> 🤔 **Para reflexionar:** ¿tiene sentido físico tratar al agua como gas ideal a esas
-> temperaturas? ¿En qué fase estaría realmente?
+$$\begin{aligned}
+3x + 2y &= 12 \\
+4x - y &= 5
+\end{aligned}$$
+
+la regla de Cramer da $x = \frac{\Delta_x}{\Delta}$ y $y = \frac{\Delta_y}{\Delta}$, donde $\Delta$
+es el determinante de la matriz de coeficientes, y $\Delta_x$ y $\Delta_y$ son los determinantes de
+esa matriz con la primera o la segunda columna sustituida por los resultados.
+
+Calcula `delta`, `x` y `y`, y compara con `np.linalg.solve`.
 """)
         + ejercicio("ej4", """
-m_agua = 50.0       # g
-MM_agua = ____      # g/mol
-n_agua = ____
+A = np.array([[3, 2], [4, -1]], dtype=float)
+b = np.array([12, 5], dtype=float)
 
-def calcular_temperatura(P, V, n, R=0.0821):
-    ____
+delta = ____
 
-T1 = calcular_temperatura(P=3.0, V=20.0, n=n_agua)
-T2 = ____
-print(f"T1 = {T1} K")
-print(f"T2 = {T2} K")
+A_x = A.copy()
+A_x[:, 0] = b           # Primera columna sustituida por b
+A_y = A.copy()
+____                    # Segunda columna sustituida por b
+
+x = ____
+y = ____
+print(f"x = {x}, y = {y}")
+print("Con np.linalg.solve:", np.linalg.solve(A, b))
+""")
+        + md("""
+## **Unidades con pint**
+
+Muchos errores en los cálculos químicos no son de programación sino de **unidades**: usar mL
+donde iban L, g donde iban kg o °C donde iba K. El resultado sale 1000 veces más grande o más
+pequeño, y Python no se queja porque solo ve números.
+
+La biblioteca **pint** une cada número con su unidad. Así, las conversiones se hacen solas y
+Python se detiene si intentas combinar unidades incompatibles.
+""")
+        + code("""
+try:
+    import pint
+except ImportError:                     # Si no está instalada (por ejemplo, en Colab)
+    import subprocess
+    subprocess.run([sys.executable, "-m", "pip", "install", "-q", "pint"], check=True)
+
+from pint import UnitRegistry
+
+ureg = UnitRegistry()     # Catálogo de unidades
+Q_ = ureg.Quantity        # Atajo para crear cantidades, útil con temperaturas
+""")
+        + md("Una **cantidad** es un número multiplicado por una unidad. Con `.to()` se convierte a otra unidad:")
+        + code("""
+volumen = 250 * ureg.mL
+masa = 2.5 * ureg.kg
+
+print(volumen.to("L"))
+print(masa.to("g"))
+print((1 * ureg.atm).to("kPa"))
+print(f"{(8.314 * ureg('J/(mol*K)')).to('L*atm/(mol*K)'):.5f}")   # R en otras unidades
+""")
+        + md("""
+Las unidades se multiplican y se dividen junto con los números. Veamos el error típico de
+calcular una concentración con el volumen en mililitros:
+""")
+        + code("""
+moles = 0.0428 * ureg.mol
+volumen = 250 * ureg.mL
+
+concentracion = moles / volumen
+print(concentracion)                  # mol/mL: correcto, pero en unidades poco usuales
+print(concentracion.to("mol/L"))      # pint hace la conversión por ti
+""")
+        + md("Si combinas unidades incompatibles, pint lanza un `DimensionalityError` en lugar de darte un resultado sin sentido:")
+        + code("""
+masa = 5 * ureg.g
+volumen = 100 * ureg.mL
+
+masa + volumen      # ¿Sumar gramos con mililitros? Error a propósito
+""", error_esperado=True)
+        + md("""
+Las temperaturas en °C necesitan cuidado: 20 °C no es «el doble» de 10 °C. Crea la cantidad con
+`Q_(valor, ureg.degC)` y conviértela a kelvin antes de multiplicar o dividir.
+""")
+        + code("""
+T = Q_(25.0, ureg.degC)
+print(T.to("K"))
+""")
+        + md(r"""
+### **Ejercicio 5a: Gas ideal con unidades**
+
+Calcula la presión de 0.250 mol de un gas ideal a 25.0 °C en un recipiente de 500 mL, usando
+$R = 0.082057~\frac{\text{L·atm}}{\text{mol·K}}$ y $P = \frac{nRT}{V}$.
+
+- Guarda en `presion` el resultado en **atm** (usa `.to("atm")`).
+- Guarda en `presion_kpa` la misma presión en **kPa**.
+
+Observa que no necesitas convertir los mL ni los °C a mano.
+""")
+        + ejercicio("ej5a", """
+n = 0.250 * ureg.mol
+T = Q_(25.0, ureg.degC)
+V = ____
+R = 0.082057 * ureg("L * atm / (mol * K)")
+
+presion = ____
+presion_kpa = ____
+print(presion, presion_kpa)
+""")
+        + md("""
+### **Ejercicio 5b: Molaridad con unidades**
+
+Se disuelven 2.50 g de NaCl (58.44 g/mol) y se aforan a 250 mL. Calcula la molaridad en
+`molaridad`, como cantidad de pint expresada en mol/L.
+""")
+        + ejercicio("ej5b", """
+masa = ____
+masa_molar = 58.44 * ureg("g/mol")
+volumen = ____
+
+molaridad = ____
+print(molaridad)
 """)
         + md("""
 ## **Uso responsable de la IA en Colab**
@@ -408,32 +462,28 @@ nombres de los botones pueden cambiar según la versión de Colab.
 > error. No me des el código corregido.»*
 """)
         + md("""
-### **Ejercicio 5: Revisa el código de un asistente de IA**
+### **Ejercicio 6: Revisa el código de un asistente de IA**
 
-Se le pidió a un asistente de IA: *«Escribe una función en Python que calcule la molaridad de una
-disolución a partir de la masa del soluto en gramos, su masa molar y el volumen en mililitros»*.
-Esta fue su respuesta:
+Se le pidió a un asistente de IA: *«Escribe código en Python que calcule la molaridad de una
+disolución a partir de la masa del soluto en gramos, su masa molar y el volumen en
+mililitros»*. Su respuesta está en la celda de código de abajo: se ve correcta y se ejecuta sin
+errores… pero tiene un problema.
 
-```python
-def calcular_molaridad(masa_g, masa_molar, volumen_ml):
-    \"\"\"Devuelve la molaridad (mol/L) de una disolución.\"\"\"
-    moles = masa_g / masa_molar
-    return moles / volumen_ml
-```
+1. Con 5.844 g de NaCl (58.44 g/mol) en 100 mL, la molaridad debe ser **1.0 mol/L**. ¿Qué
+   resultado da el código?
+2. Encuentra el error y corrígelo para que `molaridad` quede en mol/L.
 
-El código se ve correcto y se ejecuta sin errores… pero tiene un problema.
-
-1. Pruébala con un caso que sepas resolver a mano: 5.844 g de NaCl (58.44 g/mol) en 100 mL
-   deberían dar **1.0 mol/L**.
-2. Encuentra el error y corrige la función.
+> 💡 Si reescribes el cálculo con pint, el error salta a la vista.
 """)
-        + ejercicio("ej5", """
-def calcular_molaridad(masa_g, masa_molar, volumen_ml):
-    \"\"\"Devuelve la molaridad (mol/L) de una disolución.\"\"\"
-    moles = masa_g / masa_molar
-    return moles / volumen_ml
+        + ejercicio("ej6", """
+# Código propuesto por el asistente de IA
+masa_g = 5.844          # g de NaCl
+masa_molar = 58.44      # g/mol
+volumen_ml = 100.0      # mL
 
-print(calcular_molaridad(5.844, 58.44, 100.0))   # ¿Da 1.0 mol/L?
+moles = masa_g / masa_molar
+molaridad = moles / volumen_ml      # Molaridad en mol/L
+print(molaridad)
 """)
         + md("""
 ## **Resumen de la sesión**
@@ -442,15 +492,19 @@ print(calcular_molaridad(5.844, 58.44, 100.0))   # ¿Da 1.0 mol/L?
 
 **Funciones integradas:** `print()`, `input()`, `type()`, `abs()`.
 
-**Estructuras:**
-- `if`, `elif`, `else`: condicionales.
-- `def nombre(parámetros): ... return resultado`: funciones.
+**NumPy:** `np.array()` crea arreglos; las operaciones se aplican a todos los elementos a la vez
+(`temperaturas + 273.15`); `.mean()`, `.std()`, `.min()` y `.max()` resumen datos; `@` es el
+producto matricial y `np.linalg` calcula determinantes y resuelve sistemas de ecuaciones.
+
+**pint:** `ureg = UnitRegistry()` crea el catálogo de unidades; `5 * ureg.mL` es una cantidad;
+`.to("L")` convierte; `Q_(25, ureg.degC)` crea temperaturas. Combinar unidades incompatibles
+produce un `DimensionalityError`, que es justo lo que queremos.
 
 **Buenas prácticas:**
 - Intenta primero; usa la pista y la IA para entender, no para saltarte el ejercicio. Verifica
   siempre lo que te propone un asistente.
 - Usa nombres de variables descriptivos (`masa_molar_hcl` en lugar de `m`).
-- Anota las unidades en comentarios.
+- Anota las unidades en comentarios o, mejor aún, usa pint.
 - Separa tu código en *datos → cálculo → resultado*.
 """)
         + md("""
@@ -512,27 +566,20 @@ print(f"Tiempo: {tiempo_h} h")
 print(f"Energía: {energia_kcal} kcal")
 print(f"Costo por paso: {costo_por_paso} kcal/paso")
 """)
-        + md(r"""
-### **Autoevaluación 4: Fórmula de Gauss**
+        + md("""
+### **Autoevaluación 4: Conversión de varias temperaturas**
 
-La suma de los primeros $n$ números naturales es:
-
-$$S_n = \frac{n(n+1)}{2}$$
-
-Define la función `formula_gauss(n)` y úsala para sumar los primeros 100, 200 y 300 números
-naturales (`suma_100`, `suma_200` y `suma_300`).
+Convierte a kelvin, con un arreglo de NumPy, las temperaturas de sublimación del hielo seco
+(−78.5 °C), de fusión del hielo (0 °C), ambiente (25 °C), corporal (37 °C) y de ebullición del
+agua (100 °C). Guarda el resultado en `temperaturas_K`.
 """)
         + ejercicio("auto4", """
-def formula_gauss(n):
-    ____
-
-suma_100 = ____
-suma_200 = ____
-suma_300 = ____
-print(suma_100, suma_200, suma_300)
+temperaturas_C = np.array([-78.5, 0.0, 25.0, 37.0, 100.0])
+temperaturas_K = ____
+print(temperaturas_K)
 """)
         + md(r"""
-### **Autoevaluación 5: Espontaneidad de una reacción**
+### **Autoevaluación 5: Energía libre a varias temperaturas**
 
 El reformado de metano con vapor produce monóxido de carbono e hidrógeno:
 
@@ -540,25 +587,21 @@ $$\text{CH}_4(g) + \text{H}_2\text{O}(g) \rightarrow \text{CO}(g) + 3\,\text{H}_
 
 con $\Delta H^\circ = 206.1~\text{kJ/mol}$ y $\Delta S^\circ = 215~\text{J/(mol·K)}$.
 
-1. Escribe `calcular_delta_g(delta_h, delta_s, T)` que reciba $\Delta H$ en kJ/mol, $\Delta S$ en
-   J/(mol·K) y $T$ en K, y devuelva $\Delta G = \Delta H - T\Delta S$ en kJ/mol.
-2. Escribe `clasificar_reaccion(delta_g)` que devuelva `"espontánea"` ($\Delta G < 0$),
-   `"equilibrio"` ($\Delta G = 0$) o `"no espontánea"` ($\Delta G > 0$).
-3. Calcula $\Delta G$ a 25 °C (`delta_g_25`).
-4. **Reto:** ¿a partir de qué temperatura la reacción se vuelve espontánea? (`T_inversion`)
+1. Con el arreglo de temperaturas `T`, calcula $\Delta G = \Delta H - T\Delta S$ en kJ/mol para
+   todas a la vez (`delta_g`). Cuida las unidades de $\Delta S$.
+2. ¿A partir de qué temperatura la reacción se vuelve espontánea ($\Delta G < 0$)? Calcúlala en
+   `T_inversion`, igualando $\Delta G = 0$.
 """)
         + ejercicio("auto5", """
-def calcular_delta_g(delta_h, delta_s, T):
-    ____
+delta_h = 206.1                 # kJ/mol
+delta_s = ____                  # kJ/(mol·K)
+T = np.array([298.15, 500.0, 750.0, 1000.0, 1250.0])   # K
 
-def clasificar_reaccion(delta_g):
-    ____
-
-delta_g_25 = ____
-print(f"ΔG = {delta_g_25} kJ/mol → {clasificar_reaccion(delta_g_25)}")
+delta_g = ____
+print(delta_g)
 
 T_inversion = ____
-print(f"La reacción es espontánea por encima de {T_inversion} K")
+print(f"ΔG = 0 a {T_inversion} K")
 """)
         + cierre()
     )

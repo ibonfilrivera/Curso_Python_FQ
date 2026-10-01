@@ -7,7 +7,8 @@ Para cada sesión se producen dos versiones:
 * soluciones/Sesion_N_soluciones.ipynb — solucionario: los mismos notebooks
   con las soluciones de referencia del paquete `verificador`.
 
-Además genera seguimiento/Tablero_docente.ipynb, el tablero de seguimiento del grupo.
+Además genera seguimiento/Tablero_docente.ipynb, el tablero de seguimiento del grupo, e
+integra el material del equipo docente de contenido_extra/ (ver su README).
 
 Uso (desde la carpeta Curso_Python_FQ):
 
@@ -21,7 +22,10 @@ from pathlib import Path
 import nbformat
 from nbformat.v4 import new_code_cell, new_markdown_cell, new_notebook
 
-from bloques import md
+import json
+
+from adicionales import ErrorAdicional, procesar_sesion
+from bloques import code, ejercicio, md, variante
 
 RAIZ = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(RAIZ))
@@ -36,6 +40,8 @@ def _celdas(bloques, modulo, solucionario):
         tipo = bloque[0]
         if tipo == "md":
             celdas.append(new_markdown_cell(bloque[1]))
+        elif tipo == "variante":
+            celdas.append(new_code_cell(bloque[2] if solucionario else bloque[1]))
         elif tipo == "code":
             celda = new_code_cell(bloque[1])
             if bloque[2]:
@@ -70,11 +76,18 @@ def _guardar(celdas, ruta):
 
 
 def construir(numero, fuente):
+    # 1. Material del equipo docente (contenido_extra/sesionN/): bloques y especificación
+    extra, especificacion = procesar_sesion(numero, md, code, ejercicio, variante)
+    ruta_json = RAIZ / "verificador" / f"adicionales_sesion{numero}.json"
+    ruta_json.write_text(json.dumps(especificacion, indent=2, ensure_ascii=False) + "\n",
+                         encoding="utf-8")
+    # 2. El verificador se importa después de escribir el JSON para que cargue los adicionales
     modulo = importlib.import_module(f"verificador.sesion{numero}")
     for solucionario in (False, True):
         carpeta = "soluciones" if solucionario else "notebooks_kaggle"
         archivo = f"Sesion_{numero}{'_soluciones' if solucionario else ''}.ipynb"
         bloques = fuente(carpeta, archivo)
+        bloques = bloques[:-2] + extra + bloques[-2:]      # Antes de «Tu progreso»
         if solucionario:
             bloques = md("> 📘 **Solucionario.** Esta versión contiene las soluciones de "
                          "todos los ejercicios; está pensada para el equipo docente.") + bloques
@@ -93,7 +106,10 @@ if __name__ == "__main__":
     from contenido_tablero import fuente as tablero
 
     print("Generando notebooks:")
-    construir(1, sesion1)
-    construir(2, sesion2)
-    construir(3, sesion3)
+    try:
+        construir(1, sesion1)
+        construir(2, sesion2)
+        construir(3, sesion3)
+    except ErrorAdicional as e:
+        sys.exit(f"\n❌ Problema en contenido_extra/:\n{e}")
     construir_simple(tablero, "seguimiento", "Tablero_docente.ipynb")

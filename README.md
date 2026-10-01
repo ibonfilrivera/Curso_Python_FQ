@@ -11,8 +11,8 @@ y Química Teórica. Curso intensivo de 12 horas (3 sesiones de 4 horas) en Goog
 
 | Sesión | Temas | Aplicaciones químicas | Abrir en Colab |
 | :--- | :--- | :--- | :---: |
-| **1** | Tipos de datos, operaciones, `if`/`elif`/`else`, funciones, uso responsable de la IA | Moles y moléculas, gases ideales, tipo de enlace, ΔG | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ibonfilrivera/Curso_Python_FQ/blob/main/notebooks_kaggle/Sesion_1.ipynb) |
-| **2** | Listas, tuplas, diccionarios, `for`, `while`, NumPy, unidades con pint · *extra:* clases | Masas molares, vida media, control de calidad, gases y disoluciones con unidades | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ibonfilrivera/Curso_Python_FQ/blob/main/notebooks_kaggle/Sesion_2.ipynb) |
+| **1** | Tipos de datos, operaciones, NumPy, unidades con pint, uso responsable de la IA | Moles y moléculas, réplicas, rotaciones y sistemas de ecuaciones, gases y disoluciones con unidades, ΔG | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ibonfilrivera/Curso_Python_FQ/blob/main/notebooks_kaggle/Sesion_1.ipynb) |
+| **2** | Listas, tuplas, diccionarios, `if`/`elif`/`else`, `for`, `while` · *temas extra:* funciones y clases | Masas molares, tipo de enlace, gases ideales, vida media, control de calidad, espontaneidad | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ibonfilrivera/Curso_Python_FQ/blob/main/notebooks_kaggle/Sesion_2.ipynb) |
 | **3** | SciPy, Matplotlib, Pandas, RDKit · *proyecto final opcional* | Cinética, ley de Lambert-Beer, regla de Lipinski, solubilidad, pKa aparente de nanopartículas | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ibonfilrivera/Curso_Python_FQ/blob/main/notebooks_kaggle/Sesion_3.ipynb) |
 
 ## ✅ Ejercicios con verificación automática
@@ -35,6 +35,16 @@ El verificador acepta respuestas con unidades de [pint](https://pint.readthedocs
 estudiante responde `370 * ureg.mmol` donde se esperaban mol, convierte antes de comparar, y
 avisa si las unidades no son compatibles.
 
+## ➕ Material de otros asesores
+
+Cualquier asesor puede agregar secciones y ejercicios **sin conocer el sistema de verificación**:
+escribe un notebook normal en Colab con sus soluciones, marca los ejercicios con
+`#@ejercicio` / `#@revisar` y lo sube a `contenido_extra/sesionN/`. GitHub Actions lo integra al
+final de la sesión, genera la versión del estudiante y su verificación, ejecuta las pruebas y
+publica los notebooks. Los ejercicios sin marcas también se integran, solo que sin verificación
+automática. Guía completa: [`contenido_extra/README.md`](contenido_extra/README.md); resumen para
+quien quiera contribuir: [`CONTRIBUTING.md`](CONTRIBUTING.md).
+
 ## 📋 Seguimiento del grupo
 
 Si el equipo docente lo activa, cada verificación se registra en una hoja de cálculo de Google
@@ -52,6 +62,7 @@ Curso_Python_FQ/
 ├── notebooks/            Versión original del curso (referencia)
 ├── verificador/          Paquete que revisa los ejercicios (uno por sesión) y registro opcional
 ├── seguimiento/          Estrategia, Apps Script y tablero para el seguimiento del grupo
+├── contenido_extra/      Material de otros asesores (se integra automáticamente)
 ├── herramientas/         Generador de los notebooks y de los datos simulados
 ├── pruebas/              Pruebas automáticas (pytest y ejecución de todos los notebooks)
 ├── .github/workflows/    Integración continua en GitHub Actions
@@ -83,11 +94,12 @@ a mano, para que las dos versiones no se desincronicen.
 ### Integración continua
 
 Con cada `push` a `main` (y en cada *pull request*), GitHub Actions ejecuta
-[`.github/workflows/pruebas.yml`](.github/workflows/pruebas.yml) y comprueba que:
+[`.github/workflows/pruebas.yml`](.github/workflows/pruebas.yml): regenera los notebooks (con el
+material de `contenido_extra/`) y comprueba que:
 
 - el código del verificador pasa `ruff`, y el Apps Script no tiene errores de sintaxis;
-- los notebooks subidos coinciden con los que genera `construir_notebooks.py` (nadie los editó a
-  mano ni olvidó regenerarlos);
+- nadie editó a mano los notebooks generados (si el push solo trae material nuevo o cambios en
+  las fuentes, los notebooks regenerados se suben automáticamente al terminar);
 - los datos simulados de Lambert-Beer se reproducen idénticos;
 - las pruebas del verificador pasan (errores típicos, pint, registro con un servidor simulado);
 - en los solucionarios **todas** las verificaciones dan ✅, en los notebooks del estudiante sin

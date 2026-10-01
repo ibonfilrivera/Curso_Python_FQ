@@ -15,6 +15,11 @@ def code(texto, error_esperado=False):
     return [("code", texto.strip("\n"), error_esperado)]
 
 
+def variante(estudiante, solucion):
+    """Celda con un código para el estudiante y otro para el solucionario (sin verificación)."""
+    return [("variante", estudiante.strip("\n"), solucion.strip("\n"))]
+
+
 def ejercicio(clave, codigo_inicial):
     """Celda de trabajo + verificación (+ pista/solución en la versión del estudiante)."""
     return [("ejercicio", clave, codigo_inicial.strip("\n"))]
@@ -78,7 +83,7 @@ if os.path.isdir("../verificador"):      # Copia local del repositorio
 else:                                     # Google Colab: descarga el verificador
     os.makedirs("verificador", exist_ok=True)
     for archivo in ["__init__.py", "nucleo.py", "registro.py", "configuracion.py",
-                    "sesion{numero}.py"]:
+                    "sesion{numero}.py", "adicionales_sesion{numero}.json"]:
         urllib.request.urlretrieve(f"{{REPOSITORIO}}/verificador/{{archivo}}",
                                    f"verificador/{{archivo}}")
 
