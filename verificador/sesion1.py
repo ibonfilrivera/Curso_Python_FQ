@@ -1,4 +1,4 @@
-"""Ejercicios de la Sesión 1: variables, operaciones, NumPy, unidades e IA responsable."""
+"""Ejercicios de la Sesión 1: variables, operaciones, NumPy y unidades."""
 
 import os
 
@@ -183,31 +183,6 @@ volumen = 250 * ureg.mL
 
 molaridad = (masa / masa_molar / volumen).to("mol/L")
 print(f"c = {molaridad:.4f~P}")
-""")
-
-
-# --- Ejercicio 6: revisar código generado por IA ------------------------------------
-
-def _ej6(ns):
-    comparar_numero("molaridad", obtener(ns, "molaridad"), 5.844 / 58.44 / 0.100,
-                    unidades="mol/L")
-    return ("Encontraste el error: la IA dividió entre mililitros y el resultado salía en mol/mL, "
-            "1000 veces menor. Por eso siempre hay que verificar lo que propone.")
-
-
-ej6 = sesion.agregar(
-    "ej6", "Revisar el código de un asistente de IA", _ej6,
-    pista="El comentario promete mol/L. ¿En qué unidades está el volumen? Con 5.844 g de NaCl "
-          "en 100 mL deberías obtener 1.0 mol/L.",
-    solucion="""
-masa_g = 5.844          # g de NaCl
-masa_molar = 58.44      # g/mol
-volumen_ml = 100.0      # mL
-
-moles = masa_g / masa_molar
-volumen_l = volumen_ml / 1000          # La IA olvidó convertir mL a L
-molaridad = moles / volumen_l          # mol/L
-print(molaridad)
 """)
 
 

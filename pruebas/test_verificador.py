@@ -69,16 +69,6 @@ def test_texto_acepta_mayusculas_y_acentos(ns, capsys):
     assert verificar(s2.extra1, capsys)[0] == "correcto"
 
 
-def test_codigo_de_ia_con_error_de_mililitros(ns, capsys):
-    ns["molaridad"] = 5.844 / 58.44 / 100.0                # Código original de la IA: mol/mL
-    estado, salida = verificar(s1.ej6, capsys)
-    assert estado == "incorrecto" and "factor de 0.001" in salida
-    ns["molaridad"] = 5.844 / 58.44 / (100.0 / 1000)
-    assert verificar(s1.ej6, capsys)[0] == "correcto"
-    ns["molaridad"] = 5.844 * ureg.g / (58.44 * ureg("g/mol")) / (100 * ureg.mL)   # Con pint
-    assert verificar(s1.ej6, capsys)[0] == "correcto"
-
-
 def test_masa_molar_del_cloro(ns, capsys):
     class Sustancia:
         def __init__(self, nombre, formula, masa_molar):

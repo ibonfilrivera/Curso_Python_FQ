@@ -11,7 +11,7 @@ y Química Teórica. Curso intensivo de 12 horas (3 sesiones de 4 horas) en Goog
 
 | Sesión | Temas | Aplicaciones químicas | Abrir en Colab |
 | :--- | :--- | :--- | :---: |
-| **1** | Tipos de datos, operaciones, NumPy, unidades con pint, uso responsable de la IA | Moles y moléculas, réplicas, rotaciones y sistemas de ecuaciones, gases y disoluciones con unidades, ΔG | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ibonfilrivera/Curso_Python_FQ/blob/main/notebooks_kaggle/Sesion_1.ipynb) |
+| **1** | Tipos de datos, operaciones, NumPy, unidades con pint | Moles y moléculas, réplicas, rotaciones y sistemas de ecuaciones, gases y disoluciones con unidades, ΔG | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ibonfilrivera/Curso_Python_FQ/blob/main/notebooks_kaggle/Sesion_1.ipynb) |
 | **2** | Listas, tuplas, diccionarios, `if`/`elif`/`else`, `for`, `while` · *temas extra:* funciones y clases | Masas molares, tipo de enlace, gases ideales, vida media, control de calidad, espontaneidad | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ibonfilrivera/Curso_Python_FQ/blob/main/notebooks_kaggle/Sesion_2.ipynb) |
 | **3** | SciPy, Matplotlib, Pandas, RDKit · *proyecto final opcional* | Cinética, ley de Lambert-Beer, regla de Lipinski, solubilidad, pKa aparente de nanopartículas | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ibonfilrivera/Curso_Python_FQ/blob/main/notebooks_kaggle/Sesion_3.ipynb) |
 

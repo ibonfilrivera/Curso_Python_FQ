@@ -8,15 +8,13 @@ def fuente(carpeta, archivo):
         encabezado(1, "Fundamentos de Python, NumPy y unidades", """
 En esta sesión conoceremos el entorno de Google Colab, realizaremos operaciones básicas,
 trabajaremos con muchos datos a la vez usando **NumPy** y aprenderemos a cuidar las unidades con
-**pint**. Cerraremos con algunas reglas para usar con responsabilidad la inteligencia artificial
-de Colab.
+**pint**.
 
 **Al terminar podrás:**
 - Distinguir los tipos de datos básicos (`int`, `float`, `str`, `bool`).
 - Traducir fórmulas químicas a expresiones de Python.
 - Resumir datos experimentales y operar con vectores y matrices usando NumPy.
 - Evitar errores de unidades, como los factores de 1000, con la biblioteca pint.
-- Usar el asistente de IA para entender, no para saltarte el aprendizaje.
 """, carpeta, archivo)
         + instrucciones(1)
         + md("""
@@ -427,65 +425,6 @@ molaridad = ____
 print(molaridad)
 """)
         + md("""
-## **Uso responsable de la IA en Colab**
-
-Colab incluye un asistente de inteligencia artificial (Gemini) que puede explicar código,
-sugerir cómo corregir un error o escribir funciones completas. Es una herramienta útil, pero en un
-curso cuyo objetivo es **aprender a programar** conviene usarla con criterio. Las opciones y
-nombres de los botones pueden cambiar según la versión de Colab.
-
-**✅ Buenos usos**
-- Pedir que te **explique** un mensaje de error o una línea de código que no entiendes.
-- Preguntar **por qué** algo funciona, o pedir un ejemplo parecido pero distinto al ejercicio.
-- Revisar tu propio código **después** de intentarlo: «¿qué casos no estoy considerando?».
-
-**⚠️ Usos que te quitan el aprendizaje**
-- Pedir la solución de un ejercicio antes de intentarlo. Primero intenta; después usa
-  `ejN.pista()`. La IA viene al final, no al principio.
-- Copiar código que no sabrías explicar línea por línea.
-
-**🔍 La IA se equivoca, y con seguridad**
-- Puede inventar funciones que no existen, confundir unidades o usar datos químicos incorrectos
-  (masas molares, constantes). Contrasta con tus apuntes o con una fuente confiable.
-- **Verifica siempre** con `ejN.verificar()`, con un caso que sepas resolver a mano y revisando las
-  unidades.
-
-**🔒 Cuida la información**
-- No compartas datos personales, resultados de investigación no publicados ni información
-  confidencial del laboratorio.
-
-**📝 Sé transparente**
-- Si usas IA en una tarea o en un reporte, indícalo y describe para qué la usaste, según las
-  reglas de tu profesor/a y de la Facultad.
-
-> 💡 **Una buena forma de preguntar:** *«Explícame qué hace esta función y por qué da este
-> error. No me des el código corregido.»*
-""")
-        + md("""
-### **Ejercicio 6: Revisa el código de un asistente de IA**
-
-Se le pidió a un asistente de IA: *«Escribe código en Python que calcule la molaridad de una
-disolución a partir de la masa del soluto en gramos, su masa molar y el volumen en
-mililitros»*. Su respuesta está en la celda de código de abajo: se ve correcta y se ejecuta sin
-errores… pero tiene un problema.
-
-1. Con 5.844 g de NaCl (58.44 g/mol) en 100 mL, la molaridad debe ser **1.0 mol/L**. ¿Qué
-   resultado da el código?
-2. Encuentra el error y corrígelo para que `molaridad` quede en mol/L.
-
-> 💡 Si reescribes el cálculo con pint, el error salta a la vista.
-""")
-        + ejercicio("ej6", """
-# Código propuesto por el asistente de IA
-masa_g = 5.844          # g de NaCl
-masa_molar = 58.44      # g/mol
-volumen_ml = 100.0      # mL
-
-moles = masa_g / masa_molar
-molaridad = moles / volumen_ml      # Molaridad en mol/L
-print(molaridad)
-""")
-        + md("""
 ## **Resumen de la sesión**
 
 **Tipos de datos:** `int` (enteros), `float` (decimales), `str` (texto), `bool` (`True`/`False`).
@@ -501,8 +440,7 @@ producto matricial y `np.linalg` calcula determinantes y resuelve sistemas de ec
 produce un `DimensionalityError`, que es justo lo que queremos.
 
 **Buenas prácticas:**
-- Intenta primero; usa la pista y la IA para entender, no para saltarte el ejercicio. Verifica
-  siempre lo que te propone un asistente.
+- Intenta primero; usa la pista para entender, no para saltarte el ejercicio.
 - Usa nombres de variables descriptivos (`masa_molar_hcl` en lugar de `m`).
 - Anota las unidades en comentarios o, mejor aún, usa pint.
 - Separa tu código en *datos → cálculo → resultado*.
