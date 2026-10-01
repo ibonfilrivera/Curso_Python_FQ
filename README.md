@@ -11,15 +11,14 @@ y Química Teórica. Curso intensivo de 12 horas (3 sesiones de 4 horas) en Goog
 
 | Sesión | Temas | Aplicaciones químicas | Abrir en Colab |
 | :--- | :--- | :--- | :---: |
-| **1** | Tipos de datos, operaciones, NumPy, unidades con pint | Moles y moléculas, réplicas, rotaciones y sistemas de ecuaciones, gases y disoluciones con unidades, ΔG | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ibonfilrivera/Curso_Python_FQ/blob/main/notebooks_kaggle/Sesion_1.ipynb) |
-| **2** | Listas, tuplas, diccionarios, `if`/`elif`/`else`, `for`, `while` · *temas extra:* funciones y clases | Masas molares, tipo de enlace, gases ideales, vida media, control de calidad, espontaneidad | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ibonfilrivera/Curso_Python_FQ/blob/main/notebooks_kaggle/Sesion_2.ipynb) |
-| **3** | SciPy, Matplotlib, Pandas, RDKit · *proyecto final opcional* | Cinética, ley de Lambert-Beer, regla de Lipinski, solubilidad, pKa aparente de nanopartículas | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ibonfilrivera/Curso_Python_FQ/blob/main/notebooks_kaggle/Sesion_3.ipynb) |
+| **1** | Tipos de datos, operaciones, NumPy, unidades con pint | Moles y moléculas, réplicas, rotaciones y sistemas de ecuaciones, gases y disoluciones con unidades, ΔG | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ibonfilrivera/Curso_Python_FQ/blob/main/notebooks_verificador/Sesion_1.ipynb) |
+| **2** | Listas, tuplas, diccionarios, `if`/`elif`/`else`, `for`, `while` · *temas extra:* funciones y clases | Masas molares, tipo de enlace, gases ideales, vida media, control de calidad, espontaneidad | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ibonfilrivera/Curso_Python_FQ/blob/main/notebooks_verificador/Sesion_2.ipynb) |
+| **3** | SciPy, Matplotlib, Pandas, RDKit · *proyecto final opcional* | Cinética, ley de Lambert-Beer, regla de Lipinski, solubilidad, pKa aparente de nanopartículas | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ibonfilrivera/Curso_Python_FQ/blob/main/notebooks_verificador/Sesion_3.ipynb) |
 
 ## ✅ Ejercicios con verificación automática
 
-Los notebooks de `notebooks_kaggle/` funcionan como los cursos de
-[Kaggle Learn](https://www.kaggle.com/learn): cada ejercicio trae espacios `____` por completar
-y una celda que revisa la respuesta.
+Los notebooks de `notebooks_verificador/` son interactivos: cada ejercicio trae espacios `____`
+por completar y una celda que revisa la respuesta al momento.
 
 ```python
 ej1.verificar()   # ✅ Correcto / ❌ Incorrecto (con una explicación) / ✏️ Pendiente
@@ -57,21 +56,21 @@ repaso y quién necesita ayuda. La estrategia y la instalación están en
 
 ```
 Curso_Python_FQ/
-├── notebooks_kaggle/     Notebooks para estudiantes (con verificación automática)
-├── soluciones/           Solucionarios para el equipo docente
-├── notebooks/            Versión original del curso (referencia)
-├── verificador/          Paquete que revisa los ejercicios (uno por sesión) y registro opcional
-├── seguimiento/          Estrategia, Apps Script y tablero para el seguimiento del grupo
-├── contenido_extra/      Material de otros asesores (se integra automáticamente)
-├── herramientas/         Generador de los notebooks y de los datos simulados
-├── pruebas/              Pruebas automáticas (pytest y ejecución de todos los notebooks)
-├── .github/workflows/    Integración continua en GitHub Actions
-└── data/                 AqSolDB, datos de Lambert-Beer y del proyecto final
+├── notebooks_verificador/ Notebooks para estudiantes (con verificación automática)
+├── soluciones/            Solucionarios para el equipo docente
+├── notebooks/             Versión original del curso (referencia)
+├── verificador/           Paquete que revisa los ejercicios (uno por sesión) y registro opcional
+├── seguimiento/           Estrategia, Apps Script y tablero para el seguimiento del grupo
+├── contenido_extra/       Material de otros asesores (se integra automáticamente)
+├── herramientas/          Generador de los notebooks y de los datos simulados
+├── pruebas/               Pruebas automáticas (pytest y ejecución de todos los notebooks)
+├── .github/workflows/     Integración continua en GitHub Actions
+└── data/                  AqSolDB, datos de Lambert-Beer y del proyecto final
 ```
 
 ## 🛠️ Para el equipo docente: modificar el material
 
-Los notebooks de `notebooks_kaggle/` y `soluciones/` se **generan** con un script; no se editan
+Los notebooks de `notebooks_verificador/` y `soluciones/` se **generan** con un script; no se editan
 a mano, para que las dos versiones no se desincronicen.
 
 1. Edita el texto y el código de una sesión en `herramientas/contenido_sesionN.py`.
@@ -138,5 +137,5 @@ descriptores moleculares. Sorkun, M. C., Khetan, A. y Er, S. *Scientific Data* *
 git clone https://github.com/ibonfilrivera/Curso_Python_FQ.git
 cd Curso_Python_FQ
 pip install numpy pandas scipy matplotlib sympy rdkit jupyter
-jupyter notebook notebooks_kaggle/
+jupyter notebook notebooks_verificador/
 ```

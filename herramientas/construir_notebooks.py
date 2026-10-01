@@ -2,7 +2,7 @@
 
 Para cada sesión se producen dos versiones:
 
-* notebooks_kaggle/Sesion_N.ipynb      — versión del estudiante: los ejercicios
+* notebooks_verificador/Sesion_N.ipynb      — versión del estudiante: los ejercicios
   traen espacios `____` por completar y celdas para verificar la respuesta.
 * soluciones/Sesion_N_soluciones.ipynb — solucionario: los mismos notebooks
   con las soluciones de referencia del paquete `verificador`.
@@ -84,7 +84,7 @@ def construir(numero, fuente):
     # 2. El verificador se importa después de escribir el JSON para que cargue los adicionales
     modulo = importlib.import_module(f"verificador.sesion{numero}")
     for solucionario in (False, True):
-        carpeta = "soluciones" if solucionario else "notebooks_kaggle"
+        carpeta = "soluciones" if solucionario else "notebooks_verificador"
         archivo = f"Sesion_{numero}{'_soluciones' if solucionario else ''}.ipynb"
         bloques = fuente(carpeta, archivo)
         bloques = bloques[:-2] + extra + bloques[-2:]      # Antes de «Tu progreso»

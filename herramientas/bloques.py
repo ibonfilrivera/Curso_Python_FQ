@@ -49,7 +49,7 @@ def instrucciones(numero):
 ## **¿Cómo usar este notebook?**
 
 Este notebook es **interactivo**: cada ejercicio tiene una celda de código para tu respuesta y
-una celda que la **verifica automáticamente**, como en los cursos de [Kaggle Learn](https://www.kaggle.com/learn).
+una celda que la **verifica automáticamente**.
 
 1. Ejecuta la celda de **configuración** que está justo abajo (una sola vez, al abrir el notebook).
 2. En cada ejercicio, sustituye los espacios `____` por tu código y ejecuta la celda.

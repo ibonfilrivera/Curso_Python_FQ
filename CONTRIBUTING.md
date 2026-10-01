@@ -25,7 +25,7 @@ marcas también se integran, solo que sin verificación automática.
 - **Cambios mayores:** edita una copia del notebook en Colab y envíala a la coordinación, que
   trasladará tus cambios a la fuente con `herramientas/comparar_notebook.py`.
 
-> ⚠️ No edites directamente los archivos de `notebooks_kaggle/` ni de `soluciones/`: se generan
+> ⚠️ No edites directamente los archivos de `notebooks_verificador/` ni de `soluciones/`: se generan
 > automáticamente y GitHub Actions rechaza los cambios hechos a mano.
 
 ## Para la coordinación (cambios en la fuente)

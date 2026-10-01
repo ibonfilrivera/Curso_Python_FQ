@@ -1,4 +1,4 @@
-"""Núcleo del verificador de ejercicios del curso (al estilo de Kaggle Learn).
+"""Núcleo del verificador de ejercicios del curso.
 
 Cada ejercicio es un objeto con tres métodos que el estudiante llama desde el
 notebook:

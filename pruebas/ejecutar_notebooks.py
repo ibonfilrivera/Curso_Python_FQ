@@ -82,7 +82,7 @@ def main(sesiones):
     objetivos = []
     for n in sesiones:
         objetivos.append((RAIZ / f"soluciones/Sesion_{n}_soluciones.ipynb", "correcto"))
-        objetivos.append((RAIZ / f"notebooks_kaggle/Sesion_{n}.ipynb", "pendiente"))
+        objetivos.append((RAIZ / f"notebooks_verificador/Sesion_{n}.ipynb", "pendiente"))
     objetivos.append((RAIZ / "seguimiento/Tablero_docente.ipynb", None))
 
     fallos = 0

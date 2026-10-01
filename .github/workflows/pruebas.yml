@@ -58,7 +58,7 @@ jobs:
         env:
           ANTES: ${{ github.event.before }}
         run: |
-          GENERADOS="notebooks_kaggle soluciones seguimiento/Tablero_docente.ipynb verificador/adicionales_sesion1.json verificador/adicionales_sesion2.json verificador/adicionales_sesion3.json"
+          GENERADOS="notebooks_verificador soluciones seguimiento/Tablero_docente.ipynb verificador/adicionales_sesion1.json verificador/adicionales_sesion2.json verificador/adicionales_sesion3.json"
           if git diff --quiet -- $GENERADOS; then
             echo "Los notebooks generados están al día."
             exit 0
@@ -85,7 +85,7 @@ jobs:
       - name: Subir los notebooks regenerados
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
-          git add notebooks_kaggle soluciones seguimiento/Tablero_docente.ipynb verificador/adicionales_sesion*.json
+          git add notebooks_verificador soluciones seguimiento/Tablero_docente.ipynb verificador/adicionales_sesion*.json
           if git diff --cached --quiet; then
             echo "Nada que actualizar."
             exit 0

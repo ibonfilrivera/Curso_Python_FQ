@@ -1,13 +1,13 @@
 """Muestra qué cambió un asesor en una copia editada de un notebook generado.
 
-Los notebooks de notebooks_kaggle/ y soluciones/ se generan desde herramientas/. Si
+Los notebooks de notebooks_verificador/ y soluciones/ se generan desde herramientas/. Si
 alguien edita una copia en Colab, este script lista las celdas agregadas, eliminadas
 y modificadas para trasladar los cambios a herramientas/contenido_sesionN.py (o a
 contenido_extra/, si es material nuevo).
 
 Uso (desde la carpeta Curso_Python_FQ):
 
-    python herramientas/comparar_notebook.py copia_editada.ipynb notebooks_kaggle/Sesion_1.ipynb
+    python herramientas/comparar_notebook.py copia_editada.ipynb notebooks_verificador/Sesion_1.ipynb
 """
 
 import difflib

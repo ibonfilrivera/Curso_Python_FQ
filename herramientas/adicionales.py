@@ -138,7 +138,7 @@ def _ejecutar_soluciones(ruta, celdas_ejercicio):
         else:
             ejecutable.cells.append(nbformat.v4.new_code_cell(celda.source))
     NotebookClient(ejecutable, timeout=600, kernel_name="python3",
-                   resources={"metadata": {"path": str(RAIZ / "notebooks_kaggle")}}).execute()
+                   resources={"metadata": {"path": str(RAIZ / "notebooks_verificador")}}).execute()
     valores = {}
     for celda in ejecutable.cells:
         for salida in celda.get("outputs", []):

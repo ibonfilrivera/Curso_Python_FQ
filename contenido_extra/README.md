@@ -77,7 +77,7 @@ líneas de marcas; no hace falta reescribir nada.
   `pd.read_csv("https://raw.githubusercontent.com/ibonfilrivera/Curso_Python_FQ/main/data/mi_archivo.csv")`
 - **Orden:** los notebooks de una carpeta se agregan en orden alfabético. Usa nombres como
   `01_densidad.ipynb` y `02_titulacion.ipynb`.
-- **No edites** los notebooks de `notebooks_kaggle/` ni de `soluciones/`: se generan
+- **No edites** los notebooks de `notebooks_verificador/` ni de `soluciones/`: se generan
   automáticamente y los cambios hechos a mano se pierden. Si lo intentas, GitHub detiene la
   publicación y te avisa.
 
@@ -100,6 +100,6 @@ formato que solo necesita conocer la coordinación. Para proponer cambios:
    la coordinación qué celda cambiar y cómo.
 2. **Cambios grandes:** haz tus cambios en una copia del notebook en Colab y envíala a la
    coordinación. Con `python herramientas/comparar_notebook.py tu_copia.ipynb
-   notebooks_kaggle/Sesion_1.ipynb`, la coordinación ve exactamente qué celdas cambiaste y los
+   notebooks_verificador/Sesion_1.ipynb`, la coordinación ve exactamente qué celdas cambiaste y los
    traslada a la fuente.
 3. **Material nuevo:** mejor como notebook en esta carpeta; así no hace falta esperar a nadie.
