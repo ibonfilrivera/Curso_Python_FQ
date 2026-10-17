@@ -406,6 +406,15 @@ def test_placeholder_en_cadenas_con_formato():
 
 # --- Sesión 2 sin funciones ------------------------------------------------------------------
 
+def test_hierro_con_nombre_o_simbolo(ns, capsys):
+    for clave in ("hierro", "Fe", "Hierro"):
+        ns.update(masas_molares={"oxígeno": 16.0, clave: 55.85}, masa_molar_fe2o3=159.7)
+        assert verificar(s2.ej2b, capsys)[0] == "correcto"
+    ns["masas_molares"] = {"oxígeno": 16.0, "F": 55.85}               # Símbolo equivocado
+    estado, salida = verificar(s2.ej2b, capsys)
+    assert estado == "incorrecto" and '"Fe"' in salida
+
+
 def test_enlace_con_if_usa_el_delta_del_estudiante(ns, capsys):
     ns.update(delta_chi=abs(0.93 - 3.16), tipo_enlace="Iónico")
     assert verificar(s2.ej3, capsys)[0] == "correcto"

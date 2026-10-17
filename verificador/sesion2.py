@@ -10,8 +10,6 @@ progreso = sesion.progreso
 iniciar_registro = sesion.iniciar_registro
 
 MM_NACL = 58.44   # g/mol
-MM_AGUA = 18.015      # g/mol
-R_ATM = 0.0821         # atm·L/(mol·K)
 
 
 # --- Ejercicio 1: listas -----------------------------------------------------
@@ -97,15 +95,17 @@ print(f"M(HNO₃) = {masa_molar_hno3} g/mol")
 def _ej2b(ns):
     masa_fe2o3 = obtener(ns, "masa_molar_fe2o3")
     masas = obtener(ns, "masas_molares")
-    if "hierro" not in masas:
-        raise Incorrecto('Agrega la clave "hierro" al diccionario `masas_molares`.')
-    comparar_numero('masas_molares["hierro"]', masas["hierro"], 55.85, rel=2e-3)
-    comparar_numero("masa_molar_fe2o3", masa_fe2o3, 2 * masas["hierro"] + 3 * 16.0, unidades="g/mol")
+    # Se acepta el nombre o el símbolo, sin importar mayúsculas ni acentos
+    clave = next((c for c in masas if normalizar_texto(c) in ("hierro", "fe")), None)
+    if clave is None:
+        raise Incorrecto('Agrega el hierro al diccionario `masas_molares`, con la clave "hierro" o "Fe".')
+    comparar_numero(f"masas_molares[{clave!r}]", masas[clave], 55.85, rel=2e-3)
+    comparar_numero("masa_molar_fe2o3", masa_fe2o3, 2 * masas[clave] + 3 * 16.0, unidades="g/mol")
 
 
 ej2b = sesion.agregar(
     "ej2b", "Masa molar del Fe₂O₃", _ej2b,
-    pista='Agrega un par clave-valor con `masas_molares["hierro"] = 55.85`. El óxido de '
+    pista='Agrega un par clave-valor con `masas_molares["hierro"] = 55.85` (o con la clave "Fe"). El óxido de '
           'hierro(III) es Fe₂O₃.',
     solucion="""
 masas_molares["hierro"] = 55.85
@@ -163,34 +163,9 @@ print(f"Δχ = {delta_chi:.2f} → enlace {tipo_enlace}")
 """)
 
 
-# --- Ejercicio 4: gas ideal ---------------------------------------------------------
+# --- Ejercicio 4: for y while ------------------------------------------------
 
 def _ej4(ns):
-    n = 50.0 / MM_AGUA
-    comparar_numero("n_agua", obtener(ns, "n_agua"), n, rel=5e-3, unidades="mol")
-    comparar_numero("T1", obtener(ns, "T1"), 3.0 * 20.0 / (n * R_ATM), rel=5e-3, unidades="K")
-    comparar_numero("T2", obtener(ns, "T2"), 6.3 * 1.2 / (n * R_ATM), rel=5e-3, unidades="K")
-
-
-ej4 = sesion.agregar(
-    "ej4", "Temperatura de un gas ideal", _ej4,
-    pista="Despeja T de PV = nRT: T = PV / (nR). Calcula primero `n_agua` a partir de 50.0 g de "
-          "agua (M ≈ 18.015 g/mol).",
-    solucion="""
-m_agua = 50.0      # g
-MM_agua = 18.015   # g/mol
-n_agua = m_agua / MM_agua
-R = 0.0821         # atm·L/(mol·K)
-
-T1 = 3.0 * 20.0 / (n_agua * R)     # P = 3.0 atm, V = 20.0 L
-T2 = 6.3 * 1.2 / (n_agua * R)      # P = 6.3 atm, V = 1.2 L
-print(f"T1 = {T1:.2f} K, T2 = {T2:.2f} K")
-""")
-
-
-# --- Ejercicio 5: for y while ------------------------------------------------
-
-def _ej5(ns):
     ahorros = lista_no_vacia("ahorros", obtener(ns, "ahorros"), "completa el ciclo `for`.")
     if len(ahorros) != 3:
         raise Incorrecto("`ahorros` debe ser una lista con tres valores "
@@ -205,8 +180,8 @@ def _ej5(ns):
     comparar_numero("meses_necesarios", meses, 24)
 
 
-ej5 = sesion.agregar(
-    "ej5", "Ahorro para un celular", _ej5,
+ej4 = sesion.agregar(
+    "ej4", "Ahorro para un celular", _ej4,
     pista="Para el `while`, repite mientras `ahorro_total < precio_celular`, sumando "
           "$300 y un mes en cada vuelta.",
     solucion="""
@@ -227,9 +202,9 @@ print(f"Se necesitan {meses_necesarios} meses.")
 """)
 
 
-# --- Ejercicio 6: muestras peligrosas ----------------------------------------
+# --- Ejercicio 5: muestras peligrosas ----------------------------------------
 
-def _ej6(ns):
+def _ej5(ns):
     mediciones = obtener(ns, "mediciones")
     peligrosas = [i for i, c in enumerate(mediciones) if 50 < c <= 100]
     criticas = [i for i, c in enumerate(mediciones) if c > 100]
@@ -250,8 +225,8 @@ def _ej6(ns):
     return f"Hay {len(peligrosas)} muestras peligrosas y {len(criticas)} críticas."
 
 
-ej6 = sesion.agregar(
-    "ej6", "Detección de muestras peligrosas", _ej6,
+ej5 = sesion.agregar(
+    "ej5", "Detección de muestras peligrosas", _ej5,
     pista="`enumerate(mediciones)` te da, en cada vuelta, el índice y el valor. "
           "Una muestra es peligrosa si `50 < c <= 100` y crítica si `c > 100`.",
     solucion="""

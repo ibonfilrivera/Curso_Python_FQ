@@ -20,6 +20,32 @@ decisiones** con condicionales (`if`, `elif`, `else`) y a **repetir instruccione
 """, carpeta, archivo)
         + instrucciones(2)
         + md("""
+## **Variables booleanas y comparaciones**
+
+Una variable booleana solo puede valer `True` (verdadero) o `False` (falso). Se obtienen al
+comparar valores con los operadores `<`, `<=`, `>`, `>=`, `==` (igual) y `!=` (diferente).
+
+> ⚠️ `=` **asigna** un valor; `==` **compara** dos valores.
+""")
+        + code("""
+ph = 4
+
+# ¿El pH es menor que 7?
+ph < 7
+""")
+        + code("""
+# ¿El pH es exactamente igual a 7?
+ph == 7
+""")
+        + code("""
+# ¿El pH es mayor o igual que 7?
+ph >= 7
+""")
+        + code("""
+# ¿El pH es diferente de 7?
+ph != 7
+""")
+        + md("""
 ## **Listas**
 
 Son colecciones **ordenadas** de elementos (números, textos u otras listas) que se definen con
@@ -184,39 +210,13 @@ print(f"M(HNO₃) = {masa_molar_hno3} g/mol")
         + md("""
 ### **Ejercicio 2b: Agregar un elemento**
 
-Agrega el hierro (55.85 g/mol) al diccionario y calcula la masa molar del óxido de hierro(III),
+Agrega el hierro (55.85 g/mol) al diccionario, con la clave `"hierro"` o `"Fe"`, y calcula la masa molar del óxido de hierro(III),
 Fe₂O₃ (`masa_molar_fe2o3`).
 """)
         + ejercicio("ej2b", """
 ____
 masa_molar_fe2o3 = ____
 print(f"M(Fe₂O₃) = {masa_molar_fe2o3} g/mol")
-""")
-        + md("""
-## **Variables booleanas y comparaciones**
-
-Una variable booleana solo puede valer `True` (verdadero) o `False` (falso). Se obtienen al
-comparar valores con los operadores `<`, `<=`, `>`, `>=`, `==` (igual) y `!=` (diferente).
-
-> ⚠️ `=` **asigna** un valor; `==` **compara** dos valores.
-""")
-        + code("""
-ph = 4
-
-# ¿El pH es menor que 7?
-ph < 7
-""")
-        + code("""
-# ¿El pH es exactamente igual a 7?
-ph == 7
-""")
-        + code("""
-# ¿El pH es mayor o igual que 7?
-ph >= 7
-""")
-        + code("""
-# ¿El pH es diferente de 7?
-ph != 7
 """)
         + md("""
 ## **El condicional `if`**
@@ -309,31 +309,6 @@ else:
     tipo_enlace = ____
 
 print(f"Δχ = {delta_chi:.2f} → enlace {tipo_enlace}")
-""")
-        + md(r"""
-### **Ejercicio 4: Temperatura de un gas ideal**
-
-Despejando $PV = nRT$ obtenemos $T = \frac{PV}{nR}$, con $R = 0.0821~\frac{\text{atm·L}}{\text{mol·K}}$.
-
-1. Calcula la cantidad de sustancia `n_agua` en 50.0 g de agua.
-2. Calcula a qué temperatura se cumplen las siguientes condiciones y guarda los resultados en
-   `T1` y `T2`:
-   - $P = 3.0~\text{atm},~V = 20.0~\text{L}$
-   - $P = 6.3~\text{atm},~V = 1.2~\text{L}$
-
-> 🤔 **Para reflexionar:** ¿tiene sentido físico tratar al agua como gas ideal a esas
-> temperaturas? ¿En qué fase estaría realmente?
-""")
-        + ejercicio("ej4", """
-m_agua = 50.0       # g
-MM_agua = ____      # g/mol
-n_agua = ____
-R = 0.0821          # atm·L/(mol·K)
-
-T1 = ____           # P = 3.0 atm, V = 20.0 L
-T2 = ____           # P = 6.3 atm, V = 1.2 L
-print(f"T1 = {T1} K")
-print(f"T2 = {T2} K")
 """)
         + md("""
 ## **El ciclo `for`**
@@ -459,14 +434,14 @@ for n in range(1, 101):   # Como máximo 100 repeticiones
 print(f"Se necesitan {n} vidas medias.")
 """)
         + md("""
-### **Ejercicio 5: Ahorros**
+### **Ejercicio 4: Ahorros**
 
 Ahorras \\$300 pesos al mes para comprar un celular que cuesta \\$7,000 pesos.
 
 1. Con un `for`, construye la lista `ahorros` con lo que habrás ahorrado a los 10, 20 y 30 meses.
 2. Con un `while`, calcula `meses_necesarios` para poder comprar el celular.
 """)
-        + ejercicio("ej5", """
+        + ejercicio("ej4", """
 precio_celular = 7000
 ahorro_mensual = 300
 
@@ -511,14 +486,14 @@ print(f"Se generaron {len(mediciones)} mediciones. Las primeras 10: {mediciones[
 print(f"Mínimo: {min(mediciones)} ppm, máximo: {max(mediciones)} ppm")
 """)
         + md("""
-### **Ejercicio 6: Clasificación de muestras**
+### **Ejercicio 5: Clasificación de muestras**
 
 Recorre `mediciones` y construye dos listas con los **índices** (posiciones) de las muestras:
 
 - `indices_peligrosas`: concentración mayor a 50 ppm y menor o igual a 100 ppm.
 - `indices_criticas`: concentración mayor a 100 ppm.
 """)
-        + ejercicio("ej6", """
+        + ejercicio("ej5", """
 indices_peligrosas = []
 indices_criticas = []
 
